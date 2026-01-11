@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Bath Products Manager</title>
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .login-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .category-section {
+            margin-bottom: 32px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .item-list {
+            margin-top: 12px;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        .add-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .add-form input {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div id="login-screen" class="login-screen">
+            <h1>Admin Access</h1>
+            <p>Please enter the admin password to manage products.</p>
+            <div style="margin-top: 20px;">
+                <input type="password" id="admin-password" placeholder="Password" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                <button id="login-btn" class="btn btn-primary">Login</button>
+            </div>
+            <p id="login-error" style="color: red; margin-top: 10px; display: none;">Incorrect password.</p>
+            <div style="margin-top: 20px;">
+                <a href="/">← Back to App</a>
+            </div>
+        </div>
+
+        <div id="admin-panel" class="admin-panel">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h1>Product Management</h1>
+                <button id="logout-btn" class="btn btn-secondary">Logout</button>
+            </header>
+
+            <div id="categories-container">
+                <!-- Categories will be rendered here -->
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "vite-starter",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "netlify-cli": "^23.13.3",
+    "vite": "^7.3.0"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.5.0",
+    "@supabase/supabase-js": "^2.90.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.0.0",
+    "nodemailer": "^7.0.12"
+  }
+}

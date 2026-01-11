@@ -1,0 +1,121 @@
+{
+    "bathtubs": [
+        {
+            "id": "1",
+            "name": "Standard Alcove Tub",
+            "price": 450
+        },
+        {
+            "id": "2",
+            "name": "Freestanding Soaking Tub",
+            "price": 1200
+        },
+        {
+            "id": "3",
+            "name": "Walk-in Safety Tub",
+            "price": 3500
+        }
+    ],
+    "showers": [
+        {
+            "id": "1",
+            "name": "Standard Shower Stall",
+            "price": 800
+        },
+        {
+            "id": "2",
+            "name": "Walk-in Shower",
+            "price": 1500
+        },
+        {
+            "id": "3",
+            "name": "Custom Tile Shower",
+            "price": 3000
+        }
+    ],
+    "trim": [
+        {
+            "id": "1",
+            "name": "Chrome Faucet Set",
+            "price": 150
+        },
+        {
+            "id": "2",
+            "name": "Brushed Nickel Fixtures",
+            "price": 200
+        },
+        {
+            "id": "3",
+            "name": "Rainfall Showerhead",
+            "price": 250
+        }
+    ],
+    "toilets": [
+        {
+            "id": "1",
+            "name": "Standard Two-Piece",
+            "price": 250
+        },
+        {
+            "id": "2",
+            "name": "One-Piece Elongated",
+            "price": 400
+        },
+        {
+            "id": "3",
+            "name": "Wall-Mounted",
+            "price": 600
+        }
+    ],
+    "sinks": [
+        {
+            "id": "1",
+            "name": "Pedestal Sink",
+            "price": 200
+        },
+        {
+            "id": "2",
+            "name": "Vanity with Sink",
+            "price": 500
+        },
+        {
+            "id": "3",
+            "name": "Vessel Sink",
+            "price": 350
+        }
+    ],
+    "tiles": [
+        {
+            "id": "1",
+            "name": "Ceramic Floor Tile (per sq ft)",
+            "price": 5
+        },
+        {
+            "id": "2",
+            "name": "Porcelain Wall Tile (per sq ft)",
+            "price": 8
+        },
+        {
+            "id": "3",
+            "name": "Natural Stone (per sq ft)",
+            "price": 15
+        }
+    ],
+    "labor": [
+        {
+            "id": "1",
+            "name": "Basic Installation",
+            "price": 500
+        },
+        {
+            "id": "2",
+            "name": "Full Bathroom Remodel",
+            "price": 5000
+        },
+        {
+            "id": "3",
+            "name": "Plumbing Work (per hour)",
+            "price": 100
+        }
+    ]
+}
