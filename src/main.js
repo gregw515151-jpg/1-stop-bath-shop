@@ -22,6 +22,24 @@ function getAppHtml(maxPhotos) {
       <h1 style="margin: 16px 0 4px;">Bath Products Selector</h1>
     </header>
 
+    <!-- Scope of Work - Centered -->
+    <section class="card" style="margin-bottom: 16px; max-width: 500px; margin-left: auto; margin-right: auto;">
+      <div class="form-group" style="margin: 0;">
+        <label for="scope_of_work-select" style="text-decoration: underline; display: block; text-align: center; font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;">Scope of Work</label>
+        <select id="scope_of_work-select" class="select-input">
+          <option value="">Loading...</option>
+        </select>
+        <div class="admin-control" style="display: none; margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+          <input id="add-scope_of_work-name" type="text" placeholder="Product name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <input id="add-scope_of_work-price" type="number" placeholder="Price" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <div style="display: flex; gap: 8px;">
+            <button id="add-scope_of_work-btn" class="btn btn-primary" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
+            <button id="delete-scope_of_work-btn" class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete Selected</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Customer details -->
     <section class="card" style="margin-bottom:16px;">
       <h2 style="margin:0 0 8px;">Customer Details</h2>
@@ -154,21 +172,6 @@ function getAppHtml(maxPhotos) {
             <div style="display: flex; gap: 8px;">
               <button id="add-labor-btn" class="btn btn-primary" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
               <button id="delete-labor-btn" class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete Selected</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="scope_of_work-select" style="text-decoration: underline;">Scope of Work</label>
-          <select id="scope_of_work-select" class="select-input">
-            <option value="">Loading...</option>
-          </select>
-          <div class="admin-control" style="display: none; margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-            <input id="add-scope_of_work-name" type="text" placeholder="Product name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-            <input id="add-scope_of_work-price" type="number" placeholder="Price" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-            <div style="display: flex; gap: 8px;">
-              <button id="add-scope_of_work-btn" class="btn btn-primary" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
-              <button id="delete-scope_of_work-btn" class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete Selected</button>
             </div>
           </div>
         </div>
