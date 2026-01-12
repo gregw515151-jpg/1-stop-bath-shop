@@ -33,6 +33,11 @@ export const DEFAULT_PRODUCTS = {
     { id: "1", name: "Basic Installation", price: 500 },
     { id: "2", name: "Full Bathroom Remodel", price: 5000 },
     { id: "3", name: "Plumbing Work (per hour)", price: 100 }
+  ],
+  scope_of_work: [
+    { id: "1", name: "Demolition & Removal", price: 800 },
+    { id: "2", name: "Plumbing Rough-In", price: 1200 },
+    { id: "3", name: "Electrical Work", price: 1000 }
   ]
 };
 
@@ -45,7 +50,8 @@ export let selections = {
   toilet: null,
   sink: null,
   tile: null,
-  labor: null
+  labor: null,
+  scope_of_work: null
 };
 
 let isAdminMode = false;
@@ -192,6 +198,7 @@ function setupAdminControls() {
   setupCategoryAdmin('sinks');
   setupCategoryAdmin('tiles');
   setupCategoryAdmin('labor');
+  setupCategoryAdmin('scope_of_work');
 }
 
 function setupCategoryAdmin(category) {
