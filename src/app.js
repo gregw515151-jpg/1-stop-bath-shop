@@ -682,6 +682,7 @@ function injectAdminControlsToAllDropdowns() {
         <button class="btn btn-primary admin-add-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
         <button class="btn btn-secondary admin-edit-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ Edit</button>
         <button class="btn btn-secondary admin-delete-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete</button>
+        <button class="btn btn-secondary admin-cancel-btn" style="display: none; flex: 1; padding: 6px 12px; font-size: 12px; background: #6b7280;">❌ Cancel</button>
       </div>
     `;
 
@@ -765,6 +766,10 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
     addBtn.textContent = '✅ Update';
     addBtn.dataset.editingId = selectedId;
     addBtn.dataset.editingCategory = category;
+
+    // Show Cancel button
+    const cancelBtn = controlsDiv.querySelector('.admin-cancel-btn');
+    if (cancelBtn) cancelBtn.style.display = 'block';
   });
 
   // Delete button
@@ -783,6 +788,24 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
       alert(`Deleted "${item.name}"`);
     }
   });
+  
+  // Cancel button
+  const cancelBtn = controlsDiv.querySelector('.admin-cancel-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      // Clear inputs
+      nameInput.value = '';
+      priceInput.value = '';
+      
+      // Reset Add button
+      addBtn.textContent = '➕ Add';
+      delete addBtn.dataset.editingId;
+      delete addBtn.dataset.editingCategory;
+      
+      // Hide Cancel button
+      cancelBtn.style.display = 'none';
+    });
+  }
 }
 
 export async function editItem(category, id, name, price) {
