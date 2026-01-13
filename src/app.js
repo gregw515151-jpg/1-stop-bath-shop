@@ -192,10 +192,14 @@ export function loadProductsFromStorage() {
   const stored = localStorage.getItem('bathroom_quote_products');
   if (stored) {
     try {
-      products = JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Merge with defaults to ensure all categories exist
+      products = { ...DEFAULT_QUOTE_DATA, ...parsed };
     } catch (e) {
       products = { ...DEFAULT_QUOTE_DATA };
     }
+  } else {
+    products = { ...DEFAULT_QUOTE_DATA };
   }
 }
 
@@ -231,7 +235,7 @@ export function getSelections() {
 // Add/Delete
 export async function addItem(category, name, price) {
   if (!products[category]) products[category] = [];
-  const newId = String(products[category].length + 1);
+  const newId = String(Date.now()); // Use timestamp for unique ID
   products[category].push({ id: newId, name, price: parseFloat(price) });
   saveProductsToStorage();
 }
