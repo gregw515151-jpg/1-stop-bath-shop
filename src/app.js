@@ -283,8 +283,8 @@ function renumberAllItems() {
 export async function initializeApp() {
   loadProductsFromStorage();
   renumberAllItems(); // Ensure all items have sequential IDs
-  populateDropdowns();
-  buildQuoteSections();
+  buildQuoteSections(); // Build HTML first
+  populateDropdowns(); // Then populate with data
   setupAdminControls();
   setupListeners();
 }
