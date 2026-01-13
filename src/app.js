@@ -709,13 +709,28 @@ function setupAdminControls() {
 
 // Dynamically inject admin controls to all dropdowns
 function injectAdminControlsToAllDropdowns() {
+  console.log('Injecting admin controls to all dropdowns...');
+  console.log('DROPDOWN_MAPPINGS:', DROPDOWN_MAPPINGS);
+
   Object.entries(DROPDOWN_MAPPINGS).forEach(([selectId, category]) => {
+    console.log(`Looking for dropdown: ${selectId}`);
     const select = document.getElementById(selectId);
-    if (!select) return;
+
+    if (!select) {
+      console.warn(`Dropdown not found: ${selectId}`);
+      return;
+    }
+
+    console.log(`Found dropdown: ${selectId}, parent:`, select.parentElement);
 
     // Check if admin controls already exist
     const existingControls = select.parentElement.querySelector('.dynamic-admin-controls');
-    if (existingControls) return;
+    if (existingControls) {
+      console.log(`Admin controls already exist for ${selectId}`);
+      return;
+    }
+
+    console.log(`Creating admin controls for ${selectId}`);
 
     // Create admin controls
     const controlsDiv = document.createElement('div');
@@ -733,10 +748,13 @@ function injectAdminControlsToAllDropdowns() {
     `;
 
     select.parentElement.appendChild(controlsDiv);
+    console.log(`Admin controls added for ${selectId}`);
 
     // Setup event listeners
     setupDynamicAdminControls(selectId, category, controlsDiv);
   });
+
+  console.log('Admin control injection complete');
 }
 
 function removeAdminControlsFromAllDropdowns() {
