@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 export const handler = async (event) => {
     // Only allow POST requests
@@ -13,19 +13,13 @@ export const handler = async (event) => {
     try {
         const { to, customerInfo, summary, notes, pdfBase64 } = JSON.parse(event.body);
 
-        // Check for Gmail credentials
-        if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-            throw new Error('Missing GMAIL_USER or GMAIL_APP_PASSWORD');
+        // Check for Resend API key
+        if (!process.env.RESEND_API_KEY) {
+            throw new Error('Missing RESEND_API_KEY environment variable');
         }
 
-        // Create Nodemailer transporter
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_APP_PASSWORD,
-            },
-        });
+        // Initialize Resend
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const htmlBody = `
       <div style="font-family: system-ui, -apple-system, sans-serif; color: #111827; line-height: 1.6; max-width: 600px;">
@@ -58,29 +52,31 @@ export const handler = async (event) => {
       </div>
     `;
 
-        // Send email with PDF attachment
-        const info = await transporter.sendMail({
-            from: `"1 Stop Bath Shop" <${process.env.GMAIL_USER}>`,
-            to: to || process.env.GMAIL_USER, // fallback to self
+        // Convert base64 PDF to buffer
+        const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+
+        // Send email with Resend
+        const data = await resend.emails.send({
+            from: '1 Stop Bath Shop <onboarding@resend.dev>', // You'll update this to your domain later
+            to: to,
             subject: 'Bathroom Estimate Quote',
             html: htmlBody,
             attachments: [
                 {
                     filename: 'quote.pdf',
-                    // Robustly handle data URI by taking the last part after "base64,"
-                    content: Buffer.from(pdfBase64.split('base64,').pop(), 'base64'),
+                    content: pdfBuffer,
                 },
             ],
         });
 
-        console.log('Email sent: %s', info.messageId);
+        console.log('Email sent:', data.id);
 
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ success: true, messageId: info.messageId })
+            body: JSON.stringify({ success: true, messageId: data.id })
         };
 
     } catch (error) {
