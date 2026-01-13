@@ -765,11 +765,17 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
       return;
     }
 
-    const item = products[category]?.find(p => p.id === selectedId);
+    console.log('Edit clicked - Category:', category, 'Selected ID:', selectedId);
+    console.log('Available items:', products[category]);
+
+    const item = products[category]?.find(p => String(p.id) === String(selectedId));
     if (!item) {
-      alert('Item not found');
+      console.error('Item not found! Looking for ID:', selectedId, 'in', products[category]);
+      alert(`Item not found. ID: ${selectedId}`);
       return;
     }
+
+    console.log('Found item:', item);
 
     // Pre-fill inputs
     nameInput.value = item.name;
