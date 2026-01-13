@@ -634,12 +634,12 @@ export function generateEmailBody(selections) {
   }
 
   const fieldLabels = {
-    'plumbing_color': 'Plumbing Color',
-    'plumbing_style': 'Plumbing Style',
+    'plumbing_color': 'Shower Pan Color',
+    'plumbing_style': 'Faucet Style',
     'plumbing_type': 'Plumbing Type',
     'exhaust_fan': 'Exhaust Fan',
     'shower_size': 'Shower Size',
-    'wall_type': 'Wall Type',
+    'wall_type': 'Wall Surround Type',
     'vanity_length': 'Vanity Length',
     'flooring_type': 'Flooring Type'
   };
