@@ -262,9 +262,27 @@ export async function deleteItem(category, id) {
   saveProductsToStorage();
 }
 
+// Renumber all items in all categories to use sequential IDs 1-100
+function renumberAllItems() {
+  console.log('Renumbering all items to sequential IDs...');
+
+  Object.keys(products).forEach(category => {
+    if (Array.isArray(products[category])) {
+      products[category].forEach((item, index) => {
+        item.id = String(index + 1);
+      });
+      console.log(`Renumbered ${products[category].length} items in ${category}`);
+    }
+  });
+
+  saveProductsToStorage();
+  console.log('All items renumbered and saved');
+}
+
 // Initialize
 export async function initializeApp() {
   loadProductsFromStorage();
+  renumberAllItems(); // Ensure all items have sequential IDs
   populateDropdowns();
   buildQuoteSections();
   setupAdminControls();
