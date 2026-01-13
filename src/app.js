@@ -339,36 +339,15 @@ function buildQuoteSections() {
       <div class="section-content">
         <div class="form-group">
           <label>Plumbing Fixture Color:</label>
-          <select id="plumbing-color" class="select-input">
-            <option value="">-- Select --</option>
-            <option value="Chrome">Chrome</option>
-            <option value="Brushed Nickel">Brushed Nickel (+$50)</option>
-            <option value="Oil Rubbed Bronze">Oil Rubbed Bronze (+$75)</option>
-            <option value="Flat Black">Flat Black (+$100)</option>
-            <option value="Custom">Custom</option>
-          </select>
+          <select id="plumbing-color" class="select-input">`n          </select>
         </div>
         <div class="form-group">
           <label>Plumbing Fixture Style:</label>
-          <select id="plumbing-style" class="select-input">
-            <option value="">-- Select --</option>
-            <option value="Modern">Modern</option>
-            <option value="Chateau">Chateau (+$50)</option>
-            <option value="Modern Brushed">Modern Brushed (+$25)</option>
-            <option value="Modern Glyde">Modern Glyde (+$25)</option>
-            <option value="Modern Voss">Modern Voss (+$25)</option>
-            <option value="Custom">Custom</option>
-          </select>
+          <select id="plumbing-style" class="select-input">`n          </select>
         </div>
         <div class="form-group">
           <label>Electrical Device Color:</label>
-          <select id="electrical-color" class="select-input">
-            <option value="">-- Select --</option>
-            <option value="White">White</option>
-            <option value="Light Almond">Light Almond (+$5)</option>
-            <option value="Ivory">Ivory (+$5)</option>
-            <option value="Custom">Custom</option>
-          </select>
+          <select id="electrical-color" class="select-input">`n          </select>
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Fixtures & Finishes Notes:</label>
@@ -386,12 +365,7 @@ function buildQuoteSections() {
       <div class="section-content">
         <div class="form-group">
           <label>Exhaust Fan Type:</label>
-          <select id="exhaust-fan" class="select-input">
-            <option value="">-- Select --</option>
-            <option value="Fan Only">Fan Only ($100)</option>
-            <option value="Fan + Light">Fan + Light ($150)</option>
-            <option value="Fan + Light + Heater">Fan + Light + Heater ($250)</option>
-          </select>
+          <select id="exhaust-fan" class="select-input">`n          </select>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
           <div class="form-group">
@@ -425,54 +399,25 @@ function buildQuoteSections() {
           <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Shower Pan</h3>
           <div class="form-group">
             <label>Color:</label>
-            <select id="shower-color" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="White">White</option>
-              <option value="Almond">Almond (+$25)</option>
-              <option value="Biscuit">Biscuit (+$25)</option>
-              <option value="Gray">Gray (+$50)</option>
-              <option value="Custom">Custom</option>
-            </select>
+            <select id="shower-color" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Size:</label>
-            <select id="shower-size" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="60x30">60x30 ($320)</option>
-              <option value="54x30">54x30 ($340)</option>
-              <option value="72x36">72x36 ($420)</option>
-            </select>
+            <select id="shower-size" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Drain Location:</label>
-            <select id="shower-drain" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="Left">Left</option>
-              <option value="Right">Right</option>
-              <option value="Center">Center</option>
-            </select>
+            <select id="shower-drain" class="select-input">`n          </select>
           </div>
 
           <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Bathtub</h3>
           <div class="form-group">
             <label>Depth:</label>
-            <select id="tub-depth" class="select-input">
-              <option value="">-- Select --</option>
-              <option value='12"'>12"</option>
-              <option value='13"'>13" (+$20)</option>
-              <option value='15"'>15" (+$40)</option>
-              <option value='17"'>17" (+$60)</option>
-              <option value='18"'>18" (+$80)</option>
-            </select>
+            <select id="tub-depth" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Length:</label>
-            <select id="tub-length" class="select-input">
-              <option value="">-- Select --</option>
-              ${['48', '50', '52', '53', '54', '55', '56', '57', '58', '59', '60'].map((len, i) =>
-    `<option value='${len}"'>${len}" ($${400 + i * 20})</option>`
-  ).join('')}
-            </select>
+            <select id="tub-length" class="select-input">`n          </select>
           </div>
         </div>
 
@@ -480,46 +425,21 @@ function buildQuoteSections() {
           <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Walls</h3>
           <div class="form-group">
             <label>Color:</label>
-            <select id="wall-color" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="White">White</option>
-              <option value="Almond">Almond (+$25)</option>
-              <option value="Biscuit">Biscuit (+$25)</option>
-              <option value="Afterwhite">Afterwhite (+$50)</option>
-              <option value="Custom">Custom</option>
-            </select>
+            <select id="wall-color" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Pattern:</label>
-            <select id="wall-pattern" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="Smooth">Smooth</option>
-              <option value="Texture">Texture/Brushed (+$100)</option>
-              <option value="3x6 Subway">3x6 Subway (+$150)</option>
-              <option value="8x8">8x8 (+$120)</option>
-              <option value="12x12">12x12 (+$140)</option>
-            </select>
+            <select id="wall-pattern" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Wall Type:</label>
-            <select id="wall-type" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="Reg Shower">Regular Shower ($800)</option>
-              <option value="Reg Tub">Regular Tub ($600)</option>
-              <option value="4 Bead Shower">4 Bead Shower ($900)</option>
-              <option value="4 Bead Tub">4 Bead Tub ($700)</option>
-            </select>
+            <select id="wall-type" class="select-input">`n          </select>
           </div>
 
           <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Vanity</h3>
           <div class="form-group">
             <label>Length:</label>
-            <select id="vanity-length" class="select-input">
-              <option value="">-- Select --</option>
-              ${['18', '24', '36', '42', '48', '54', '60', '78'].map((len, i) =>
-    `<option value='${len}"'>${len}" ($${300 + i * 100})</option>`
-  ).join('')}
-            </select>
+            <select id="vanity-length" class="select-input">`n          </select>
           </div>
         </div>
         <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
@@ -539,11 +459,7 @@ function buildQuoteSections() {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
           <div class="form-group">
             <label>Flooring Type:</label>
-            <select id="flooring-type" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="LVP">LVP ($4/sqft)</option>
-              <option value="Tile">Tile ($8/sqft)</option>
-            </select>
+            <select id="flooring-type" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Square Footage:</label>
@@ -553,23 +469,11 @@ function buildQuoteSections() {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 16px;">
           <div class="form-group">
             <label>Baseboard Style:</label>
-            <select id="baseboard-style" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="WM623">WM623 - 3¼" Colonial ($2.50/ft)</option>
-              <option value="WM713">WM713 - 3½" Clamshell ($2.75/ft)</option>
-              <option value="WM663">WM663 - 3¼" Ogee ($2.60/ft)</option>
-              <option value="Custom">Custom</option>
-            </select>
+            <select id="baseboard-style" class="select-input">`n          </select>
           </div>
           <div class="form-group">
             <label>Window/Door Trim:</label>
-            <select id="window-style" class="select-input">
-              <option value="">-- Select --</option>
-              <option value="WM376">WM376 - 2⅛" Colonial ($2.00/ft)</option>
-              <option value="WM366">WM366 - 2¼" Flat Edge ($2.10/ft)</option>
-              <option value="WM445">WM445 - 3¼" Colonial ($2.50/ft)</option>
-              <option value="Custom">Custom</option>
-            </select>
+            <select id="window-style" class="select-input">`n          </select>
           </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
@@ -874,3 +778,4 @@ export async function editItem(category, id, name, price) {
     saveProductsToStorage();
   }
 }
+
