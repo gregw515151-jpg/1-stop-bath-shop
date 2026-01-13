@@ -15,10 +15,12 @@ export let products = { ...DEFAULT_QUOTE_DATA };
 export let selections = {
   scope_of_work: null,
   demo_items: [],
+  demolition_notes: "",
   plumbing_color: "",
   plumbing_style: "",
   plumbing_type: "",
   electrical_color: "",
+  fixtures_notes: "",
   exhaust_fan: "",
   switches: 0,
   outlets: 0,
@@ -43,12 +45,14 @@ export let selections = {
   vanity_top_holes: "",
   vanity_top_faucets: "",
   vanity_top_splashes: [],
+  bathroom_notes: "",
   flooring_type: "",
   flooring_sqft: 0,
   baseboard_style: "",
   baseboard_finish: "",
   window_style: "",
-  window_finish: ""
+  window_finish: "",
+  flooring_notes: ""
 };
 
 let isAdminMode = false;
@@ -146,6 +150,10 @@ function buildQuoteSections() {
             </label>
           `).join('')}
         </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Demolition Notes:</label>
+          <textarea id="demolition-notes" rows="2" class="select-input" placeholder="Any special demolition requirements or notes..."></textarea>
+        </div>
       </div>
     </section>
 
@@ -188,6 +196,10 @@ function buildQuoteSections() {
             <option value="Ivory">Ivory (+$5)</option>
             <option value="Custom">Custom</option>
           </select>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Fixtures & Finishes Notes:</label>
+          <textarea id="fixtures-notes" rows="2" class="select-input" placeholder="Any special fixture or finish requirements..."></textarea>
         </div>
       </div>
     </section>
@@ -337,6 +349,10 @@ function buildQuoteSections() {
             </select>
           </div>
         </div>
+        <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
+          <label>Bathroom Products Notes:</label>
+          <textarea id="bathroom-notes" rows="2" class="select-input" placeholder="Any special requirements for shower, tub, walls, or vanity..."></textarea>
+        </div>
       </div>
     </section>
 
@@ -383,6 +399,10 @@ function buildQuoteSections() {
             </select>
           </div>
         </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Flooring & Trim Notes:</label>
+          <textarea id="flooring-notes" rows="2" class="select-input" placeholder="Any special flooring or trim requirements..."></textarea>
+        </div>
       </div>
     </section>
   `;
@@ -409,6 +429,7 @@ function setupListeners() {
   const inputs = [
     'plumbing-color', 'plumbing-style', 'electrical-color', 'exhaust-fan',
     'switches', 'outlets', 'recessed-lights', 'electrical-notes',
+    'demolition-notes', 'fixtures-notes', 'bathroom-notes', 'flooring-notes',
     'shower-color', 'shower-size', 'shower-drain',
     'tub-depth', 'tub-length',
     'wall-color', 'wall-pattern', 'wall-type',
