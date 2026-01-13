@@ -1,6 +1,7 @@
-// src/main.js - Contractor Quote System
 import './style.css'
-import { initializeApp } from './app.js'
+import { initializeApp, getSelections, generateEmailBody } from './app.js'
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
@@ -251,6 +252,231 @@ document.getElementById('photos-input')?.addEventListener('change', async (e) =>
 document.getElementById('photos-clear')?.addEventListener('click', () => {
   state.photos = [];
   refreshPhotosUI();
+});
+
+function getCustomerInfo() {
+  const name = document.getElementById('customer-name')?.value || '';
+  const address = document.getElementById('customer-address')?.value || '';
+  const phone = document.getElementById('customer-phone')?.value || '';
+  const email = document.getElementById('customer-email')?.value || '';
+  const notes = document.getElementById('customer-notes')?.value || '';
+  return { name, address, phone, email, notes };
+}
+
+async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
+  const summaryEl = document.getElementById('summary');
+  const totalEl = document.getElementById('total');
+  const customer = getCustomerInfo();
+
+  // Temporary off-screen container for clean render
+  const pdfRoot = document.createElement('div');
+  pdfRoot.style.width = '800px';
+  pdfRoot.style.padding = '24px';
+  pdfRoot.style.background = '#ffffff';
+  pdfRoot.style.color = '#111827';
+  pdfRoot.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  pdfRoot.style.lineHeight = '1.5';
+  pdfRoot.style.position = 'fixed';
+  pdfRoot.style.left = '-99999px';
+
+  const logoHTML = (logo && logo.dataUrl)
+    ? `<img src="${logo.dataUrl}" alt="Logo" style="max-height:90px; width:auto; display:block; margin:0 auto; object-fit:contain;">`
+    : '';
+
+  const customerHTML = `
+    <h2 style="font-size:16px; margin: 12px 0 8px;">Customer</h2>
+    <div style="font-size:14px;">
+      <div><strong>Name:</strong> ${esc(customer.name)}</div>
+      <div><strong>Phone:</strong> ${esc(customer.phone)}</div>
+      <div><strong>Email:</strong> ${esc(customer.email)}</div>
+      <div style="margin-top:6px;"><strong>Address:</strong><br>${esc(customer.address).replace(/\n/g, '<br>')}</div>
+    </div>
+    <h2 style="font-size:16px; margin: 16px 0 8px;">Notes</h2>
+    <div style="font-size:14px; white-space:pre-wrap;">${esc(customer.notes)}</div>
+  `;
+
+  const photosGridHTML = (photos || []).map((p) => `
+    <div style="break-inside: avoid; margin-bottom: 20px; text-align: center;">
+      <img src="${p.dataUrl}" alt="${esc(p.name)}" style="max-width:100%; max-height:500px; height:auto; width:auto; border-radius:4px; border:1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      ${p.caption ? `<div style="font-size:12px; color:#555; margin-top:8px; font-style:italic;">${esc(p.caption)}</div>` : ''}
+    </div>
+  `).join('');
+
+  pdfRoot.innerHTML = `
+    <div style="text-align:center; margin-bottom: 10px;">
+      ${logoHTML}
+    </div>
+
+    ${customerHTML}
+
+    <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
+    <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
+
+    <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
+    <div>${totalEl ? totalEl.innerHTML : ''}</div>
+
+    <h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>
+    <div>${photosGridHTML || '<div style="font-size:12px;color:#6b7280;">No photos attached.</div>'}</div>
+  `;
+
+  document.body.appendChild(pdfRoot);
+
+  // Render to hi-res canvas
+  const canvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+  const imgData = canvas.toDataURL('image/png');
+
+  // Create PDF with pagination
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+  heightLeft -= pageHeight;
+
+  while (heightLeft > 0) {
+    pdf.addPage();
+    position = heightLeft - imgHeight;
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+    heightLeft -= pageHeight;
+  }
+
+  const blob = pdf.output('blob');
+  document.body.removeChild(pdfRoot);
+
+  const download = () => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return { blob, download };
+}
+
+/* ---------- Email Quote ---------- */
+document.getElementById('email-btn')?.addEventListener('click', async () => {
+  const selections = getSelections();
+  const summaryEl = document.getElementById('summary');
+  const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
+
+  if (!hasSelections) {
+    alert('Please select some items before sending a quote.');
+    return;
+  }
+
+  const emailBtn = document.getElementById('email-btn');
+  const originalText = emailBtn.textContent;
+
+  try {
+    // Show loading state
+    emailBtn.disabled = true;
+    emailBtn.textContent = '📧 Sending...';
+
+    const baseBody = generateEmailBody(selections);
+    const customer = getCustomerInfo();
+
+    // Get email from the quote-email input
+    const quoteEmailInput = document.getElementById('quote-email');
+    const recipientEmail = quoteEmailInput?.value || customer.email;
+
+    if (!recipientEmail) {
+      alert('Please enter an email address in the "Send Quote To" field.');
+      emailBtn.textContent = originalText;
+      emailBtn.disabled = false;
+      return;
+    }
+
+    // Build the PDF
+    const { blob } = await generateQuotePDF({
+      logo: state.logo,
+      photos: state.photos,
+      fileName: 'quote.pdf'
+    });
+
+    // Convert PDF blob to base64
+    const reader = new FileReader();
+    const pdfBase64 = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result.split(',')[1]); // Robust Base64 extraction
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    // Send email via Netlify function
+    const response = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to: recipientEmail,
+        customerInfo: {
+          name: customer.name,
+          phone: customer.phone,
+          email: recipientEmail,
+          address: customer.address,
+        },
+        summary: baseBody,
+        notes: customer.notes,
+        pdfBase64: pdfBase64
+      }),
+    });
+
+    let result;
+    const contentType = response.headers.get("content-type");
+    if (response.ok) {
+      try {
+        result = await response.json();
+      } catch (e) {
+        result = { success: true };
+      }
+    } else if (contentType && contentType.indexOf("application/json") !== -1) {
+      result = await response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned ${response.status} ${response.statusText}: ${text.substring(0, 100)}`);
+    }
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to send email');
+    }
+
+    // Success!
+    emailBtn.textContent = '✅ Sent!';
+    alert(`✅ Email sent successfully to ${recipientEmail}!`);
+
+    setTimeout(() => {
+      emailBtn.textContent = originalText;
+      emailBtn.disabled = false;
+    }, 3000);
+
+  } catch (error) {
+    console.error('Email error:', error);
+    emailBtn.textContent = '❌ Failed';
+    alert(`Failed to send email: ${error.message}\n\nPlease check your internet connection and ensure the server is running correctly.`);
+
+    setTimeout(() => {
+      emailBtn.textContent = originalText;
+      emailBtn.disabled = false;
+    }, 3000);
+  }
+});
+
+/* ---------- Print Button ---------- */
+document.getElementById('print-btn')?.addEventListener('click', async () => {
+  const { download } = await generateQuotePDF({
+    logo: state.logo,
+    photos: state.photos,
+    fileName: 'quote.pdf'
+  });
+  download();
 });
 
 /* ---------- Reset Button ---------- */

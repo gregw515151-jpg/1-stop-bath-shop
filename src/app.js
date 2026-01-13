@@ -539,24 +539,6 @@ function setupListeners() {
   document.querySelectorAll('.demo-item').forEach(cb => {
     cb.addEventListener('change', updateSummary);
   });
-
-  // Email button
-  document.getElementById('email-btn')?.addEventListener('click', () => {
-    const email = document.getElementById('quote-email')?.value;
-    if (!email) {
-      alert('Please enter an email address');
-      return;
-    }
-
-    const emailBody = generateEmailBody(selections);
-    const subject = 'Bathroom Quote';
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-  });
-
-  // Print button
-  document.getElementById('print-btn')?.addEventListener('click', () => {
-    window.print();
-  });
 }
 
 function updateSummary() {
@@ -564,13 +546,25 @@ function updateSummary() {
   selections.scope_of_work = getSelectedItem('scope_of_work-select', products.scope_of_work);
   selections.demo_items = Array.from(document.querySelectorAll('.demo-item:checked')).map(cb => cb.value);
 
+  // Define all labels for display and selection update
+  const fieldMapping = {
+    'plumbing-color': { key: 'plumbing_color', label: 'Plumbing Color' },
+    'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style' },
+    'plumbing-type': { key: 'plumbing_type', label: 'Plumbing Type' },
+    'exhaust-fan': { key: 'exhaust_fan', label: 'Exhaust Fan' },
+    'shower-size': { key: 'shower_size', label: 'Shower Size' },
+    'wall-type': { key: 'wall_type', label: 'Wall Type' },
+    'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
+    'flooring-type': { key: 'flooring_type', label: 'Flooring' }
+  };
+
   // Build summary
   let total = 0;
   let html = '';
 
   if (selections.scope_of_work) {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-      <strong>Scope:</strong> ${selections.scope_of_work.name} <span style="color: #059669;">$${selections.scope_of_work.price}</span>
+      <strong>Scope:</strong> ${selections.scope_of_work.name} <span style="color: #059669;">$${selections.scope_of_work.price.toFixed(2)}</span>
     </div>`;
     total += selections.scope_of_work.price;
   }
@@ -581,23 +575,24 @@ function updateSummary() {
     </div>`;
   }
 
-  // Add other selections
-  const fields = [
-    { id: 'plumbing-color', label: 'Plumbing Color' },
-    { id: 'plumbing-style', label: 'Plumbing Style' },
-    { id: 'exhaust-fan', label: 'Exhaust Fan' },
-    { id: 'shower-size', label: 'Shower Size' },
-    { id: 'wall-type', label: 'Wall Type' },
-    { id: 'vanity-length', label: 'Vanity Length' },
-    { id: 'flooring-type', label: 'Flooring' }
-  ];
+  // Update other selections and build HTML
+  Object.entries(fieldMapping).forEach(([id, config]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const val = el.value;
+      selections[config.key] = val ? el.options[el.selectedIndex].text : "";
 
-  fields.forEach(field => {
-    const el = document.getElementById(field.id);
-    if (el && el.value) {
-      html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-        <strong>${field.label}:</strong> ${el.options[el.selectedIndex].text}
-      </div>`;
+      if (val) {
+        // Try to estimate price if it's in the text (e.g. "+$100")
+        const priceMatch = el.options[el.selectedIndex].text.match(/\(\+\$([0-9.]+)\)/);
+        if (priceMatch) {
+          total += parseFloat(priceMatch[1]);
+        }
+
+        html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
+          <strong>${config.label}:</strong> ${el.options[el.selectedIndex].text}
+        </div>`;
+      }
     }
   });
 
@@ -628,13 +623,35 @@ function getSelectedItem(selectId, items) {
 }
 
 export function generateEmailBody(selections) {
-  let body = "BATHROOM QUOTE\n\n";
+  let body = "";
+
   if (selections.scope_of_work) {
-    body += `Scope: ${selections.scope_of_work.name} - $${selections.scope_of_work.price}\n`;
+    body += `SCOPE: ${selections.scope_of_work.name} - $${selections.scope_of_work.price.toFixed(2)}\n`;
   }
-  if (selections.demo_items.length > 0) {
-    body += `\nDemo Items: ${selections.demo_items.join(', ')}\n`;
+
+  if (selections.demo_items && selections.demo_items.length > 0) {
+    body += `\nDEMO ITEMS:\n- ${selections.demo_items.join('\n- ')}\n`;
   }
+
+  const fieldLabels = {
+    'plumbing_color': 'Plumbing Color',
+    'plumbing_style': 'Plumbing Style',
+    'plumbing_type': 'Plumbing Type',
+    'exhaust_fan': 'Exhaust Fan',
+    'shower_size': 'Shower Size',
+    'wall_type': 'Wall Type',
+    'vanity_length': 'Vanity Length',
+    'flooring_type': 'Flooring Type'
+  };
+
+  let hasOther = false;
+  Object.entries(fieldLabels).forEach(([key, label]) => {
+    if (selections[key] && selections[key] !== "") {
+      if (!hasOther) { body += "\nPRODUCT SELECTIONS:\n"; hasOther = true; }
+      body += `${label}: ${selections[key]}\n`;
+    }
+  });
+
   return body;
 }
 
