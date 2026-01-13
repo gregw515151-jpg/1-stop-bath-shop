@@ -1,5 +1,5 @@
 // Comprehensive Contractor Quote System - Complete Implementation
-// Dynamic Admin Controls for All Dropdowns
+// Based on handwritten specifications
 
 export const DEFAULT_QUOTE_DATA = {
   scope_of_work: [
@@ -118,6 +118,27 @@ export const DEFAULT_QUOTE_DATA = {
   ]
 };
 
+// Dropdown mappings for dynamic admin controls
+const DROPDOWN_MAPPINGS = {
+  'scope_of_work-select': 'scope_of_work',
+  'plumbing-color': 'plumbing_colors',
+  'plumbing-style': 'plumbing_styles',
+  'electrical-color': 'electrical_colors',
+  'exhaust-fan': 'exhaust_fans',
+  'shower-color': 'shower_colors',
+  'shower-size': 'shower_sizes',
+  'shower-drain': 'drain_locations',
+  'tub-depth': 'tub_depths',
+  'tub-length': 'tub_lengths',
+  'wall-color': 'wall_colors',
+  'wall-pattern': 'wall_patterns',
+  'wall-type': 'wall_types',
+  'vanity-length': 'vanity_lengths',
+  'flooring-type': 'flooring_types',
+  'baseboard-style': 'baseboard_styles',
+  'window-style': 'window_styles'
+};
+
 export let products = { ...DEFAULT_QUOTE_DATA };
 
 // Comprehensive selections object
@@ -166,35 +187,12 @@ export let selections = {
 
 let isAdminMode = false;
 
-// Dropdown mappings
-const DROPDOWN_MAPPINGS = {
-  'scope_of_work-select': 'scope_of_work',
-  'plumbing-color': 'plumbing_colors',
-  'plumbing-style': 'plumbing_styles',
-  'electrical-color': 'electrical_colors',
-  'exhaust-fan': 'exhaust_fans',
-  'shower-color': 'shower_colors',
-  'shower-size': 'shower_sizes',
-  'shower-drain': 'drain_locations',
-  'tub-depth': 'tub_depths',
-  'tub-length': 'tub_lengths',
-  'wall-color': 'wall_colors',
-  'wall-pattern': 'wall_patterns',
-  'wall-type': 'wall_types',
-  'vanity-length': 'vanity_lengths',
-  'flooring-type': 'flooring_types',
-  'baseboard-style': 'baseboard_styles',
-  'window-style': 'window_styles'
-};
-
 // Load/Save
 export function loadProductsFromStorage() {
   const stored = localStorage.getItem('bathroom_quote_products');
   if (stored) {
     try {
-      const parsed = JSON.parse(stored);
-      // Merge with defaults to ensure all categories exist
-      products = { ...DEFAULT_QUOTE_DATA, ...parsed };
+      products = JSON.parse(stored);
     } catch (e) {
       products = { ...DEFAULT_QUOTE_DATA };
     }
@@ -210,7 +208,6 @@ export function loginAdmin(password) {
   if (password === 'admin123') {
     isAdminMode = true;
     document.body.classList.add('admin-mode');
-    injectAdminControlsToAllDropdowns();
     return true;
   }
   return false;
@@ -219,7 +216,6 @@ export function loginAdmin(password) {
 export function logoutAdmin() {
   isAdminMode = false;
   document.body.classList.remove('admin-mode');
-  removeAdminControlsFromAllDropdowns();
 }
 
 export function isAdmin() {
@@ -230,146 +226,18 @@ export function getSelections() {
   return selections;
 }
 
-// Add/Delete/Edit items
+// Add/Delete
 export async function addItem(category, name, price) {
   if (!products[category]) products[category] = [];
-  const newId = String(Date.now()); // Use timestamp for unique ID
+  const newId = String(products[category].length + 1);
   products[category].push({ id: newId, name, price: parseFloat(price) });
   saveProductsToStorage();
-  return newId;
 }
 
 export async function deleteItem(category, id) {
   if (!products[category]) return;
   products[category] = products[category].filter(item => item.id !== id);
   saveProductsToStorage();
-}
-
-export async function editItem(category, id, name, price) {
-  if (!products[category]) return;
-  const item = products[category].find(p => p.id === id);
-  if (item) {
-    item.name = name;
-    item.price = parseFloat(price);
-    saveProductsToStorage();
-  }
-}
-
-// Dynamically inject admin controls to all dropdowns
-function injectAdminControlsToAllDropdowns() {
-  Object.entries(DROPDOWN_MAPPINGS).forEach(([selectId, category]) => {
-    const select = document.getElementById(selectId);
-    if (!select) return;
-
-    // Check if admin controls already exist
-    const existingControls = select.parentElement.querySelector('.dynamic-admin-controls');
-    if (existingControls) return;
-
-    // Create admin controls
-    const controlsDiv = document.createElement('div');
-    controlsDiv.className = 'dynamic-admin-controls admin-control';
-    controlsDiv.style.cssText = 'margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;';
-
-    controlsDiv.innerHTML = `
-      <input type="text" placeholder="Item name" class="admin-name-input" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-      <input type="number" placeholder="Price" class="admin-price-input" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-primary admin-add-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
-        <button class="btn btn-secondary admin-edit-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ Edit</button>
-        <button class="btn btn-secondary admin-delete-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete</button>
-      </div>
-    `;
-
-    select.parentElement.appendChild(controlsDiv);
-
-    // Setup event listeners
-    setupDynamicAdminControls(selectId, category, controlsDiv);
-  });
-}
-
-function removeAdminControlsFromAllDropdowns() {
-  document.querySelectorAll('.dynamic-admin-controls').forEach(el => el.remove());
-}
-
-function setupDynamicAdminControls(selectId, category, controlsDiv) {
-  const select = document.getElementById(selectId);
-  const nameInput = controlsDiv.querySelector('.admin-name-input');
-  const priceInput = controlsDiv.querySelector('.admin-price-input');
-  const addBtn = controlsDiv.querySelector('.admin-add-btn');
-  const editBtn = controlsDiv.querySelector('.admin-edit-btn');
-  const deleteBtn = controlsDiv.querySelector('.admin-delete-btn');
-
-  // Add button
-  addBtn.addEventListener('click', async () => {
-    const name = nameInput.value.trim();
-    const price = parseFloat(priceInput.value) || 0;
-
-    if (!name) {
-      alert('Please enter an item name');
-      return;
-    }
-
-    await addItem(category, name, price);
-    nameInput.value = '';
-    priceInput.value = '';
-    populateDropdowns();
-    alert(`Added "${name}"`);
-  });
-
-  // Edit button
-  editBtn.addEventListener('click', async () => {
-    const selectedId = select.value;
-    if (!selectedId) {
-      alert('Please select an item to edit');
-      return;
-    }
-
-    const item = products[category]?.find(p => p.id === selectedId);
-    if (!item) return;
-
-    // Pre-fill inputs
-    nameInput.value = item.name;
-    priceInput.value = item.price;
-
-    // Change Add button to Update
-    addBtn.textContent = '✅ Update';
-    addBtn.onclick = async () => {
-      const newName = nameInput.value.trim();
-      const newPrice = parseFloat(priceInput.value) || 0;
-
-      if (!newName) {
-        alert('Please enter an item name');
-        return;
-      }
-
-      await editItem(category, selectedId, newName, newPrice);
-      nameInput.value = '';
-      priceInput.value = '';
-      addBtn.textContent = '➕ Add';
-      addBtn.onclick = null;
-      setupDynamicAdminControls(selectId, category, controlsDiv);
-      populateDropdowns();
-      updateSummary();
-      alert(`Updated "${newName}"`);
-    };
-  });
-
-  // Delete button
-  deleteBtn.addEventListener('click', async () => {
-    const selectedId = select.value;
-    if (!selectedId) {
-      alert('Please select an item to delete');
-      return;
-    }
-
-    const item = products[category]?.find(p => p.id === selectedId);
-    if (item && confirm(`Delete "${item.name}"?`)) {
-      await deleteItem(category, selectedId);
-      populateDropdowns();
-      updateSummary();
-      alert(`Deleted "${item.name}"`);
-    }
-  });
 }
 
 // Initialize
@@ -382,15 +250,13 @@ export async function initializeApp() {
 }
 
 function populateDropdowns() {
-  Object.entries(DROPDOWN_MAPPINGS).forEach(([selectId, category]) => {
-    const select = document.getElementById(selectId);
-    if (select && products[category]) {
-      select.innerHTML = '<option value="">-- Select --</option>' +
-        products[category].map(item =>
-          `<option value="${item.id}">${item.name}${item.price > 0 ? ' (+$' + item.price.toFixed(2) + ')' : item.price < 0 ? ' (-$' + Math.abs(item.price).toFixed(2) + ')' : ''}</option>`
-        ).join('');
-    }
-  });
+  const select = document.getElementById('scope_of_work-select');
+  if (select && products.scope_of_work) {
+    select.innerHTML = '<option value="">-- Select --</option>' +
+      products.scope_of_work.map(item =>
+        `<option value="${item.id}">${item.name} - $${item.price.toFixed(2)}</option>`
+      ).join('');
+  }
 }
 
 function buildQuoteSections() {
@@ -398,16 +264,298 @@ function buildQuoteSections() {
   if (!container) return;
 
   container.innerHTML = `
-    <p style="text-align: center; color: #6b7280; padding: 20px;">
-      <strong>Comprehensive Quote System Loaded</strong><br>
-      <small>Use the dropdowns to select options. Login as admin to manage items.</small>
-    </p>
+    <!-- Section 1: Demolition & Disposal -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🗑️ Demolition & Disposal</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select items to demo:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+          ${['Vanity', 'Vanity Top', 'Toilet', 'Drywall', 'Ceiling', 'Fan', 'Vanity Light', 'Ceiling Lights', 'Tub', 'Shower', 'Floor', 'Door Casing', 'Window Casing', 'Bill & List'].map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="demo-item" value="${item}" style="width: 18px; height: 18px;">
+              <span>${item}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Demolition Notes:</label>
+          <textarea id="demolition-notes" rows="2" class="select-input" placeholder="Any special demolition requirements or notes..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Fixtures & Finishes -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🚰 Fixtures & Finishes</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label>Plumbing Fixture Color:</label>
+          <select id="plumbing-color" class="select-input">
+            <option value="">-- Select --</option>
+            <option value="Chrome">Chrome</option>
+            <option value="Brushed Nickel">Brushed Nickel (+$50)</option>
+            <option value="Oil Rubbed Bronze">Oil Rubbed Bronze (+$75)</option>
+            <option value="Flat Black">Flat Black (+$100)</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Plumbing Fixture Style:</label>
+          <select id="plumbing-style" class="select-input">
+            <option value="">-- Select --</option>
+            <option value="Modern">Modern</option>
+            <option value="Chateau">Chateau (+$50)</option>
+            <option value="Modern Brushed">Modern Brushed (+$25)</option>
+            <option value="Modern Glyde">Modern Glyde (+$25)</option>
+            <option value="Modern Voss">Modern Voss (+$25)</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Electrical Device Color:</label>
+          <select id="electrical-color" class="select-input">
+            <option value="">-- Select --</option>
+            <option value="White">White</option>
+            <option value="Light Almond">Light Almond (+$5)</option>
+            <option value="Ivory">Ivory (+$5)</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Fixtures & Finishes Notes:</label>
+          <textarea id="fixtures-notes" rows="2" class="select-input" placeholder="Any special fixture or finish requirements..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Electrical -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">⚡ Electrical</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label>Exhaust Fan Type:</label>
+          <select id="exhaust-fan" class="select-input">
+            <option value="">-- Select --</option>
+            <option value="Fan Only">Fan Only ($100)</option>
+            <option value="Fan + Light">Fan + Light ($150)</option>
+            <option value="Fan + Light + Heater">Fan + Light + Heater ($250)</option>
+          </select>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+          <div class="form-group">
+            <label>Switches:</label>
+            <input type="number" id="switches" min="0" class="select-input" placeholder="How many?">
+          </div>
+          <div class="form-group">
+            <label>Outlets:</label>
+            <input type="number" id="outlets" min="0" class="select-input" placeholder="How many?">
+          </div>
+          <div class="form-group">
+            <label>Recessed Lights:</label>
+            <input type="number" id="recessed-lights" min="0" class="select-input" placeholder="How many?">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Electrical Notes:</label>
+          <textarea id="electrical-notes" rows="2" class="select-input" placeholder="Any special electrical requirements..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Bathroom Products -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🛁 Bathroom Products</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <div>
+          <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Shower Pan</h3>
+          <div class="form-group">
+            <label>Color:</label>
+            <select id="shower-color" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="White">White</option>
+              <option value="Almond">Almond (+$25)</option>
+              <option value="Biscuit">Biscuit (+$25)</option>
+              <option value="Gray">Gray (+$50)</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Size:</label>
+            <select id="shower-size" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="60x30">60x30 ($320)</option>
+              <option value="54x30">54x30 ($340)</option>
+              <option value="72x36">72x36 ($420)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Drain Location:</label>
+            <select id="shower-drain" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="Left">Left</option>
+              <option value="Right">Right</option>
+              <option value="Center">Center</option>
+            </select>
+          </div>
+
+          <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Bathtub</h3>
+          <div class="form-group">
+            <label>Depth:</label>
+            <select id="tub-depth" class="select-input">
+              <option value="">-- Select --</option>
+              <option value='12"'>12"</option>
+              <option value='13"'>13" (+$20)</option>
+              <option value='15"'>15" (+$40)</option>
+              <option value='17"'>17" (+$60)</option>
+              <option value='18"'>18" (+$80)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Length:</label>
+            <select id="tub-length" class="select-input">
+              <option value="">-- Select --</option>
+              ${['48', '50', '52', '53', '54', '55', '56', '57', '58', '59', '60'].map((len, i) =>
+    `<option value='${len}"'>${len}" ($${400 + i * 20})</option>`
+  ).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Walls</h3>
+          <div class="form-group">
+            <label>Color:</label>
+            <select id="wall-color" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="White">White</option>
+              <option value="Almond">Almond (+$25)</option>
+              <option value="Biscuit">Biscuit (+$25)</option>
+              <option value="Afterwhite">Afterwhite (+$50)</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pattern:</label>
+            <select id="wall-pattern" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="Smooth">Smooth</option>
+              <option value="Texture">Texture/Brushed (+$100)</option>
+              <option value="3x6 Subway">3x6 Subway (+$150)</option>
+              <option value="8x8">8x8 (+$120)</option>
+              <option value="12x12">12x12 (+$140)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Wall Type:</label>
+            <select id="wall-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="Reg Shower">Regular Shower ($800)</option>
+              <option value="Reg Tub">Regular Tub ($600)</option>
+              <option value="4 Bead Shower">4 Bead Shower ($900)</option>
+              <option value="4 Bead Tub">4 Bead Tub ($700)</option>
+            </select>
+          </div>
+
+          <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Vanity</h3>
+          <div class="form-group">
+            <label>Length:</label>
+            <select id="vanity-length" class="select-input">
+              <option value="">-- Select --</option>
+              ${['18', '24', '36', '42', '48', '54', '60', '78'].map((len, i) =>
+    `<option value='${len}"'>${len}" ($${300 + i * 100})</option>`
+  ).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
+          <label>Bathroom Products Notes:</label>
+          <textarea id="bathroom-notes" rows="2" class="select-input" placeholder="Any special requirements for shower, tub, walls, or vanity..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Flooring & Trim -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🔨 Flooring & Trim</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Flooring Type:</label>
+            <select id="flooring-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="LVP">LVP ($4/sqft)</option>
+              <option value="Tile">Tile ($8/sqft)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Square Footage:</label>
+            <input type="number" id="flooring-sqft" min="0" class="select-input" placeholder="Enter sq ft">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label>Baseboard Style:</label>
+            <select id="baseboard-style" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="WM623">WM623 - 3¼" Colonial ($2.50/ft)</option>
+              <option value="WM713">WM713 - 3½" Clamshell ($2.75/ft)</option>
+              <option value="WM663">WM663 - 3¼" Ogee ($2.60/ft)</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Window/Door Trim:</label>
+            <select id="window-style" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="WM376">WM376 - 2⅛" Colonial ($2.00/ft)</option>
+              <option value="WM366">WM366 - 2¼" Flat Edge ($2.10/ft)</option>
+              <option value="WM445">WM445 - 3¼" Colonial ($2.50/ft)</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Flooring & Trim Notes:</label>
+          <textarea id="flooring-notes" rows="2" class="select-input" placeholder="Any special flooring or trim requirements..."></textarea>
+        </div>
+      </div>
+    </section>
   `;
+
+  // Make toggle function global
+  window.toggleSection = function (header) {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.toggle-icon');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.textContent = '▼';
+    } else {
+      content.style.display = 'none';
+      icon.textContent = '▶';
+    }
+  };
 }
 
 function setupListeners() {
+  // Scope of work
   document.getElementById('scope_of_work-select')?.addEventListener('change', updateSummary);
 
+  // All other inputs
   const inputs = [
     'plumbing-color', 'plumbing-style', 'electrical-color', 'exhaust-fan',
     'switches', 'outlets', 'recessed-lights', 'electrical-notes',
@@ -424,15 +572,18 @@ function setupListeners() {
     if (el) el.addEventListener('change', updateSummary);
   });
 
+  // Demo checkboxes
   document.querySelectorAll('.demo-item').forEach(cb => {
     cb.addEventListener('change', updateSummary);
   });
 }
 
 function updateSummary() {
-  selections.scope_of_work = getSelectedItem('scope_of_work-select', 'scope_of_work');
+  // Update selections
+  selections.scope_of_work = getSelectedItem('scope_of_work-select', products.scope_of_work);
   selections.demo_items = Array.from(document.querySelectorAll('.demo-item:checked')).map(cb => cb.value);
 
+  // Build summary
   let total = 0;
   let html = '';
 
@@ -448,6 +599,26 @@ function updateSummary() {
       <strong>Demo:</strong> ${selections.demo_items.join(', ')}
     </div>`;
   }
+
+  // Add other selections
+  const fields = [
+    { id: 'plumbing-color', label: 'Plumbing Color' },
+    { id: 'plumbing-style', label: 'Plumbing Style' },
+    { id: 'exhaust-fan', label: 'Exhaust Fan' },
+    { id: 'shower-size', label: 'Shower Size' },
+    { id: 'wall-type', label: 'Wall Type' },
+    { id: 'vanity-length', label: 'Vanity Length' },
+    { id: 'flooring-type', label: 'Flooring' }
+  ];
+
+  fields.forEach(field => {
+    const el = document.getElementById(field.id);
+    if (el && el.value) {
+      html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
+        <strong>${field.label}:</strong> ${el.options[el.selectedIndex].text}
+      </div>`;
+    }
+  });
 
   const summaryDiv = document.getElementById('summary');
   const totalDiv = document.getElementById('total');
@@ -469,10 +640,10 @@ function updateSummary() {
   }
 }
 
-function getSelectedItem(selectId, category) {
+function getSelectedItem(selectId, items) {
   const select = document.getElementById(selectId);
   if (!select || !select.value) return null;
-  return products[category]?.find(item => item.id === select.value) || null;
+  return items?.find(item => item.id === select.value) || null;
 }
 
 export function generateEmailBody(selections) {
@@ -490,7 +661,7 @@ function setupAdminControls() {
   document.getElementById('admin-btn')?.addEventListener('click', () => {
     const password = prompt('Enter admin password:');
     if (password && loginAdmin(password)) {
-      alert('Admin mode activated! Admin controls added to all dropdowns.');
+      alert('Admin mode activated!');
     } else if (password) {
       alert('Incorrect password');
     }
