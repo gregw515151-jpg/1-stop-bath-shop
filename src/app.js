@@ -539,6 +539,24 @@ function setupListeners() {
   document.querySelectorAll('.demo-item').forEach(cb => {
     cb.addEventListener('change', updateSummary);
   });
+
+  // Email button
+  document.getElementById('email-btn')?.addEventListener('click', () => {
+    const email = document.getElementById('quote-email')?.value;
+    if (!email) {
+      alert('Please enter an email address');
+      return;
+    }
+
+    const emailBody = generateEmailBody(selections);
+    const subject = 'Bathroom Quote';
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+  });
+
+  // Print button
+  document.getElementById('print-btn')?.addEventListener('click', () => {
+    window.print();
+  });
 }
 
 function updateSummary() {
@@ -788,7 +806,7 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
       alert(`Deleted "${item.name}"`);
     }
   });
-  
+
   // Cancel button
   const cancelBtn = controlsDiv.querySelector('.admin-cancel-btn');
   if (cancelBtn) {
@@ -796,12 +814,12 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
       // Clear inputs
       nameInput.value = '';
       priceInput.value = '';
-      
+
       // Reset Add button
       addBtn.textContent = '➕ Add';
       delete addBtn.dataset.editingId;
       delete addBtn.dataset.editingCategory;
-      
+
       // Hide Cancel button
       cancelBtn.style.display = 'none';
     });
