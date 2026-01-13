@@ -52,6 +52,14 @@ function getAppHtml(maxPhotos) {
         <select id="scope_of_work-select" class="select-input">
           <option value="">-- Select --</option>
         </select>
+        <div class="admin-control" style="display: none; margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+          <input id="add-scope_of_work-name" type="text" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <input id="add-scope_of_work-price" type="number" placeholder="Price" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <div style="display: flex; gap: 8px;">
+            <button id="add-scope_of_work-btn" class="btn btn-primary" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
+            <button id="delete-scope_of_work-btn" class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete Selected</button>
+          </div>
+        </div>
       </div>
     </section>
 

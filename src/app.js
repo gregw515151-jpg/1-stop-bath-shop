@@ -541,4 +541,52 @@ function setupAdminControls() {
     logoutAdmin();
     alert('Logged out');
   });
+
+  // Setup admin for scope_of_work
+  setupCategoryAdmin('scope_of_work');
+}
+
+function setupCategoryAdmin(category) {
+  const addBtn = document.getElementById(`add-${category}-btn`);
+  const deleteBtn = document.getElementById(`delete-${category}-btn`);
+  const nameInput = document.getElementById(`add-${category}-name`);
+  const priceInput = document.getElementById(`add-${category}-price`);
+  const select = document.getElementById(`${category}-select`);
+
+  if (addBtn && nameInput && priceInput) {
+    addBtn.addEventListener('click', async () => {
+      const name = nameInput.value.trim();
+      const price = parseFloat(priceInput.value) || 0;
+
+      if (!name) {
+        alert('Please enter an item name');
+        return;
+      }
+
+      await addItem(category, name, price);
+      nameInput.value = '';
+      priceInput.value = '';
+
+      populateDropdowns();
+      alert(`Added "${name}" to ${category.replace('_', ' ')}`);
+    });
+  }
+
+  if (deleteBtn && select) {
+    deleteBtn.addEventListener('click', async () => {
+      const selectedId = select.value;
+      if (!selectedId) {
+        alert('Please select an item to delete');
+        return;
+      }
+
+      const item = products[category]?.find(p => p.id === selectedId);
+      if (item && confirm(`Delete "${item.name}"?`)) {
+        await deleteItem(category, selectedId);
+        populateDropdowns();
+        updateSummary();
+        alert(`Deleted "${item.name}"`);
+      }
+    });
+  }
 }
