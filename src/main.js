@@ -6,9 +6,12 @@ import html2canvas from 'html2canvas'
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
 const MAX_PHOTOS = 15;
-const SITE_PASSWORD = "bath2025"; // Change this to your desired password
+// const SITE_PASSWORD = "bath2025"; // Password protection disabled
 
 /* ---------- Password Protection ---------- */
+// Password protection has been disabled for public access
+// Uncomment the code below to re-enable password protection
+/*
 function checkSiteAccess() {
   const accessGranted = sessionStorage.getItem('siteAccess');
   if (accessGranted === 'true') {
@@ -33,6 +36,7 @@ function checkSiteAccess() {
 if (!checkSiteAccess()) {
   throw new Error('Access denied');
 }
+*/
 
 /* ---------- HTML Template ---------- */
 function getAppHtml(maxPhotos) {
