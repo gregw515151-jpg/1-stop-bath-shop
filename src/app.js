@@ -727,7 +727,7 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
   const editBtn = controlsDiv.querySelector('.admin-edit-btn');
   const deleteBtn = controlsDiv.querySelector('.admin-delete-btn');
 
-  // Add button
+  // Add button (handles both Add and Update)
   addBtn.addEventListener('click', async () => {
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value) || 0;
@@ -737,11 +737,24 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
       return;
     }
 
-    await addItem(category, name, price);
+    // Check if we're in edit mode
+    if (addBtn.dataset.editingId) {
+      // Update existing item
+      await editItem(category, addBtn.dataset.editingId, name, price);
+      delete addBtn.dataset.editingId;
+      delete addBtn.dataset.editingCategory;
+      addBtn.textContent = '➕ Add';
+      alert(`Updated "${name}"`);
+    } else {
+      // Add new item
+      await addItem(category, name, price);
+      alert(`Added "${name}"`);
+    }
+
     nameInput.value = '';
     priceInput.value = '';
     populateDropdowns();
-    alert(`Added "${name}"`);
+    updateSummary();
   });
 
   // Edit button
@@ -753,33 +766,19 @@ function setupDynamicAdminControls(selectId, category, controlsDiv) {
     }
 
     const item = products[category]?.find(p => p.id === selectedId);
-    if (!item) return;
+    if (!item) {
+      alert('Item not found');
+      return;
+    }
 
     // Pre-fill inputs
     nameInput.value = item.name;
     priceInput.value = item.price;
 
-    // Change Add button to Update
+    // Change Add button to Update and store the selected ID
     addBtn.textContent = '✅ Update';
-    addBtn.onclick = async () => {
-      const newName = nameInput.value.trim();
-      const newPrice = parseFloat(priceInput.value) || 0;
-
-      if (!newName) {
-        alert('Please enter an item name');
-        return;
-      }
-
-      await editItem(category, selectedId, newName, newPrice);
-      nameInput.value = '';
-      priceInput.value = '';
-      addBtn.textContent = '➕ Add';
-      addBtn.onclick = null;
-      setupDynamicAdminControls(selectId, category, controlsDiv);
-      populateDropdowns();
-      updateSummary();
-      alert(`Updated "${newName}"`);
-    };
+    addBtn.dataset.editingId = selectedId;
+    addBtn.dataset.editingCategory = category;
   });
 
   // Delete button
