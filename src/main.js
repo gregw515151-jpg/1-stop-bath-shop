@@ -297,7 +297,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
   const photosGridHTML = (photos || []).map((p) => `
     <div style="break-inside: avoid; margin-bottom: 20px; text-align: center;">
-      <img src="${p.dataUrl}" alt="${esc(p.name)}" style="max-width:100%; max-height:500px; height:auto; width:auto; border-radius:4px; border:1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <img src="${p.dataUrl}" alt="${esc(p.name)}" style="max-width:700px; width:100%; height:auto; display:block; margin:0 auto; border-radius:4px; border:1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       ${p.caption ? `<div style="font-size:12px; color:#555; margin-top:8px; font-style:italic;">${esc(p.caption)}</div>` : ''}
     </div>
   `).join('');
@@ -409,8 +409,8 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
       reader.readAsDataURL(blob);
     });
 
-    // Send email via Netlify function
-    const response = await fetch('/.netlify/functions/send-email', {
+    // Send email via API
+    const response = await fetch('/api/send-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

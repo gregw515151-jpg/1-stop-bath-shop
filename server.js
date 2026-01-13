@@ -1,25 +1,20 @@
+import express from 'express';
 import { Resend } from 'resend';
+import cors from 'cors';
 
-export const handler = async (event) => {
-    // Only allow POST requests
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: 'Method not allowed' })
-        };
-    }
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+app.post('/api/send-email', async (req, res) => {
     try {
-        const { to, customerInfo, summary, notes, pdfBase64 } = JSON.parse(event.body);
+        const { to, customerInfo, summary, notes, pdfBase64 } = req.body;
 
-        // Check for Resend API key
         if (!process.env.RESEND_API_KEY) {
             throw new Error('Missing RESEND_API_KEY environment variable');
         }
-
-        // Initialize Resend
-        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const htmlBody = `
       <div style="font-family: system-ui, -apple-system, sans-serif; color: #111827; line-height: 1.6; max-width: 600px;">
@@ -52,30 +47,35 @@ export const handler = async (event) => {
       </div>
     `;
 
-        // Send email with Resend (no PDF attachment to stay under 40KB free tier limit)
-        const data = await resend.emails.send({
+        const pdfBuffer = pdfBase64 ? Buffer.from(pdfBase64, 'base64') : null;
+
+        const emailData = {
             from: '1 Stop Bath Shop <onboarding@resend.dev>',
             to: to,
             subject: 'Bathroom Estimate Quote',
             html: htmlBody,
-        });
+        };
+
+        if (pdfBuffer) {
+            emailData.attachments = [{
+                filename: 'quote.pdf',
+                content: pdfBuffer,
+            }];
+        }
+
+        const data = await resend.emails.send(emailData);
 
         console.log('Email sent:', data.id);
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ success: true, messageId: data.id })
-        };
+        res.json({ success: true, messageId: data.id });
 
     } catch (error) {
-        console.error('Function error:', error);
-        return {
-            statusCode: 500,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: error.message || 'Failed to send email' })
-        };
+        console.error('Email error:', error);
+        res.status(500).json({ error: error.message || 'Failed to send email' });
     }
-};
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
