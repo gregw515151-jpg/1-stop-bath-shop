@@ -1,27 +1,27 @@
-import { Resend } from 'resend';
+const { Resend } = require('resend');
 
-export const handler = async (event) => {
-    // Only allow POST requests
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: 'Method not allowed' })
-        };
+exports.handler = async (event) => {
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
+
+  try {
+    const { to, customerInfo, summary, notes, pdfBase64 } = JSON.parse(event.body);
+
+    // Check for Resend API key
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('Missing RESEND_API_KEY environment variable');
     }
 
-    try {
-        const { to, customerInfo, summary, notes, pdfBase64 } = JSON.parse(event.body);
+    // Initialize Resend
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-        // Check for Resend API key
-        if (!process.env.RESEND_API_KEY) {
-            throw new Error('Missing RESEND_API_KEY environment variable');
-        }
-
-        // Initialize Resend
-        const resend = new Resend(process.env.RESEND_API_KEY);
-
-        const htmlBody = `
+    const htmlBody = `
       <div style="font-family: system-ui, -apple-system, sans-serif; color: #111827; line-height: 1.6; max-width: 600px;">
         <h1 style="margin-bottom: 24px; color: #1f2937; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Bathroom Estimate Quote</h1>
         
@@ -52,30 +52,30 @@ export const handler = async (event) => {
       </div>
     `;
 
-        // Send email with Resend (no PDF attachment to stay under 40KB free tier limit)
-        const data = await resend.emails.send({
-            from: '1 Stop Bath Shop <onboarding@resend.dev>',
-            to: to,
-            subject: 'Bathroom Estimate Quote',
-            html: htmlBody,
-        });
+    // Send email with Resend (no PDF attachment to stay under 40KB free tier limit)
+    const data = await resend.emails.send({
+      from: '1 Stop Bath Shop <onboarding@resend.dev>',
+      to: to,
+      subject: 'Bathroom Estimate Quote',
+      html: htmlBody,
+    });
 
-        console.log('Email sent:', data.id);
+    console.log('Email sent:', data.id);
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ success: true, messageId: data.id })
-        };
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ success: true, messageId: data.id })
+    };
 
-    } catch (error) {
-        console.error('Function error:', error);
-        return {
-            statusCode: 500,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: error.message || 'Failed to send email' })
-        };
-    }
+  } catch (error) {
+    console.error('Function error:', error);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: error.message || 'Failed to send email' })
+    };
+  }
 };
