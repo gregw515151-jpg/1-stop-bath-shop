@@ -696,6 +696,14 @@ function setupAdminControls() {
     logoutAdmin();
     alert('Logged out');
   });
+
+  document.getElementById('admin-reset-btn')?.addEventListener('click', () => {
+    if (confirm('⚠️ This will reset all dropdown data to defaults and clear any custom items you added. Continue?')) {
+      localStorage.removeItem('bathroom_quote_products');
+      alert('Data reset! Page will reload.');
+      window.location.reload();
+    }
+  });
 }
 // Dynamic Admin Controls - Append to end of app.js
 
