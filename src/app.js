@@ -232,11 +232,27 @@ export function getSelections() {
   return selections;
 }
 
-// Add/Delete
+// Add/Delete with sequential ID system
 export async function addItem(category, name, price) {
   if (!products[category]) products[category] = [];
-  const newId = String(Date.now()); // Use timestamp for unique ID
-  products[category].push({ id: newId, name, price: parseFloat(price) });
+
+  // Find the lowest available ID from 1-100
+  const usedIds = new Set(products[category].map(item => parseInt(item.id)));
+  let newId = 1;
+  while (usedIds.has(newId) && newId <= 100) {
+    newId++;
+  }
+
+  if (newId > 100) {
+    alert('Maximum of 100 items per category reached');
+    return;
+  }
+
+  products[category].push({ id: String(newId), name, price: parseFloat(price) });
+
+  // Sort by ID to keep them in order
+  products[category].sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
   saveProductsToStorage();
 }
 
