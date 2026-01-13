@@ -339,15 +339,18 @@ function buildQuoteSections() {
       <div class="section-content">
         <div class="form-group">
           <label>Plumbing Fixture Color:</label>
-          <select id="plumbing-color" class="select-input">`n          </select>
+          <select id="plumbing-color" class="select-input">
+          </select>
         </div>
         <div class="form-group">
           <label>Plumbing Fixture Style:</label>
-          <select id="plumbing-style" class="select-input">`n          </select>
+          <select id="plumbing-style" class="select-input">
+          </select>
         </div>
         <div class="form-group">
           <label>Electrical Device Color:</label>
-          <select id="electrical-color" class="select-input">`n          </select>
+          <select id="electrical-color" class="select-input">
+          </select>
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Fixtures & Finishes Notes:</label>
@@ -365,7 +368,8 @@ function buildQuoteSections() {
       <div class="section-content">
         <div class="form-group">
           <label>Exhaust Fan Type:</label>
-          <select id="exhaust-fan" class="select-input">`n          </select>
+          <select id="exhaust-fan" class="select-input">
+          </select>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
           <div class="form-group">
@@ -399,25 +403,30 @@ function buildQuoteSections() {
           <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Shower Pan</h3>
           <div class="form-group">
             <label>Color:</label>
-            <select id="shower-color" class="select-input">`n          </select>
+            <select id="shower-color" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Size:</label>
-            <select id="shower-size" class="select-input">`n          </select>
+            <select id="shower-size" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Drain Location:</label>
-            <select id="shower-drain" class="select-input">`n          </select>
+            <select id="shower-drain" class="select-input">
+          </select>
           </div>
 
           <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Bathtub</h3>
           <div class="form-group">
             <label>Depth:</label>
-            <select id="tub-depth" class="select-input">`n          </select>
+            <select id="tub-depth" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Length:</label>
-            <select id="tub-length" class="select-input">`n          </select>
+            <select id="tub-length" class="select-input">
+          </select>
           </div>
         </div>
 
@@ -425,21 +434,25 @@ function buildQuoteSections() {
           <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Walls</h3>
           <div class="form-group">
             <label>Color:</label>
-            <select id="wall-color" class="select-input">`n          </select>
+            <select id="wall-color" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Pattern:</label>
-            <select id="wall-pattern" class="select-input">`n          </select>
+            <select id="wall-pattern" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Wall Type:</label>
-            <select id="wall-type" class="select-input">`n          </select>
+            <select id="wall-type" class="select-input">
+          </select>
           </div>
 
           <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Vanity</h3>
           <div class="form-group">
             <label>Length:</label>
-            <select id="vanity-length" class="select-input">`n          </select>
+            <select id="vanity-length" class="select-input">
+          </select>
           </div>
         </div>
         <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
@@ -459,7 +472,8 @@ function buildQuoteSections() {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
           <div class="form-group">
             <label>Flooring Type:</label>
-            <select id="flooring-type" class="select-input">`n          </select>
+            <select id="flooring-type" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Square Footage:</label>
@@ -469,11 +483,13 @@ function buildQuoteSections() {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 16px;">
           <div class="form-group">
             <label>Baseboard Style:</label>
-            <select id="baseboard-style" class="select-input">`n          </select>
+            <select id="baseboard-style" class="select-input">
+          </select>
           </div>
           <div class="form-group">
             <label>Window/Door Trim:</label>
-            <select id="window-style" class="select-input">`n          </select>
+            <select id="window-style" class="select-input">
+          </select>
           </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
