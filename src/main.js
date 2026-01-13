@@ -5,6 +5,33 @@ import { initializeApp } from './app.js'
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
 const MAX_PHOTOS = 15;
+const SITE_PASSWORD = "bath2025"; // Change this to your desired password
+
+/* ---------- Password Protection ---------- */
+function checkSiteAccess() {
+  const accessGranted = sessionStorage.getItem('siteAccess');
+  if (accessGranted === 'true') {
+    return true;
+  }
+
+  const password = prompt('Enter site password to access:');
+  if (password === SITE_PASSWORD) {
+    sessionStorage.setItem('siteAccess', 'true');
+    return true;
+  } else if (password !== null) {
+    alert('Incorrect password. Access denied.');
+    document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;"><h1>Access Denied</h1></div>';
+    return false;
+  } else {
+    document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;"><h1>Access Required</h1></div>';
+    return false;
+  }
+}
+
+// Check access before loading app
+if (!checkSiteAccess()) {
+  throw new Error('Access denied');
+}
 
 /* ---------- HTML Template ---------- */
 function getAppHtml(maxPhotos) {
