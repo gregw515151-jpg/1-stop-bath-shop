@@ -1,6 +1,6 @@
 // Comprehensive Contractor Quote System - Complete Implementation
 // Based on handwritten specifications
-
+import { supabase } from './supabaseClient.js';
 export const DEFAULT_QUOTE_DATA = {
   scope_of_work: [
     { id: "1", name: "Demolition & Removal", price: 800 },
@@ -187,24 +187,63 @@ export let selections = {
 
 let isAdminMode = false;
 
-// Load/Save
-export function loadProductsFromStorage() {
-  const stored = localStorage.getItem('bathroom_quote_products');
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      // Merge with defaults to ensure all categories exist
-      products = { ...DEFAULT_QUOTE_DATA, ...parsed };
-    } catch (e) {
+// Load/Save to Supabase
+export async function loadProductsFromStorage() {
+  try {
+    // First try to load from Supabase
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.warn('Supabase load error, falling back to defaults:', error.message);
       products = { ...DEFAULT_QUOTE_DATA };
+      return;
     }
-  } else {
+
+    if (data && data.length > 0) {
+      // Convert array of {category, items} to object format
+      const loadedProducts = {};
+      data.forEach(row => {
+        if (row.category && row.items) {
+          loadedProducts[row.category] = row.items;
+        }
+      });
+      // Merge with defaults to ensure all categories exist
+      products = { ...DEFAULT_QUOTE_DATA, ...loadedProducts };
+      console.log('Products loaded from Supabase:', Object.keys(loadedProducts).length, 'categories');
+    } else {
+      // No data in Supabase yet, use defaults and save them
+      products = { ...DEFAULT_QUOTE_DATA };
+      console.log('No products in Supabase, using defaults');
+      await saveProductsToStorage(); // Save defaults to Supabase
+    }
+  } catch (err) {
+    console.error('Error loading products:', err);
     products = { ...DEFAULT_QUOTE_DATA };
   }
 }
 
-export function saveProductsToStorage() {
-  localStorage.setItem('bathroom_quote_products', JSON.stringify(products));
+export async function saveProductsToStorage() {
+  try {
+    // Save each category as a separate row in Supabase
+    for (const [category, items] of Object.entries(products)) {
+      const { error } = await supabase
+        .from('products')
+        .upsert(
+          { category: category, items: items },
+          { onConflict: 'category' }
+        );
+
+      if (error) {
+        console.error(`Error saving ${category}:`, error.message);
+      }
+    }
+    console.log('Products saved to Supabase');
+  } catch (err) {
+    console.error('Error saving products:', err);
+  }
 }
 
 // Admin
@@ -281,7 +320,7 @@ function renumberAllItems() {
 
 // Initialize
 export async function initializeApp() {
-  loadProductsFromStorage();
+  await loadProductsFromStorage(); // Now async - loads from Supabase
   renumberAllItems(); // Ensure all items have sequential IDs
   buildQuoteSections(); // Build HTML first
   populateDropdowns(); // Then populate with data
