@@ -503,7 +503,129 @@ function buildQuoteSections() {
       </div>
     </section>
 
-    <!-- Section 5: Cabinetry -->
+    <!-- Section 5: Options -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">⚙️ Options</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Shower Head:</label>
+            <select id="shower-head" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="standard">Standard</option>
+              <option value="handheld">Handheld</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Trim Color:</label>
+            <select id="trim-color" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="chrome">Chrome</option>
+              <option value="brushed-nickel">Brushed Nickel</option>
+              <option value="oil-rubbed-bronze">Oil Rubbed Bronze</option>
+              <option value="black">Black</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label>Shelves:</label>
+            <select id="shelves-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="single">Single Shelf</option>
+              <option value="double">Double Shelf</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Number of Shelves:</label>
+            <input type="number" id="shelves-qty" min="0" max="10" class="select-input" placeholder="How many?">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label>Seat:</label>
+            <select id="seat-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="hexagon">Hexagon</option>
+              <option value="bench">Bench</option>
+              <option value="lh">LH (Left Hand)</option>
+              <option value="rh">RH (Right Hand)</option>
+              <option value="folding">Folding</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Grab Bars Size:</label>
+            <select id="grab-bars-size" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="16">16"</option>
+              <option value="24">24"</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Number of Grab Bars:</label>
+            <input type="number" id="grab-bars-qty" min="0" max="10" class="select-input" placeholder="How many?">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label>Enclosure:</label>
+            <select id="enclosure-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="curtain-bowed">Curtain Rod - Bowed</option>
+              <option value="curtain-straight">Curtain Rod - Straight</option>
+              <option value="shower-door">Shower Door</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Window Kit:</label>
+            <select id="window-kit" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        
+        <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 16px;">Shower Door</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Style:</label>
+            <select id="shower-door-style" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="bypass-slider">Bypass Slider</option>
+              <option value="panel-pivot">Panel Pivot</option>
+              <option value="pivot">Pivot</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Glass Thickness:</label>
+            <select id="shower-door-thickness" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="1/4">1/4"</option>
+              <option value="3/8">3/8"</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Options Notes:</label>
+          <textarea id="options-notes" rows="2" class="select-input" placeholder="Any special requirements for shower options..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Cabinetry -->
     <section class="card collapsible-section" style="margin-bottom: 16px;">
       <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
         <h2 style="margin: 0; font-size: 1.25rem;">🪵 Cabinetry</h2>
