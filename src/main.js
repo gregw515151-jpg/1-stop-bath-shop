@@ -1,5 +1,6 @@
 import './style.css'
 import { initializeApp, getSelections, generateEmailBody } from './app.js'
+import { supabase } from './supabaseClient.js'
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 
@@ -377,6 +378,28 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   return { blob, base64, download };
 }
 
+// Helper to upload PDF to Supabase
+async function uploadToSupabase(blob, fileName) {
+  const timestamp = new Date().getTime();
+  const path = `${timestamp}_${fileName}`;
+
+  const { data, error } = await supabase.storage
+    .from('quotes')
+    .upload(path, blob, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('quotes')
+    .getPublicUrl(path);
+
+  return publicUrl;
+}
+
 /* ---------- Email Quote ---------- */
 document.getElementById('email-btn')?.addEventListener('click', async () => {
   const emailBtn = document.getElementById('email-btn');
@@ -402,41 +425,49 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
 
   try {
     emailBtn.disabled = true;
-    emailBtn.textContent = 'Generating PDF...';
+    emailBtn.textContent = 'Uploading PDF...';
 
-    // Step 1: Generate the PDF base64
-    const { base64 } = await generateQuotePDF({
+    // Step 1: Generate the PDF blob
+    const { blob } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
       fileName: 'quote.pdf'
     });
 
-    emailBtn.textContent = 'Sending Email...';
+    // Step 2: Upload to Supabase Storage
+    const publicUrl = await uploadToSupabase(blob, 'quote.pdf');
 
-    // Step 2: Send Email via Render API
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: recipientEmail,
-        customerInfo: customer,
-        summary: generateEmailBody(selections),
-        notes: customer.notes,
-        pdfBase64: base64
-      })
-    });
+    // Step 3: Open Email App
+    const subject = 'Bathroom Quote from 1 Stop Bath Shop';
+    const body = `
+BATHROOM ESTIMATE QUOTE
+========================
 
-    const result = await response.json();
+** VIEW YOUR QUOTE HERE:**
+${publicUrl}
 
-    if (result.success) {
-      alert('Email sent successfully with quote attached!');
-    } else {
-      throw new Error(result.error || 'Failed to send email');
-    }
+CUSTOMER INFORMATION:
+Name: ${customer.name || 'N/A'}
+Phone: ${customer.phone || 'N/A'}
+Email: ${customer.email || 'N/A'}
+Address: ${customer.address || 'N/A'}
+
+SUMMARY:
+${generateEmailBody(selections)}
+
+${customer.notes ? `ADDITIONAL NOTES:\n${customer.notes}\n` : ''}
+========================
+Thank you for your interest!
+1 Stop Bath Shop
+    `.trim();
+
+    // Open mailto link
+    const mailtoLink = `mailto:${encodeURIComponent(recipientEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
 
   } catch (error) {
     console.error('Email error:', error);
-    alert('Error sending email: ' + error.message);
+    alert('Error preparing email: ' + error.message);
   } finally {
     emailBtn.disabled = false;
     emailBtn.textContent = originalText;
