@@ -58,6 +58,7 @@ function renderCategories() {
                 <input type="text" id="add-name-${cat.id}" placeholder="Item Name">
                 <input type="number" id="add-price-${cat.id}" placeholder="Price" step="0.01">
                 <button class="btn btn-primary" onclick="window.handleAdd('${cat.id}')">Add</button>
+                <button class="btn btn-cancel" onclick="window.handleCancel('${cat.id}')" style="background: #6b7280; margin-left: 4px;">Cancel</button>
             </div>
             <div class="item-list" id="list-${cat.id}">
                 ${renderItemList(cat.id)}
@@ -114,6 +115,13 @@ window.handleDelete = async (categoryId, id) => {
         console.error(err);
         alert('Error deleting item.');
     }
+};
+
+window.handleCancel = (categoryId) => {
+    const nameInp = document.getElementById(`add-name-${categoryId}`);
+    const priceInp = document.getElementById(`add-price-${categoryId}`);
+    nameInp.value = '';
+    priceInp.value = '';
 };
 
 init();
