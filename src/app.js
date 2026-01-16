@@ -386,11 +386,6 @@ function buildQuoteSections() {
           <select id="plumbing-style" class="select-input">
           </select>
         </div>
-        <div class="form-group">
-          <label>Electrical Device Color:</label>
-          <select id="electrical-color" class="select-input">
-          </select>
-        </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Fixtures & Finishes Notes:</label>
           <textarea id="fixtures-notes" rows="2" class="select-input" placeholder="Any special fixture or finish requirements..."></textarea>
@@ -422,7 +417,11 @@ function buildQuoteSections() {
           <div class="form-group">
             <label>Recessed Lights:</label>
             <input type="number" id="recessed-lights" min="0" class="select-input" placeholder="How many?">
-          </div>
+        </div>
+        <div class="form-group">
+          <label>Device Color:</label>
+          <select id="electrical-color" class="select-input">
+          </select>
         </div>
         <div class="form-group">
           <label>Electrical Notes:</label>
