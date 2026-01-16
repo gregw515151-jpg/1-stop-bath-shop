@@ -402,49 +402,41 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
 
   try {
     emailBtn.disabled = true;
-    emailBtn.textContent = 'Preparing...';
+    emailBtn.textContent = 'Generating PDF...';
 
-    // Step 1: Generate the PDF (this will produce the download function)
-    const { download } = await generateQuotePDF({
+    // Step 1: Generate the PDF base64
+    const { base64 } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
       fileName: 'quote.pdf'
     });
 
-    // Step 2: Open Email App
-    const subject = 'Bathroom Quote from 1 Stop Bath Shop';
-    const body = `
-BATHROOM ESTIMATE QUOTE
-========================
+    emailBtn.textContent = 'Sending Email...';
 
-CUSTOMER INFORMATION:
-Name: ${customer.name || 'N/A'}
-Phone: ${customer.phone || 'N/A'}
-Email: ${customer.email || 'N/A'}
-Address: ${customer.address || 'N/A'}
+    // Step 2: Send Email via Render API
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: recipientEmail,
+        customerInfo: customer,
+        summary: generateEmailBody(selections),
+        notes: customer.notes,
+        pdfBase64: base64
+      })
+    });
 
-SUMMARY:
-${generateEmailBody(selections)}
+    const result = await response.json();
 
-${customer.notes ? `ADDITIONAL NOTES:\n${customer.notes}\n` : ''}
-========================
-Thank you for your interest!
-1 Stop Bath Shop
-    `.trim();
-
-    // Trigger download
-    download();
-
-    // Open mailto link
-    const mailtoLink = `mailto:${encodeURIComponent(recipientEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // Alert the user so they know to attach the file
-    alert('The PDF quote is downloading! Once your email app opens, please attach the "quote.pdf" file from your downloads.');
-    window.location.href = mailtoLink;
+    if (result.success) {
+      alert('Email sent successfully with quote attached!');
+    } else {
+      throw new Error(result.error || 'Failed to send email');
+    }
 
   } catch (error) {
     console.error('Email error:', error);
-    alert('Error preparing email: ' + error.message);
+    alert('Error sending email: ' + error.message);
   } finally {
     emailBtn.disabled = false;
     emailBtn.textContent = originalText;
