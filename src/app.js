@@ -15,11 +15,11 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "5", name: "Custom", price: 0 }
   ],
   plumbing_styles: [
-    { id: "1", name: "Modern", price: 0 },
+    { id: "1", name: "Moen", price: 0 },
     { id: "2", name: "Chateau", price: 50 },
-    { id: "3", name: "Modern Brushed", price: 25 },
-    { id: "4", name: "Modern Glyde", price: 25 },
-    { id: "5", name: "Modern Voss", price: 25 },
+    { id: "3", name: "Moen Brushed", price: 25 },
+    { id: "4", name: "Moen Glyde", price: 25 },
+    { id: "5", name: "Moen Voss", price: 25 },
     { id: "6", name: "Custom", price: 0 }
   ],
   electrical_colors: [
