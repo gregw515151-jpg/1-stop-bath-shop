@@ -377,6 +377,15 @@ function buildQuoteSections() {
       </div>
       <div class="section-content">
         <div class="form-group">
+          <label>Fixture Type:</label>
+          <select id="fixture-type" class="select-input">
+            <option value="">-- Select --</option>
+            <option value="tub">Tub</option>
+            <option value="shower">Shower</option>
+            <option value="tub-shower">Tub/Shower Combo</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Plumbing Fixture Color:</label>
           <select id="plumbing-color" class="select-input">
           </select>
