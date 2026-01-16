@@ -2,6 +2,37 @@ import { initializeApp, products, addItem, deleteItem } from './app.js';
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
+// Simple audio function - plays a short beep sound
+function playSound(type) {
+    // Create audio context
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    if (type === 'login') {
+        // Rising tone for login (like game start)
+        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+    } else {
+        // Falling tone for logout (like game over)
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.15);
+        oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.4);
+    }
+}
+
 const loginScreen = document.getElementById('login-screen');
 const adminPanel = document.getElementById('admin-panel');
 const passwordInput = document.getElementById('admin-password');
@@ -29,6 +60,8 @@ async function init() {
     });
 
     logoutBtn.addEventListener('click', () => {
+        // Play logout sound
+        playSound('logout');
         adminPanel.style.display = 'none';
         loginScreen.style.display = 'block';
         passwordInput.value = '';
@@ -39,6 +72,8 @@ function handleLogin() {
     if (passwordInput.value === ADMIN_PASSWORD) {
         loginScreen.style.display = 'none';
         adminPanel.style.display = 'block';
+        // Play login sound
+        playSound('login');
         renderCategories();
     } else {
         loginError.style.display = 'block';
