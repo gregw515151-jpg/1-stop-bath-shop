@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { MailerSend, EmailParams, Sender, Recipient, Attachment } from "mailersend";
 
