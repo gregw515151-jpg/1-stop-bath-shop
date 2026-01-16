@@ -1,36 +1,73 @@
 import { initializeApp, products, addItem, deleteItem } from './app.js';
+import duckHuntMemories from './assets/duck-hunt-memories.mp4';
+import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
-// Simple audio function - plays a short beep sound
-function playSound(type) {
-    // Create audio context
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+// Function to play Duck Hunt video overlay
+function playDuckHuntVideo(videoSrc, onComplete) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'duck-hunt-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        cursor: pointer;
+    `;
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // Create video element
+    const video = document.createElement('video');
+    video.src = videoSrc;
+    video.autoplay = true;
+    video.style.cssText = `
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 12px;
+        box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
+    `;
 
-    if (type === 'login') {
-        // Rising tone for login (like game start)
-        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
-        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.3);
-    } else {
-        // Falling tone for logout (like game over)
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.15);
-        oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.4);
-    }
+    // Skip message
+    const skipText = document.createElement('div');
+    skipText.textContent = 'Click anywhere to skip';
+    skipText.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        color: white;
+        font-size: 14px;
+        opacity: 0.7;
+    `;
+
+    overlay.appendChild(video);
+    overlay.appendChild(skipText);
+    document.body.appendChild(overlay);
+
+    // Handle video end
+    video.onended = () => {
+        overlay.remove();
+        if (onComplete) onComplete();
+    };
+
+    // Handle click to skip
+    overlay.onclick = () => {
+        video.pause();
+        overlay.remove();
+        if (onComplete) onComplete();
+    };
+
+    // Handle video error
+    video.onerror = () => {
+        console.warn('Duck Hunt video failed to load, skipping animation');
+        overlay.remove();
+        if (onComplete) onComplete();
+    };
 }
 
 const loginScreen = document.getElementById('login-screen');
@@ -60,21 +97,23 @@ async function init() {
     });
 
     logoutBtn.addEventListener('click', () => {
-        // Play logout sound
-        playSound('logout');
-        adminPanel.style.display = 'none';
-        loginScreen.style.display = 'block';
-        passwordInput.value = '';
+        // Play Duck Hunt Dog Jump on logout
+        playDuckHuntVideo(duckHuntDogJump, () => {
+            adminPanel.style.display = 'none';
+            loginScreen.style.display = 'block';
+            passwordInput.value = '';
+        });
     });
 }
 
 function handleLogin() {
     if (passwordInput.value === ADMIN_PASSWORD) {
         loginScreen.style.display = 'none';
-        adminPanel.style.display = 'block';
-        // Play login sound
-        playSound('login');
-        renderCategories();
+        // Play Duck Hunt Memories on login
+        playDuckHuntVideo(duckHuntMemories, () => {
+            adminPanel.style.display = 'block';
+            renderCategories();
+        });
     } else {
         loginError.style.display = 'block';
     }
