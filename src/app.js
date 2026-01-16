@@ -697,10 +697,122 @@ function buildQuoteSections() {
       </div>
     </section>
 
-    <!-- Section 6: Flooring & Trim -->
+    <!-- Section 8: Accessories -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🧴 Accessories</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Towel Bar:</label>
+            <input type="number" id="towel-bar-qty" min="0" class="select-input" placeholder="How many?">
+          </div>
+          <div class="form-group">
+            <label>Towel Ring:</label>
+            <input type="number" id="towel-ring-qty" min="0" class="select-input" placeholder="How many?">
+          </div>
+          <div class="form-group">
+            <label>T.P. Holder:</label>
+            <input type="number" id="tp-holder-qty" min="0" class="select-input" placeholder="How many?">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Accessories Finish:</label>
+          <select id="accessories-finish" class="select-input">
+            <option value="">-- Same as Plumbing Fixtures --</option>
+            <option value="chrome">Chrome</option>
+            <option value="brushed-nickel">Brushed Nickel</option>
+            <option value="oil-rubbed-bronze">Oil Rubbed Bronze</option>
+            <option value="black">Black</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Accessories Notes:</label>
+          <textarea id="accessories-notes" rows="2" class="select-input" placeholder="Any special requirements for accessories..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9: Drywall & Paint -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🎨 Drywall & Paint</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Drywall Linear Footage:</label>
+            <input type="number" id="drywall-linear-ft" min="0" class="select-input" placeholder="Linear feet">
+          </div>
+          <div class="form-group">
+            <label>Drywall Sheets:</label>
+            <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="How many sheets?">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label style="font-weight: 600; margin-bottom: 12px; display: block;">Paint Work:</label>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-walls" style="width: 18px; height: 18px;"> 2 Coats Walls
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-trim" style="width: 18px; height: 18px;"> Trim Paint
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-ceiling" style="width: 18px; height: 18px;"> Ceiling
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="point-up-drywall" style="width: 18px; height: 18px;"> Point Up Drywall
+            </label>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Drywall & Paint Notes:</label>
+          <textarea id="drywall-notes" rows="2" class="select-input" placeholder="Any special requirements for drywall or paint..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 10: Trim -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🪵 Trim</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Casing (Linear Ft):</label>
+            <input type="number" id="trim-casing-ft" min="0" class="select-input" placeholder="Linear feet">
+          </div>
+          <div class="form-group">
+            <label>Baseboard (Linear Ft):</label>
+            <input type="number" id="trim-baseboard-ft" min="0" class="select-input" placeholder="Linear feet">
+          </div>
+          <div class="form-group">
+            <label>Qtr Round (Linear Ft):</label>
+            <input type="number" id="trim-qtr-round-ft" min="0" class="select-input" placeholder="Linear feet">
+          </div>
+          <div class="form-group">
+            <label>Doors (Qty):</label>
+            <input type="number" id="trim-doors-qty" min="0" class="select-input" placeholder="How many?">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Trim Notes:</label>
+          <textarea id="trim-notes" rows="2" class="select-input" placeholder="Any special requirements for trim..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 11: Flooring -->
     <section class="card collapsible-section" style="margin-bottom: 16px;">
       <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
-        <h2 style="margin: 0; font-size: 1.25rem;">🔨 Flooring & Trim</h2>
+        <h2 style="margin: 0; font-size: 1.25rem;">🔨 Flooring</h2>
         <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
       </div>
       <div class="section-content">
@@ -715,21 +827,9 @@ function buildQuoteSections() {
             <input type="number" id="flooring-sqft" min="0" class="select-input" placeholder="Enter sq ft">
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 16px;">
-          <div class="form-group">
-            <label>Baseboard Style:</label>
-            <select id="baseboard-style" class="select-input">
-          </select>
-          </div>
-          <div class="form-group">
-            <label>Window/Door Trim:</label>
-            <select id="window-style" class="select-input">
-          </select>
-          </div>
-        </div>
         <div class="form-group" style="margin-top: 16px;">
-          <label>Flooring & Trim Notes:</label>
-          <textarea id="flooring-notes" rows="2" class="select-input" placeholder="Any special flooring or trim requirements..."></textarea>
+          <label>Flooring Notes:</label>
+          <textarea id="flooring-notes" rows="2" class="select-input" placeholder="Any special flooring requirements..."></textarea>
         </div>
       </div>
     </section>
