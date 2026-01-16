@@ -52,19 +52,30 @@ function getAppHtml(maxPhotos) {
     </header>
 
     <!-- Scope of Work - Centered -->
-    <section class="card" style="margin-bottom: 16px; max-width: 500px; margin-left: auto; margin-right: auto;">
-      <div class="form-group" style="margin: 0;">
-        <label for="scope_of_work-select" style="text-decoration: underline; display: block; text-align: center; font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;">Scope of Work</label>
-        <select id="scope_of_work-select" class="select-input">
-          <option value="">-- Select --</option>
-        </select>
-        <div class="admin-control" style="display: none; margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-          <input id="add-scope_of_work-name" type="text" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <input id="add-scope_of_work-price" type="number" placeholder="Price" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <div style="display: flex; gap: 8px;">
-            <button id="add-scope_of_work-btn" class="btn btn-primary" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
-            <button id="delete-scope_of_work-btn" class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete Selected</button>
-          </div>
+    <section class="card" style="margin-bottom: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      <div style="margin: 0;">
+        <label style="text-decoration: underline; display: block; text-align: center; font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;">Scope of Work</label>
+        <div id="scope-of-work-checkboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="scope-item" value="Title Shower" style="width: 18px; height: 18px;">
+            <span>Title Shower</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="scope-item" value="Tub to Shower Conversion" style="width: 18px; height: 18px;">
+            <span>Tub to Shower Conversion</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="scope-item" value="Replacement Tub" style="width: 18px; height: 18px;">
+            <span>Replacement Tub</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="scope-item" value="Replacement Shower" style="width: 18px; height: 18px;">
+            <span>Replacement Shower</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="scope-item" value="Bathroom Remodel" style="width: 18px; height: 18px;">
+            <span>Bathroom Remodel</span>
+          </label>
         </div>
       </div>
     </section>
