@@ -72,10 +72,19 @@ export const DEFAULT_QUOTE_DATA = {
   ],
   wall_colors: [
     { id: "1", name: "White", price: 0 },
-    { id: "2", name: "Almond", price: 25 },
-    { id: "3", name: "Biscuit", price: 25 },
-    { id: "4", name: "Afterwhite", price: 50 },
-    { id: "5", name: "Custom", price: 0 }
+    { id: "2", name: "Gray", price: 25 },
+    { id: "3", name: "Almond", price: 25 },
+    { id: "4", name: "Biscuit", price: 25 },
+    { id: "5", name: "Silver White", price: 50 },
+    { id: "6", name: "Basket Weave", price: 75 },
+    { id: "7", name: "Lightning", price: 75 },
+    { id: "8", name: "Charmeuse", price: 75 },
+    { id: "9", name: "Juparana Granite", price: 100 },
+    { id: "10", name: "River Rock", price: 75 },
+    { id: "11", name: "Brecchia", price: 75 },
+    { id: "12", name: "Roman Stone", price: 75 },
+    { id: "13", name: "Travertine", price: 75 },
+    { id: "14", name: "Other", price: 0 }
   ],
   wall_patterns: [
     { id: "1", name: "Smooth", price: 0 },
