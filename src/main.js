@@ -449,7 +449,7 @@ BATHROOM ESTIMATE QUOTE
 ========================
 
 ** VIEW YOUR QUOTE HERE:**
-${publicUrl}
+<${publicUrl}>
 
 CUSTOMER INFORMATION:
 Name: ${customer.name || 'N/A'}
