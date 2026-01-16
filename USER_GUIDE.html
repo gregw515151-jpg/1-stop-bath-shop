@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>User Guide</title>
+    <style>
+        @media print {
+            body { margin: 0.5in; }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            page-break-after: avoid;
+        }
+        h2 {
+            color: #1e40af;
+            margin-top: 30px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #1e3a8a;
+            page-break-after: avoid;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+        code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            page-break-inside: avoid;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #2563eb;
+            padding-left: 20px;
+            margin-left: 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .print-button:hover {
+            background: #1e40af;
+        }
+        @media print {
+            .print-button { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">🖨️ Print to PDF</button>
+    <h1>1 Stop Bath Shop - Bathroom Quote System</h1>
+<h2>Complete User Guide</h2>
+<hr />
+<h2>Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#accessing-the-application">Accessing the Application</a></li>
+<li><a href="#main-quote-system">Main Quote System</a></li>
+<li><a href="#admin-panel">Admin Panel</a></li>
+<li><a href="#passwords--login-information">Passwords &amp; Login Information</a></li>
+<li><a href="#features-guide">Features Guide</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ol>
+<hr />
+<h2>Overview</h2>
+<p>The <strong>1 Stop Bath Shop Bathroom Quote System</strong> is a comprehensive web-based application designed to help contractors create professional bathroom renovation quotes quickly and efficiently. The system includes:</p>
+<ul>
+<li><strong>Interactive Quote Builder</strong> - Select products, services, and options</li>
+<li><strong>Customer Information Management</strong> - Capture client details</li>
+<li><strong>Photo Upload</strong> - Attach up to 15 photos with captions</li>
+<li><strong>PDF Generation</strong> - Create professional quote documents</li>
+<li><strong>Email Integration</strong> - Send quotes directly to customers</li>
+<li><strong>Admin Panel</strong> - Manage product catalog and pricing</li>
+<li><strong>Password Protection</strong> - Secure access to the application</li>
+</ul>
+<p><strong>Live Website:</strong> https://one-stop-bath-shop.onrender.com</p>
+<hr />
+<h2>Accessing the Application</h2>
+<h3>Main Application Access</h3>
+<p><strong>URL:</strong> https://one-stop-bath-shop.onrender.com</p>
+<p><strong>Password:</strong> ~~No password required~~ (Public access enabled)</p>
+<h4>Accessing the Site:</h4>
+<ol>
+<li>Navigate to https://one-stop-bath-shop.onrender.com</li>
+<li>The application will load immediately - no password needed!</li>
+</ol>
+<blockquote>
+<p><strong>Note:</strong> The site is now publicly accessible. Anyone with the URL can use the quote system.</p>
+</blockquote>
+<h4>Changing the Main Password:</h4>
+<p>To change the site access password, edit line 9 in <code>src/main.js</code>:</p>
+<pre><code class="language-javascript">const SITE_PASSWORD = &quot;bath2025&quot;; // Change this to your desired password
+</code></pre>
+<hr />
+<h2>Admin Panel</h2>
+<h3>Accessing Admin Mode</h3>
+<p>The admin panel allows you to add, edit, and delete products from the dropdown menus.</p>
+<h4>Admin Access (Main App):</h4>
+<ol>
+<li>Click the <strong>🔐 Admin</strong> button in the top-right corner</li>
+<li>Enter admin password when prompted</li>
+<li>Admin controls will appear under each dropdown</li>
+</ol>
+<p><strong>Default Admin Password:</strong> The system will prompt you to set this up</p>
+<h4>Separate Admin Panel:</h4>
+<p><strong>URL:</strong> https://one-stop-bath-shop.onrender.com/admin.html</p>
+<p><strong>Password:</strong> <code>admin123</code> (or set via environment variable <code>VITE_ADMIN_PASSWORD</code>)</p>
+<h4>Admin Panel Features:</h4>
+<ul>
+<li><strong>Add Items:</strong> Enter item name and price, click "Add"</li>
+<li><strong>Delete Items:</strong> Click "Delete" next to any item</li>
+<li><strong>Categories Available:</strong></li>
+<li>Bathtubs</li>
+<li>Showers</li>
+<li>Trim &amp; Fixtures</li>
+<li>Toilets</li>
+<li>Sinks</li>
+<li>Tiles</li>
+<li>Labor &amp; Installation</li>
+</ul>
+<h4>Changing Admin Password:</h4>
+<p>To change the admin panel password, edit line 3 in <code>src/admin.js</code>:</p>
+<pre><code class="language-javascript">const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+</code></pre>
+<p>Or set the environment variable <code>VITE_ADMIN_PASSWORD</code> in your hosting platform.</p>
+<hr />
+<h2>Passwords &amp; Login Information</h2>
+<h3>Summary of All Passwords</h3>
+<table>
+<thead>
+<tr>
+<th>Access Point</th>
+<th>Default Password</th>
+<th>Location to Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Main Site Access</strong></td>
+<td><code>bath2025</code></td>
+<td><code>src/main.js</code> line 9</td>
+</tr>
+<tr>
+<td><strong>Admin Panel (admin.html)</strong></td>
+<td><code>admin123</code></td>
+<td><code>src/admin.js</code> line 3 or env var</td>
+</tr>
+<tr>
+<td><strong>In-App Admin Mode</strong></td>
+<td>Prompted on first use</td>
+<td>Browser prompt</td>
+</tr>
+</tbody>
+</table>
+<h3>Important Security Notes:</h3>
+<ul>
+<li>✅ Change default passwords before deploying to production</li>
+<li>✅ Store passwords securely</li>
+<li>✅ Don't share passwords in public repositories</li>
+<li>✅ Use environment variables for sensitive data</li>
+</ul>
+<hr />
+<h2>Features Guide</h2>
+<h3>1. Creating a Quote</h3>
+<h4>Step 1: Select Scope of Work</h4>
+<ul>
+<li>Choose the primary service from the "Scope of Work" dropdown</li>
+<li>This determines the base project type</li>
+</ul>
+<h4>Step 2: Enter Customer Details</h4>
+<p>Fill in the customer information:<br />
+- <strong>Name:</strong> Customer's full name<br />
+- <strong>Phone:</strong> Contact phone number<br />
+- <strong>Email:</strong> Customer's email address<br />
+- <strong>Address:</strong> Project location address</p>
+<h4>Step 3: Add Notes</h4>
+<ul>
+<li>Use the "Notes" section for special instructions, terms, or scope details</li>
+<li>This will appear on the final quote</li>
+</ul>
+<h4>Step 4: Select Products &amp; Services</h4>
+<p>Navigate through the collapsible sections:<br />
+- <strong>Demolition &amp; Removal</strong><br />
+- <strong>Plumbing &amp; Fixtures</strong><br />
+- <strong>Electrical Work</strong><br />
+- <strong>Bathtub Options</strong><br />
+- <strong>Shower Options</strong><br />
+- <strong>Vanity &amp; Countertops</strong><br />
+- <strong>Flooring &amp; Finishing</strong></p>
+<p>Each section contains relevant dropdowns, checkboxes, and input fields.</p>
+<h4>Step 5: Add Photos (Optional)</h4>
+<ol>
+<li>Click <strong>"+ Add Photos"</strong> button</li>
+<li>Select up to 15 images from your device</li>
+<li>Add captions to photos (optional)</li>
+<li>Remove photos by clicking "Remove" button</li>
+</ol>
+<h4>Step 6: Review Summary</h4>
+<ul>
+<li>The <strong>Estimate Summary</strong> updates automatically as you make selections</li>
+<li>Review the total cost at the bottom</li>
+</ul>
+<h4>Step 7: Send or Print Quote</h4>
+<p><strong>Option A: Email Quote</strong><br />
+1. Enter recipient email in the "Send Quote To" field<br />
+2. Click <strong>"Email Quote"</strong> button<br />
+3. Your default email app will open with the quote pre-filled<br />
+4. Review and send the email</p>
+<p><strong>Option B: Print/Save PDF</strong><br />
+1. Click <strong>"Print / Save PDF"</strong> button<br />
+2. A PDF will be generated and downloaded<br />
+3. The PDF includes:<br />
+   - Company logo<br />
+   - Customer information<br />
+   - Complete estimate summary<br />
+   - All photos with captions<br />
+   - Notes and terms</p>
+<h3>2. Using Admin Mode</h3>
+<h4>In-App Admin Controls:</h4>
+<ol>
+<li>Click <strong>🔐 Admin</strong> button (top-right)</li>
+<li>Enter admin password</li>
+<li>Admin controls appear under each dropdown:</li>
+<li><strong>Add Item:</strong> Enter name and price, click "➕ Add"</li>
+<li><strong>Delete Item:</strong> Select item, click "🗑️ Delete Selected"</li>
+<li>Click <strong>Logout</strong> when finished</li>
+</ol>
+<h4>Standalone Admin Panel:</h4>
+<ol>
+<li>Go to https://one-stop-bath-shop.onrender.com/admin.html</li>
+<li>Enter password: <code>admin123</code></li>
+<li>Manage all product categories</li>
+<li>Changes sync automatically via Supabase database</li>
+</ol>
+<h3>3. Resetting the Form</h3>
+<p>Click <strong>"Clear All"</strong> button to:<br />
+- Clear all selections<br />
+- Remove customer information<br />
+- Clear notes<br />
+- Reset the summary<br />
+- Keep photos (use "Clear All" in Photos section to remove)</p>
+<h3>4. Admin Data Reset</h3>
+<p>When logged in as admin:<br />
+1. Click <strong>🔄 Reset Data</strong> button<br />
+2. Confirm the action<br />
+3. All product data resets to default values</p>
+<hr />
+<h2>Technical Information</h2>
+<h3>Database Backend</h3>
+<ul>
+<li><strong>Platform:</strong> Supabase (PostgreSQL)</li>
+<li><strong>Purpose:</strong> Store product catalog and pricing</li>
+<li><strong>Access:</strong> Configured via environment variables</li>
+</ul>
+<h3>Hosting</h3>
+<ul>
+<li><strong>Platform:</strong> Netlify</li>
+<li><strong>URL:</strong> https://one-stop-bath-shop.onrender.com</li>
+<li><strong>Auto-Deploy:</strong> Enabled from GitHub repository</li>
+</ul>
+<h3>Environment Variables</h3>
+<p>Required environment variables (set in Netlify):</p>
+<pre><code>VITE_SUPABASE_URL=&lt;your-supabase-url&gt;
+VITE_SUPABASE_ANON_KEY=&lt;your-supabase-anon-key&gt;
+VITE_ADMIN_PASSWORD=&lt;your-admin-password&gt;
+</code></pre>
+<h3>Browser Compatibility</h3>
+<ul>
+<li>✅ Chrome/Edge (recommended)</li>
+<li>✅ Safari</li>
+<li>✅ Firefox</li>
+<li>✅ Mobile browsers (iOS Safari, Chrome Mobile)</li>
+</ul>
+<hr />
+<h2>Troubleshooting</h2>
+<h3>Common Issues</h3>
+<h4>"Access Denied" Error</h4>
+<ul>
+<li><strong>Cause:</strong> Incorrect site password</li>
+<li><strong>Solution:</strong> Ensure you're entering <code>bath2025</code> (case-sensitive)</li>
+</ul>
+<h4>Admin Controls Not Appearing</h4>
+<ul>
+<li><strong>Cause:</strong> Not logged in as admin</li>
+<li><strong>Solution:</strong> Click 🔐 Admin button and enter admin password</li>
+</ul>
+<h4>Email Button Not Working</h4>
+<ul>
+<li><strong>Cause:</strong> No email address entered</li>
+<li><strong>Solution:</strong> Enter email in "Send Quote To" field</li>
+</ul>
+<h4>Photos Not Uploading</h4>
+<ul>
+<li><strong>Cause:</strong> Maximum 15 photos reached</li>
+<li><strong>Solution:</strong> Remove some photos before adding new ones</li>
+</ul>
+<h4>PDF Not Generating</h4>
+<ul>
+<li><strong>Cause:</strong> Browser popup blocker</li>
+<li><strong>Solution:</strong> Allow popups for this site</li>
+</ul>
+<h4>Changes Not Saving in Admin Panel</h4>
+<ul>
+<li><strong>Cause:</strong> Database connection issue</li>
+<li><strong>Solution:</strong> Check internet connection and refresh page</li>
+</ul>
+<h3>Getting Help</h3>
+<p>For technical support or questions:<br />
+- <strong>Email:</strong> gregw515151@gmail.com<br />
+- <strong>GitHub:</strong> https://github.com/gregw515151-jpg/1-stop-bath-shop</p>
+<hr />
+<h2>Best Practices</h2>
+<h3>For Daily Use:</h3>
+<ol>
+<li>✅ Always fill in customer details completely</li>
+<li>✅ Add photos for better documentation</li>
+<li>✅ Review the summary before sending quotes</li>
+<li>✅ Save PDFs for your records</li>
+<li>✅ Log out of admin mode when finished</li>
+</ol>
+<h3>For Administrators:</h3>
+<ol>
+<li>✅ Regularly backup your product database</li>
+<li>✅ Keep pricing up to date</li>
+<li>✅ Test new products before adding to live system</li>
+<li>✅ Monitor Netlify deployment status</li>
+<li>✅ Change default passwords immediately</li>
+</ol>
+<h3>Security Tips:</h3>
+<ol>
+<li>🔒 Never share passwords publicly</li>
+<li>🔒 Use strong, unique passwords</li>
+<li>🔒 Log out when using shared computers</li>
+<li>🔒 Regularly review admin access logs</li>
+<li>🔒 Keep environment variables secure</li>
+</ol>
+<hr />
+<h2>Quick Reference</h2>
+<h3>Keyboard Shortcuts</h3>
+<ul>
+<li><strong>Enter:</strong> Submit forms (login, admin inputs)</li>
+<li><strong>Ctrl/Cmd + P:</strong> Print (when viewing quote)</li>
+</ul>
+<h3>File Locations</h3>
+<ul>
+<li>Main app: <code>index.html</code></li>
+<li>Admin panel: <code>admin.html</code></li>
+<li>Passwords: <code>src/main.js</code> and <code>src/admin.js</code></li>
+<li>Styling: <code>src/style.css</code></li>
+<li>Logic: <code>src/app.js</code></li>
+</ul>
+<h3>Important URLs</h3>
+<ul>
+<li><strong>Live Site:</strong> https://one-stop-bath-shop.onrender.com</li>
+<li><strong>Admin Panel:</strong> https://one-stop-bath-shop.onrender.com/admin.html</li>
+<li><strong>GitHub Repo:</strong> https://github.com/gregw515151-jpg/1-stop-bath-shop</li>
+<li><strong>Netlify Dashboard:</strong> https://app.netlify.com/projects/1stopbathshop</li>
+</ul>
+<hr />
+<h2>Version Information</h2>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 2026<br />
+<strong>Developer:</strong> Greg W<br />
+<strong>Company:</strong> 1 Stop Bath Shop</p>
+<hr />
+<h2>License &amp; Usage</h2>
+<p>This software is proprietary to 1 Stop Bath Shop. Unauthorized copying, distribution, or modification is prohibited. See the Software Purchase Agreement for complete terms and conditions.</p>
+<hr />
+<p><strong>End of User Guide</strong></p>
+</body>
+</html>

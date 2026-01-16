@@ -52,12 +52,18 @@ exports.handler = async (event) => {
       </div>
     `;
 
-    // Send email with Resend (no PDF attachment to stay under 40KB free tier limit)
+    // Send email with Resend
     const data = await resend.emails.send({
       from: '1 Stop Bath Shop <onboarding@resend.dev>',
       to: to,
       subject: 'Bathroom Estimate Quote',
       html: htmlBody,
+      attachments: pdfBase64 ? [
+        {
+          filename: 'quote.pdf',
+          content: pdfBase64,
+        },
+      ] : [],
     });
 
     console.log('Email sent:', data.id);

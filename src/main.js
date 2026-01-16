@@ -362,6 +362,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   }
 
   const blob = pdf.output('blob');
+  const base64 = pdf.output('datauristring').split(',')[1];
   document.body.removeChild(pdfRoot);
 
   const download = () => {
@@ -373,11 +374,14 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     URL.revokeObjectURL(url);
   };
 
-  return { blob, download };
+  return { blob, base64, download };
 }
 
 /* ---------- Email Quote ---------- */
-document.getElementById('email-btn')?.addEventListener('click', () => {
+document.getElementById('email-btn')?.addEventListener('click', async () => {
+  const emailBtn = document.getElementById('email-btn');
+  const originalText = emailBtn.textContent;
+
   const selections = getSelections();
   const summaryEl = document.getElementById('summary');
   const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
@@ -388,8 +392,6 @@ document.getElementById('email-btn')?.addEventListener('click', () => {
   }
 
   const customer = getCustomerInfo();
-
-  // Get email from the quote-email input
   const quoteEmailInput = document.getElementById('quote-email');
   const recipientEmail = quoteEmailInput?.value || customer.email;
 
@@ -398,35 +400,45 @@ document.getElementById('email-btn')?.addEventListener('click', () => {
     return;
   }
 
-  // Generate email body
-  const baseBody = generateEmailBody(selections);
+  try {
+    emailBtn.disabled = true;
+    emailBtn.textContent = 'Generating PDF...';
 
-  // Build email content
-  const subject = 'Bathroom Quote from 1 Stop Bath Shop';
-  const body = `
-BATHROOM ESTIMATE QUOTE
-========================
+    // Generate PDF for attachment
+    const { base64 } = await generateQuotePDF({
+      logo: state.logo,
+      photos: state.photos,
+      fileName: 'quote.pdf'
+    });
 
-CUSTOMER INFORMATION:
-Name: ${customer.name || 'N/A'}
-Phone: ${customer.phone || 'N/A'}
-Email: ${customer.email || 'N/A'}
-Address: ${customer.address || 'N/A'}
+    emailBtn.textContent = 'Sending...';
 
-ESTIMATE SUMMARY:
-${baseBody}
+    const response = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: recipientEmail,
+        customerInfo: customer,
+        summary: document.getElementById('summary-text')?.textContent || '',
+        notes: customer.notes,
+        pdfBase64: base64
+      })
+    });
 
-${customer.notes ? `ADDITIONAL NOTES:\n${customer.notes}\n` : ''}
-========================
-Thank you for your interest!
-1 Stop Bath Shop
-  `.trim();
+    const result = await response.json();
 
-  // Create mailto link
-  const mailtoLink = `mailto:${encodeURIComponent(recipientEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-  // Open default email client
-  window.location.href = mailtoLink;
+    if (result.success) {
+      alert('Email sent successfully!');
+    } else {
+      throw new Error(result.error || 'Failed to send email');
+    }
+  } catch (error) {
+    console.error('Email error:', error);
+    alert('Error sending email: ' + error.message);
+  } finally {
+    emailBtn.disabled = false;
+    emailBtn.textContent = originalText;
+  }
 });
 
 /* ---------- Print Button ---------- */

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Reference</title>
+    <style>
+        @media print {
+            body { margin: 0.5in; }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            page-break-after: avoid;
+        }
+        h2 {
+            color: #1e40af;
+            margin-top: 30px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #1e3a8a;
+            page-break-after: avoid;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+        code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            page-break-inside: avoid;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #2563eb;
+            padding-left: 20px;
+            margin-left: 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .print-button:hover {
+            background: #1e40af;
+        }
+        @media print {
+            .print-button { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">🖨️ Print to PDF</button>
+    <h1>1 STOP BATH SHOP - QUICK REFERENCE CARD</h1>
+<hr />
+<h2>🔑 PASSWORDS &amp; ACCESS</h2>
+<table>
+<thead>
+<tr>
+<th><strong>What</strong></th>
+<th><strong>Password</strong></th>
+<th><strong>Where to Change</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Main Site</strong></td>
+<td>~~None (Public)~~</td>
+<td><code>src/main.js</code> line 9 (disabled)</td>
+</tr>
+<tr>
+<td><strong>Admin Panel</strong></td>
+<td><code>admin123</code></td>
+<td><code>src/admin.js</code> line 3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌐 IMPORTANT URLS</h2>
+<ul>
+<li><strong>Live Site:</strong> https://one-stop-bath-shop.onrender.com</li>
+<li><strong>Admin Panel:</strong> https://one-stop-bath-shop.onrender.com/admin.html</li>
+<li><strong>GitHub:</strong> https://github.com/gregw515151-jpg/1-stop-bath-shop</li>
+<li><strong>Netlify Dashboard:</strong> https://app.netlify.com/projects/1stopbathshop</li>
+</ul>
+<hr />
+<h2>📧 CONTACT INFO</h2>
+<ul>
+<li><strong>Email:</strong> gregw515151@gmail.com</li>
+<li><strong>Company:</strong> 1 Stop Bath Shop</li>
+</ul>
+<hr />
+<h2>⚡ QUICK START</h2>
+<h3>For Users:</h3>
+<ol>
+<li>Go to https://one-stop-bath-shop.onrender.com</li>
+<li>~~No password needed - site is public!~~</li>
+<li>Fill in customer details</li>
+<li>Select products and services</li>
+<li>Add photos (optional)</li>
+<li>Click "Email Quote" or "Print / Save PDF"</li>
+</ol>
+<h3>For Admins:</h3>
+<ol>
+<li>Click 🔐 Admin button (or go to /admin.html)</li>
+<li>Enter password: <code>admin123</code></li>
+<li>Add/delete products as needed</li>
+<li>Click Logout when done</li>
+</ol>
+<hr />
+<h2>🛠️ COMMON TASKS</h2>
+<h3>Re-enable Site Password (if needed):</h3>
+<p>Edit <code>src/main.js</code> line 9-40:<br />
+Uncomment the password protection code</p>
+<h3>Change Admin Password:</h3>
+<p>Edit <code>src/admin.js</code> line 3:</p>
+<pre><code class="language-javascript">const ADMIN_PASSWORD = 'YOUR_NEW_PASSWORD';
+</code></pre>
+<h3>Deploy Changes:</h3>
+<pre><code class="language-bash">git add .
+git commit -m &quot;Your message&quot;
+git push
+</code></pre>
+<p>(Netlify auto-deploys)</p>
+<hr />
+<h2>📱 FEATURES</h2>
+<p>✅ Public access (no password)<br />
+✅ Customer information capture<br />
+✅ Product selection dropdowns<br />
+✅ Photo upload (up to 15)<br />
+✅ PDF generation<br />
+✅ Email quotes (mailto)<br />
+✅ Admin product management<br />
+✅ Mobile-friendly<br />
+✅ Auto-calculating totals  </p>
+<hr />
+<h2>🆘 TROUBLESHOOTING</h2>
+<p><strong>Can't access site?</strong><br />
+→ Site is public now - just go to the URL!</p>
+<p><strong>Admin controls not showing?</strong><br />
+→ Click 🔐 Admin and enter password</p>
+<p><strong>Email not working?</strong><br />
+→ Enter email in "Send Quote To" field</p>
+<p><strong>Changes not saving?</strong><br />
+→ Check internet connection, refresh page</p>
+<hr />
+<h2>📄 DOCUMENTS</h2>
+<ul>
+<li><strong>USER_GUIDE.md</strong> - Complete instructions</li>
+<li><strong>SOFTWARE_PURCHASE_AGREEMENT.md</strong> - Sales contract</li>
+<li><strong>README.md</strong> - Technical documentation</li>
+</ul>
+<hr />
+<h2>💾 BACKUP REMINDER</h2>
+<p>✅ Backup Supabase database monthly<br />
+✅ Keep copy of source code<br />
+✅ Save environment variables<br />
+✅ Export product catalog regularly  </p>
+<hr />
+<p><strong>Print this card and keep it handy!</strong></p>
+</body>
+</html>
