@@ -3,9 +3,11 @@
 import { supabase } from './supabaseClient.js';
 export const DEFAULT_QUOTE_DATA = {
   scope_of_work: [
-    { id: "1", name: "Demolition & Removal", price: 800 },
-    { id: "2", name: "Plumbing Rough-In", price: 1200 },
-    { id: "3", name: "Electrical Work", price: 1000 }
+    { id: "1", name: "Title Shower", price: 0 },
+    { id: "2", name: "Tub to Shower Conversion", price: 0 },
+    { id: "3", name: "Replacement Tub", price: 0 },
+    { id: "4", name: "Replacement Shower", price: 0 },
+    { id: "5", name: "Bathroom Remodel", price: 0 }
   ],
   plumbing_colors: [
     { id: "1", name: "Chrome", price: 0 },
