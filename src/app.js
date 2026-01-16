@@ -505,6 +505,50 @@ function buildQuoteSections() {
           <select id="vanity-length" class="select-input">
           </select>
         </div>
+        
+        <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 16px;">Vanity Top</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+          <div class="form-group">
+            <label>Bowl Style:</label>
+            <select id="vanity-top-bowl" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="oval">Oval Bowl</option>
+              <option value="square">Square Bowl</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Faucet Drill:</label>
+            <select id="vanity-top-drill" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="single">Single Hole</option>
+              <option value="4inch">4" Drill</option>
+              <option value="8inch">8" Drill</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Faucet Count:</label>
+            <select id="vanity-top-faucets" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="single">Single Faucet</option>
+              <option value="double">2 Faucets</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label>Splash Options:</label>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+              <input type="checkbox" id="splash-back" style="width: 18px; height: 18px;"> Back Splash
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+              <input type="checkbox" id="splash-left" style="width: 18px; height: 18px;"> Left Splash
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+              <input type="checkbox" id="splash-right" style="width: 18px; height: 18px;"> Right Splash
+            </label>
+          </div>
+        </div>
+        
         <div class="form-group" style="margin-top: 16px;">
           <label>Cabinetry Notes:</label>
           <textarea id="cabinetry-notes" rows="2" class="select-input" placeholder="Any special requirements for vanity or cabinetry..."></textarea>
