@@ -507,12 +507,28 @@ Thank you for your interest!
 
 /* ---------- Print Button ---------- */
 document.getElementById('print-btn')?.addEventListener('click', async () => {
-  const { download } = await generateQuotePDF({
-    logo: state.logo,
-    photos: state.photos,
-    fileName: 'quote.pdf'
-  });
-  download();
+  const printBtn = document.getElementById('print-btn');
+  const originalText = printBtn.textContent;
+
+  try {
+    printBtn.disabled = true;
+    printBtn.textContent = 'Generating PDF...';
+
+    const { download } = await generateQuotePDF({
+      logo: state.logo,
+      photos: state.photos,
+      fileName: 'quote.pdf'
+    });
+
+    download();
+
+  } catch (error) {
+    console.error('Print error:', error);
+    alert('Error generating PDF: ' + error.message);
+  } finally {
+    printBtn.disabled = false;
+    printBtn.textContent = originalText;
+  }
 });
 
 /* ---------- Reset Button ---------- */
