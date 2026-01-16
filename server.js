@@ -1,22 +1,20 @@
 import express from 'express';
-import { Resend } from 'resend';
-import cors from 'cors';
+import { MailerSend, EmailParams, Sender, Recipient, Attachment } from "mailersend";
 
-const app = express();
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize MailerSend
+const mailersend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_KEY,
+});
 
 app.post('/api/send-email', async (req, res) => {
-    try {
-        const { to, customerInfo, summary, notes, pdfBase64 } = req.body;
+  try {
+    const { to, customerInfo, summary, notes, pdfBase64 } = req.body;
 
-        if (!process.env.RESEND_API_KEY) {
-            throw new Error('Missing RESEND_API_KEY environment variable');
-        }
+    if (!process.env.MAILERSEND_API_KEY) {
+      throw new Error('Missing MAILERSEND_API_KEY environment variable');
+    }
 
-        const htmlBody = `
+    const htmlBody = `
       <div style="font-family: system-ui, -apple-system, sans-serif; color: #111827; line-height: 1.6; max-width: 600px;">
         <h1 style="margin-bottom: 24px; color: #1f2937; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Bathroom Estimate Quote</h1>
         
@@ -47,35 +45,41 @@ app.post('/api/send-email', async (req, res) => {
       </div>
     `;
 
-        const pdfBuffer = pdfBase64 ? Buffer.from(pdfBase64, 'base64') : null;
+    const sentFrom = new Sender(process.env.MAILERSEND_SENDER_EMAIL || "MS_Y18z0L@test-zkq340ek996gd796.mlsender.net", "1 Stop Bath Shop");
+    const recipients = [
+      new Recipient(to, customerInfo.name || "Valued Customer")
+    ];
 
-        const emailData = {
-            from: '1 Stop Bath Shop <onboarding@resend.dev>',
-            to: to,
-            subject: 'Bathroom Estimate Quote',
-            html: htmlBody,
-        };
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setReplyTo(sentFrom)
+      .setSubject("Bathroom Estimate Quote")
+      .setHtml(htmlBody)
+      .setText("Please find your bathroom estimate quote attached.");
 
-        if (pdfBuffer) {
-            emailData.attachments = [{
-                filename: 'quote.pdf',
-                content: pdfBuffer,
-            }];
-        }
-
-        const data = await resend.emails.send(emailData);
-
-        console.log('Email sent:', data.id);
-
-        res.json({ success: true, messageId: data.id });
-
-    } catch (error) {
-        console.error('Email error:', error);
-        res.status(500).json({ error: error.message || 'Failed to send email' });
+    if (pdfBase64) {
+      const attachment = new Attachment(
+        pdfBase64,
+        "quote.pdf",
+        "attachment"
+      );
+      emailParams.setAttachments([attachment]);
     }
+
+    const data = await mailersend.email.send(emailParams);
+
+    console.log('Email sent:', data);
+
+    res.json({ success: true, messageId: data });
+
+  } catch (error) {
+    console.error('Email error:', error);
+    res.status(500).json({ error: error.message || 'Failed to send email' });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

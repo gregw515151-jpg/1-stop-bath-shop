@@ -404,10 +404,6 @@ async function uploadToSupabase(blob, fileName) {
 document.getElementById('email-btn')?.addEventListener('click', async () => {
   const emailBtn = document.getElementById('email-btn');
   const originalText = emailBtn.textContent;
-  let fallbackLink = document.getElementById('email-fallback-link');
-
-  // Clear any previous fallback link
-  if (fallbackLink) fallbackLink.remove();
 
   const selections = getSelections();
   const summaryEl = document.getElementById('summary');
@@ -429,81 +425,44 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
 
   try {
     emailBtn.disabled = true;
-    emailBtn.textContent = 'Uploading PDF...';
+    emailBtn.textContent = 'Generating PDF...';
 
-    // Step 1: Generate the PDF blob
-    const { blob } = await generateQuotePDF({
+    // Step 1: Generate the PDF base64
+    const { base64 } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
       fileName: 'quote.pdf'
     });
 
-    // Step 2: Upload to Supabase Storage
-    const publicUrl = await uploadToSupabase(blob, 'quote.pdf');
-    console.log('PDF Uploaded. Public URL:', publicUrl);
+    emailBtn.textContent = 'Sending Email...';
 
-    // Step 3: Open Email App
-    const subject = 'Bathroom Quote from 1 Stop Bath Shop';
-    const body = `
-BATHROOM ESTIMATE QUOTE
-========================
+    // Step 2: Send Email via Server API (MailerSend)
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: recipientEmail,
+        customerInfo: customer,
+        summary: generateEmailBody(selections),
+        notes: customer.notes,
+        pdfBase64: base64
+      })
+    });
 
-** VIEW YOUR QUOTE HERE:**
-<${publicUrl}>
+    const result = await response.json();
 
-CUSTOMER INFORMATION:
-Name: ${customer.name || 'N/A'}
-Phone: ${customer.phone || 'N/A'}
-Email: ${customer.email || 'N/A'}
-Address: ${customer.address || 'N/A'}
-
-SUMMARY:
-${generateEmailBody(selections)}
-
-${customer.notes ? `ADDITIONAL NOTES:\n${customer.notes}\n` : ''}
-========================
-Thank you for your interest!
-1 Stop Bath Shop
-    `.trim();
-
-    // Open mailto link
-    const mailtoLink = `mailto:${encodeURIComponent(recipientEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    console.log('Attempting to open mailto link...');
-
-    // Create a manual link just in case
-    fallbackLink = document.createElement('a');
-    fallbackLink.id = 'email-fallback-link';
-    fallbackLink.href = mailtoLink;
-    fallbackLink.textContent = '📧 Click here if email app did not open';
-    fallbackLink.style.display = 'block';
-    fallbackLink.style.marginTop = '10px';
-    fallbackLink.style.color = '#2563eb';
-    fallbackLink.style.textDecoration = 'underline';
-    fallbackLink.style.fontWeight = 'bold';
-    emailBtn.parentNode.appendChild(fallbackLink);
-
-    // Try auto-open
-    window.location.href = mailtoLink;
-
-    emailBtn.textContent = 'Email Draft Ready!';
+    if (result.success) {
+      alert('Email sent successfully! (Check your spam folder just in case)');
+    } else {
+      throw new Error(result.error || 'Failed to send email');
+    }
 
   } catch (error) {
     console.error('Email error:', error);
-    alert('Error preparing email: ' + error.message);
+    alert('Error sending email: ' + error.message);
+  } finally {
     emailBtn.disabled = false;
     emailBtn.textContent = originalText;
-  } finally {
-    // Keep the "Ready" state if successful so user sees the link
-    if (emailBtn.textContent !== 'Email Draft Ready!') {
-      emailBtn.disabled = false;
-      emailBtn.textContent = originalText;
-    } else {
-      // Re-enable after a moment to allow re-sending
-      setTimeout(() => {
-        emailBtn.disabled = false;
-        emailBtn.textContent = originalText;
-      }, 5000);
-    }
   }
 });
 
