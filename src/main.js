@@ -437,7 +437,7 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
     emailBtn.textContent = 'Sending Email...';
 
     // Step 2: Send Email via Server API (Gmail SMTP)
-    const response = await fetch('/api/send-email', {
+    const response = await fetch('https://one-stop-bath-shop.onrender.com/api/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
