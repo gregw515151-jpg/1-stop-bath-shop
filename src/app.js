@@ -486,13 +486,6 @@ function buildQuoteSections() {
             <select id="wall-type" class="select-input">
           </select>
           </div>
-
-          <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151;">Vanity</h3>
-          <div class="form-group">
-            <label>Length:</label>
-            <select id="vanity-length" class="select-input">
-          </select>
-          </div>
         </div>
         <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
           <label>Acrylics Notes:</label>
@@ -501,7 +494,26 @@ function buildQuoteSections() {
       </div>
     </section>
 
-    <!-- Section 5: Flooring & Trim -->
+    <!-- Section 5: Cabinetry -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🪵 Cabinetry</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label>Vanity Length:</label>
+          <select id="vanity-length" class="select-input">
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Cabinetry Notes:</label>
+          <textarea id="cabinetry-notes" rows="2" class="select-input" placeholder="Any special requirements for vanity or cabinetry..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Flooring & Trim -->
     <section class="card collapsible-section" style="margin-bottom: 16px;">
       <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
         <h2 style="margin: 0; font-size: 1.25rem;">🔨 Flooring & Trim</h2>
