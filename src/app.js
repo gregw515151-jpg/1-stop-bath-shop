@@ -880,7 +880,9 @@ function setupListeners() {
 
 function updateSummary() {
   // Update selections
-  selections.scope_of_work = getSelectedItem('scope_of_work-select', products.scope_of_work);
+  // selections.scope_of_work = getSelectedItem('scope_of_work-select', products.scope_of_work);
+  const scopeItems = Array.from(document.querySelectorAll('.scope-item:checked')).map(cb => cb.value);
+  selections.scope_of_work = scopeItems.join(', ');
   selections.demo_items = Array.from(document.querySelectorAll('.demo-item:checked')).map(cb => cb.value);
 
   // Define all labels for display and selection update
@@ -963,7 +965,7 @@ export function generateEmailBody(selections) {
   let body = "";
 
   if (selections.scope_of_work) {
-    body += `SCOPE: ${selections.scope_of_work.name} - $${selections.scope_of_work.price.toFixed(2)}\n`;
+    body += `SCOPE: ${selections.scope_of_work}\n`;
   }
 
   if (selections.demo_items && selections.demo_items.length > 0) {
