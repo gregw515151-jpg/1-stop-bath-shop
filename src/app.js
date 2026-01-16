@@ -431,10 +431,10 @@ function buildQuoteSections() {
       </div>
     </section>
 
-    <!-- Section 4: Bathroom Products -->
+    <!-- Section 4: Acrylics (Shower Pan, Bathtub, Walls) -->
     <section class="card collapsible-section" style="margin-bottom: 16px;">
       <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
-        <h2 style="margin: 0; font-size: 1.25rem;">🛁 Bathroom Products</h2>
+        <h2 style="margin: 0; font-size: 1.25rem;">🛁 Acrylics</h2>
         <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
       </div>
       <div class="section-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
@@ -495,8 +495,8 @@ function buildQuoteSections() {
           </div>
         </div>
         <div class="form-group" style="margin-top: 20px; grid-column: 1 / -1;">
-          <label>Bathroom Products Notes:</label>
-          <textarea id="bathroom-notes" rows="2" class="select-input" placeholder="Any special requirements for shower, tub, walls, or vanity..."></textarea>
+          <label>Acrylics Notes:</label>
+          <textarea id="bathroom-notes" rows="2" class="select-input" placeholder="Any special requirements for shower pan, bathtub, or walls..."></textarea>
         </div>
       </div>
     </section>
