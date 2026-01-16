@@ -1,11 +1,16 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { MailerSend, EmailParams, Sender, Recipient, Attachment } from "mailersend";
 
 // Initialize MailerSend
 const mailersend = new MailerSend({
   apiKey: process.env.MAILERSEND_API_KEY,
 });
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
 
 app.post('/api/send-email', async (req, res) => {
   try {
