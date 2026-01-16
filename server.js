@@ -1,11 +1,15 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { MailerSend, EmailParams, Sender, Recipient, Attachment } from "mailersend";
+import nodemailer from 'nodemailer';
 
-// Initialize MailerSend
-const mailersend = new MailerSend({
-  apiKey: process.env.MAILERSEND_API_KEY,
+// Initialize Gmail transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  }
 });
 
 const app = express();
@@ -16,8 +20,8 @@ app.post('/api/send-email', async (req, res) => {
   try {
     const { to, customerInfo, summary, notes, pdfBase64 } = req.body;
 
-    if (!process.env.MAILERSEND_API_KEY) {
-      throw new Error('Missing MAILERSEND_API_KEY environment variable');
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+      throw new Error('Missing Gmail credentials in environment variables');
     }
 
     const htmlBody = `
@@ -51,33 +55,27 @@ app.post('/api/send-email', async (req, res) => {
       </div>
     `;
 
-    const sentFrom = new Sender(process.env.MAILERSEND_SENDER_EMAIL || "MS_Y18z0L@test-zkq340ek996gd796.mlsender.net", "1 Stop Bath Shop");
-    const recipients = [
-      new Recipient(to, customerInfo.name || "Valued Customer")
-    ];
-
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo(recipients)
-      .setReplyTo(sentFrom)
-      .setSubject("Bathroom Estimate Quote")
-      .setHtml(htmlBody)
-      .setText("Please find your bathroom estimate quote attached.");
+    const mailOptions = {
+      from: `"1 Stop Bath Shop" <${process.env.GMAIL_USER}>`,
+      to: to,
+      subject: 'Bathroom Estimate Quote',
+      html: htmlBody,
+      attachments: []
+    };
 
     if (pdfBase64) {
-      const attachment = new Attachment(
-        pdfBase64,
-        "quote.pdf",
-        "attachment"
-      );
-      emailParams.setAttachments([attachment]);
+      mailOptions.attachments.push({
+        filename: 'quote.pdf',
+        content: pdfBase64,
+        encoding: 'base64'
+      });
     }
 
-    const data = await mailersend.email.send(emailParams);
+    const info = await transporter.sendMail(mailOptions);
 
-    console.log('Email sent:', data);
+    console.log('Email sent:', info.messageId);
 
-    res.json({ success: true, messageId: data });
+    res.json({ success: true, messageId: info.messageId });
 
   } catch (error) {
     console.error('Email error:', error);
