@@ -82,7 +82,8 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: "Texture/Brushed", price: 100 },
     { id: "3", name: "3x6 Subway", price: 150 },
     { id: "4", name: "8x8", price: 120 },
-    { id: "5", name: "12x12", price: 140 }
+    { id: "5", name: "12x12", price: 140 },
+    { id: "6", name: "Other", price: 0 }
   ],
   wall_types: [
     { id: "1", name: "Reg Shower", price: 800 },
