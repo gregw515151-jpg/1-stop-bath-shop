@@ -365,7 +365,7 @@ function buildQuoteSections() {
       <div class="section-content">
         <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select items to demo:</label>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-          ${['Vanity', 'Vanity Top', 'Toilet', 'Drywall', 'Ceiling', 'Fan', 'Vanity Light', 'Ceiling Lights', 'Tub', 'Shower', 'Floor', 'Door Casing', 'Window Casing', 'Bill & List'].map(item => `
+          ${['Vanity', 'Vanity Top', 'Toilet', 'Drywall', 'Ceiling', 'Fan', 'Vanity Light', 'Ceiling Lights', 'Tub', 'Shower', 'Floor', 'Door Casing', 'Window Casing', 'Baseboard', 'Bill & List'].map(item => `
             <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
               <input type="checkbox" class="demo-item" value="${item}" style="width: 18px; height: 18px;">
               <span>${item}</span>
