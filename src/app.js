@@ -87,8 +87,8 @@ export const DEFAULT_QUOTE_DATA = {
   wall_types: [
     { id: "1", name: "Reg Shower", price: 800 },
     { id: "2", name: "Reg Tub", price: 600 },
-    { id: "3", name: "4 Bend Shower", price: 900 },
-    { id: "4", name: "4 Bend Tub", price: 700 }
+    { id: "3", name: "Bend Shower", price: 900 },
+    { id: "4", name: "Bend Tub", price: 700 }
   ],
   vanity_lengths: [
     { id: "1", name: '18"', price: 300 },
