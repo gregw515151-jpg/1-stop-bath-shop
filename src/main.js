@@ -118,10 +118,32 @@ function getAppHtml(maxPhotos) {
 
       <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="email-btn" class="btn btn-primary" disabled>Email Quote</button>
+        <button id="share-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📤 Share PDF</button>
         <button id="print-btn" class="btn btn-secondary">Print / Save PDF</button>
         <button id="reset-btn" class="btn btn-secondary" style="margin-left:auto;">Clear All</button>
       </div>
     </section>
+
+    <!--PDF Viewer Modal -->
+    <div id="pdf-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; overflow: auto;">
+      <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
+        <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px 16px 0 0;">
+          <h2 style="margin: 0; font-size: 1.4rem;">📄 Your Quote is Ready!</h2>
+          <button id="modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; hover: background: rgba(255,255,255,0.3);">✕</button>
+        </div>
+        <div style="padding: 32px; text-align: center;">
+          <div style="font-size: 16px; color: #374151; margin-bottom: 24px; line-height: 1.6;">
+            Your bathroom estimate quote has been generated and uploaded successfully! 
+            Use the buttons below to view, share, or download your PDF.
+          </div>
+          <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
+            <button id="modal-view-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️ View PDF</button>
+            <button id="modal-share-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px;">📤 Share PDF</button>
+            <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">📋 Copy Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Photos -->
     <section class="card" style="margin-top:16px;">
@@ -400,7 +422,9 @@ async function uploadToSupabase(blob, fileName) {
   return publicUrl;
 }
 
-/* ---------- Email Quote ---------- */
+/* ---------- Email Quote (Show PDF in Modal) ---------- */
+let currentPdfUrl = null; // Store the current PDF URL for sharing
+
 document.getElementById('email-btn')?.addEventListener('click', async () => {
   const emailBtn = document.getElementById('email-btn');
   const originalText = emailBtn.textContent;
@@ -410,16 +434,7 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
   const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
 
   if (!hasSelections) {
-    alert('Please select some items before sending a quote.');
-    return;
-  }
-
-  const customer = getCustomerInfo();
-  const quoteEmailInput = document.getElementById('quote-email');
-  const recipientEmail = quoteEmailInput?.value || customer.email;
-
-  if (!recipientEmail) {
-    alert('Please enter an email address in the "Send Quote To" field.');
+    alert('Please select some items before viewing the quote.');
     return;
   }
 
@@ -427,42 +442,186 @@ document.getElementById('email-btn')?.addEventListener('click', async () => {
     emailBtn.disabled = true;
     emailBtn.textContent = 'Generating PDF...';
 
-    // Step 1: Generate the PDF base64
-    const { base64 } = await generateQuotePDF({
+    // Step 1: Generate the PDF
+    const { blob } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
       fileName: 'quote.pdf'
     });
 
-    emailBtn.textContent = 'Sending Email...';
+    emailBtn.textContent = 'Uploading PDF...';
 
-    // Step 2: Send Email via Server API (Gmail SMTP)
-    const response = await fetch('https://one-stop-bath-shop.onrender.com/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: recipientEmail,
-        customerInfo: customer,
-        summary: generateEmailBody(selections),
-        notes: customer.notes,
-        pdfBase64: base64
-      })
-    });
+    // Step 2: Upload PDF to Supabase Storage
+    const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
+    currentPdfUrl = pdfUrl; // Store for sharing
 
-    const result = await response.json();
+    emailBtn.textContent = 'Opening PDF...';
 
-    if (result.success) {
-      alert('Email sent successfully! ✅');
-    } else {
-      throw new Error(result.error || 'Failed to send email');
+    // Step 3: Show modal
+    const modal = document.getElementById('pdf-modal');
+    modal.style.display = 'block';
+
+    // Save to Supabase for tracking
+    try {
+      const customer = getCustomerInfo();
+      await supabase.from('quotes_sent').insert([{
+        customer_name: customer.name,
+        customer_email: customer.email,
+        customer_phone: customer.phone,
+        pdf_url: pdfUrl,
+        created_at: new Date().toISOString()
+      }]);
+      console.log('Quote saved to Supabase');
+    } catch (dbError) {
+      console.warn('Failed to save to database:', dbError);
     }
 
   } catch (error) {
     console.error('Email error:', error);
-    alert('Error sending email: ' + error.message);
+    alert('Error preparing PDF: ' + error.message);
   } finally {
     emailBtn.disabled = false;
     emailBtn.textContent = originalText;
+  }
+});
+
+/* ---------- Modal Close Button ---------- */
+document.getElementById('modal-close-btn')?.addEventListener('click', () => {
+  const modal = document.getElementById('pdf-modal');
+  modal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+document.getElementById('pdf-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'pdf-modal') {
+    document.getElementById('pdf-modal').style.display = 'none';
+  }
+});
+
+/* ---------- Modal View PDF Button ---------- */
+document.getElementById('modal-view-btn')?.addEventListener('click', () => {
+  if (!currentPdfUrl) {
+    alert('No PDF to view. Please generate a quote first.');
+    return;
+  }
+
+  // Open PDF in new tab
+  window.open(currentPdfUrl, '_blank');
+});
+
+/* ---------- Modal Share Button ---------- */
+document.getElementById('modal-share-btn')?.addEventListener('click', async () => {
+  if (!currentPdfUrl) {
+    alert('No PDF to share. Please generate a quote first.');
+    return;
+  }
+
+  try {
+    // Try to use Web Share API (works great on mobile!)
+    if (navigator.share) {
+      await navigator.share({
+        title: 'Bathroom Estimate Quote - 1 Stop Bath Shop',
+        text: 'Here is your bathroom estimate quote from 1 Stop Bath Shop',
+        url: currentPdfUrl
+      });
+      console.log('Share completed!');
+    } else {
+      // Fallback: Copy to clipboard
+      await navigator.clipboard.writeText(currentPdfUrl);
+      alert('Web Share not supported. PDF link copied to clipboard! You can now paste and share it. 📋');
+    }
+  } catch (error) {
+    // User cancelled or error occurred
+    if (error.name !== 'AbortError') {
+      console.error('Share error:', error);
+      // Try clipboard fallback
+      try {
+        await navigator.clipboard.writeText(currentPdfUrl);
+        alert('PDF link copied to clipboard! 📋');
+      } catch (clipError) {
+        alert('Share failed. PDF URL: ' + currentPdfUrl);
+      }
+    }
+  }
+});
+
+/* ---------- Modal Copy Link Button ---------- */
+document.getElementById('modal-copy-link-btn')?.addEventListener('click', async () => {
+  if (!currentPdfUrl) {
+    alert('No PDF link to copy. Please generate a quote first.');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(currentPdfUrl);
+    alert('PDF link copied to clipboard! ✅');
+  } catch (error) {
+    console.error('Copy error:', error);
+    // Fallback: show the URL
+    prompt('Copy this PDF link:', currentPdfUrl);
+  }
+});
+
+/* ---------- Share PDF Button ---------- */
+document.getElementById('share-btn')?.addEventListener('click', async () => {
+  const shareBtn = document.getElementById('share-btn');
+  const originalText = shareBtn.textContent;
+
+  const summaryEl = document.getElementById('summary');
+  const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
+
+  if (!hasSelections) {
+    alert('Please select some items before sharing a quote.');
+    return;
+  }
+
+  try {
+    shareBtn.disabled = true;
+    shareBtn.textContent = 'Generating PDF...';
+
+    // Generate the PDF
+    const { blob } = await generateQuotePDF({
+      logo: state.logo,
+      photos: state.photos,
+      fileName: 'quote.pdf'
+    });
+
+    shareBtn.textContent = 'Uploading PDF...';
+
+    // Upload PDF to Supabase
+    const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
+
+    shareBtn.textContent = 'Preparing share...';
+
+    // Try to use Web Share API (works great on mobile!)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Bathroom Estimate Quote - 1 Stop Bath Shop',
+          text: 'Here is your bathroom estimate quote from 1 Stop Bath Shop',
+          url: pdfUrl
+        });
+        alert('Share completed! ✅');
+      } catch (shareError) {
+        // User cancelled share or share failed
+        if (shareError.name !== 'AbortError') {
+          console.warn('Share failed:', shareError);
+          // Fallback: open PDF in new tab
+          window.open(pdfUrl, '_blank');
+        }
+      }
+    } else {
+      // No Web Share API (desktop) - just open the PDF
+      window.open(pdfUrl, '_blank');
+      alert('PDF opened in new tab! You can download or share from there. ✅');
+    }
+
+  } catch (error) {
+    console.error('Share error:', error);
+    alert('Error preparing PDF: ' + error.message);
+  } finally {
+    shareBtn.disabled = false;
+    shareBtn.textContent = originalText;
   }
 });
 
