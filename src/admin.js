@@ -79,13 +79,25 @@ const logoutBtn = document.getElementById('logout-btn');
 const categoriesContainer = document.getElementById('categories-container');
 
 const CATEGORIES = [
-    { id: 'bathtubs', name: 'Bathtubs' },
-    { id: 'showers', name: 'Showers' },
-    { id: 'trim', name: 'Trim & Fixtures' },
-    { id: 'toilets', name: 'Toilets' },
-    { id: 'sinks', name: 'Sinks' },
-    { id: 'tiles', name: 'Tiles' },
-    { id: 'labor', name: 'Labor & Installation' }
+    { id: 'scope_of_work', name: 'Scope of Work' },
+    { id: 'plumbing_colors', name: 'Plumbing Colors' },
+    { id: 'plumbing_styles', name: 'Plumbing Styles' },
+    { id: 'electrical_colors', name: 'Electrical Colors' },
+    { id: 'exhaust_fans', name: 'Exhaust Fans' },
+    { id: 'shower_colors', name: 'Shower Colors' },
+    { id: 'shower_sizes', name: 'Shower Sizes' },
+    { id: 'drain_locations', name: 'Drain Locations' },
+    { id: 'tub_depths', name: 'Tub Depths' },
+    { id: 'tub_lengths', name: 'Tub Lengths' },
+    { id: 'wall_colors', name: 'Wall Colors' },
+    { id: 'wall_patterns', name: 'Wall Patterns' },
+    { id: 'wall_types', name: 'Wall Types' },
+    { id: 'vanity_lengths', name: 'Vanity Lengths' },
+    { id: 'flooring_types', name: 'Flooring Types' },
+    { id: 'baseboard_styles', name: 'Baseboard Styles' },
+    { id: 'window_styles', name: 'Window Styles' },
+    { id: 'tile_materials', name: 'Tile Materials' },
+    { id: 'plumbing_materials', name: 'Plumbing Materials' }
 ];
 
 async function init() {
@@ -147,12 +159,15 @@ function renderItemList(categoryId) {
     if (items.length === 0) return '<p style="color: #6b7280; font-size: 14px;">No items in this category.</p>';
 
     return items.map(item => `
-        <div class="item-row">
-            <div>
+        <div class="item-row" id="item-${categoryId}-${item.id}">
+            <div style="flex: 1;">
                 <strong>${item.name}</strong>
                 <span style="color: #6b7280; margin-left: 8px;">$${parseFloat(item.price).toFixed(2)}</span>
             </div>
-            <button class="btn-delete" onclick="window.handleDelete('${categoryId}', '${item.id}')">Delete</button>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer;" onclick="window.handleEdit('${categoryId}', '${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price})">Edit</button>
+                <button class="btn-delete" onclick="window.handleDelete('${categoryId}', '${item.id}')">Delete</button>
+            </div>
         </div>
     `).join('');
 }
@@ -177,6 +192,58 @@ window.handleAdd = async (categoryId) => {
         console.error(err);
         alert('Error adding item. Check console for details.');
     }
+};
+
+window.handleEdit = async (categoryId, itemId, currentName, currentPrice) => {
+    const itemRow = document.getElementById(`item-${categoryId}-${itemId}`);
+    if (!itemRow) return;
+
+    // Replace item display with edit form
+    itemRow.innerHTML = `
+        <div style="flex: 1; display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="edit-name-${categoryId}-${itemId}" value="${currentName}" style="flex: 1; padding: 6px; border: 1px solid #d1d5db; border-radius: 4px;">
+            <input type="number" id="edit-price-${categoryId}-${itemId}" value="${currentPrice}" step="0.01" style="width: 100px; padding: 6px; border: 1px solid #d1d5db; border-radius: 4px;">
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn" style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer;" onclick="window.handleSaveEdit('${categoryId}', '${itemId}')">Save</button>
+            <button class="btn" style="background: #6b7280; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; border: none; cursor: pointer;" onclick="window.handleCancelEdit('${categoryId}')">Cancel</button>
+        </div>
+    `;
+};
+
+window.handleSaveEdit = async (categoryId, itemId) => {
+    const nameInput = document.getElementById(`edit-name-${categoryId}-${itemId}`);
+    const priceInput = document.getElementById(`edit-price-${categoryId}-${itemId}`);
+
+    const newName = nameInput.value.trim();
+    const newPrice = parseFloat(priceInput.value);
+
+    if (!newName || isNaN(newPrice)) {
+        alert('Please enter a valid name and price.');
+        return;
+    }
+
+    try {
+        // Delete the old item
+        await deleteItem(categoryId, itemId);
+        // Add the item with new values but same ID
+        const categoryItems = products[categoryId];
+        categoryItems.push({ id: itemId, name: newName, price: newPrice });
+        // Sort by ID
+        categoryItems.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+        // Save to storage
+        await import('./app.js').then(module => module.saveProductsToStorage());
+
+        renderCategories();
+    } catch (err) {
+        console.error(err);
+        alert('Error updating item. Check console for details.');
+    }
+};
+
+window.handleCancelEdit = (categoryId) => {
+    renderCategories();
 };
 
 window.handleDelete = async (categoryId, id) => {

@@ -150,27 +150,29 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "19", name: "COLOR MATCH SILICONE", price: 0 },
     { id: "20", name: "TRIM", price: 0 },
     { id: "21", name: "SHELF", price: 0 },
-    { id: "22", name: "DELIVERY SHIPPING", price: 0 },
-    { id: "23", name: "CARTRIDGE VALVE", price: 0 },
-    { id: "24", name: "TRANSITIONS", price: 0 },
-    { id: "25", name: "DROP EAR EL", price: 0 },
-    { id: "26", name: "STAPLES PLUG", price: 0 },
-    { id: "27", name: "EXTENDERS", price: 0 },
-    { id: "28", name: "PIPE / FITTINGS / SOLDER / PRIMER / GLUE PLUMBING", price: 0 },
-    { id: "29", name: "SHOWER TRIM KIT", price: 0 },
-    { id: "30", name: "HANDHELD SHOWER", price: 0 },
-    { id: "31", name: "GRAB BAR", price: 0 },
-    { id: "32", name: "BN TUB DRAIN / OVERFLOW TRIM", price: 0 },
-    { id: "33", name: "SHOWER DRAIN", price: 0 },
-    { id: "34", name: "DROP EL - AZISBN", price: 0 },
-    { id: "35", name: "VANITY FAUCET", price: 0 },
-    { id: "36", name: "TUB SPOUT", price: 0 },
-    { id: "37", name: "VANITY P-TRAP", price: 0 },
-    { id: "38", name: "VANITY EXTENSION DRAIN", price: 0 },
-    { id: "39", name: "WAX RING", price: 0 },
-    { id: "40", name: "TOILET / TOILET SUPPLY LINE", price: 0 },
-    { id: "41", name: "VANITY / TOILET SHUT-OFF VALVES", price: 0 },
-    { id: "42", name: "TENSION CURTAIN ROD", price: 0 }
+    { id: "22", name: "DELIVERY SHIPPING", price: 0 }
+  ],
+  plumbing_materials: [
+    { id: "1", name: "CARTRIDGE VALVE", price: 0 },
+    { id: "2", name: "TRANSITIONS", price: 0 },
+    { id: "3", name: "DROP EAR EL", price: 0 },
+    { id: "4", name: "STAPLES PLUG", price: 0 },
+    { id: "5", name: "EXTENDERS", price: 0 },
+    { id: "6", name: "PIPE / FITTINGS / SOLDER / PRIMER / GLUE PLUMBING", price: 0 },
+    { id: "7", name: "SHOWER TRIM KIT", price: 0 },
+    { id: "8", name: "HANDHELD SHOWER", price: 0 },
+    { id: "9", name: "GRAB BAR", price: 0 },
+    { id: "10", name: "BN TUB DRAIN / OVERFLOW TRIM", price: 0 },
+    { id: "11", name: "SHOWER DRAIN", price: 0 },
+    { id: "12", name: "DROP EL - AZISBN", price: 0 },
+    { id: "13", name: "VANITY FAUCET", price: 0 },
+    { id: "14", name: "TUB SPOUT", price: 0 },
+    { id: "15", name: "VANITY P-TRAP", price: 0 },
+    { id: "16", name: "VANITY EXTENSION DRAIN", price: 0 },
+    { id: "17", name: "WAX RING", price: 0 },
+    { id: "18", name: "TOILET / TOILET SUPPLY LINE", price: 0 },
+    { id: "19", name: "VANITY / TOILET SHUT-OFF VALVES", price: 0 },
+    { id: "20", name: "TENSION CURTAIN ROD", price: 0 }
   ]
 };
 
@@ -892,7 +894,10 @@ function buildQuoteSections() {
           ${products.tile_materials.map(item => `
             <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
               <input type="checkbox" class="tile-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
-              <span style="flex: 1; font-size: 14px;">${item.name}</span>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
               <input type="number" class="tile-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
             </label>
           `).join('')}
@@ -900,6 +905,33 @@ function buildQuoteSections() {
         <div class="form-group" style="margin-top: 16px;">
           <label>Tile Notes:</label>
           <textarea id="tile-notes" rows="2" class="select-input" placeholder="Any special requirements for tile work or materials..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 13: Plumbing -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🔧 Plumbing</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select materials and quantities:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${products.plumbing_materials.map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="plumbing-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
+              <input type="number" class="plumbing-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Plumbing Notes:</label>
+          <textarea id="plumbing-notes" rows="2" class="select-input" placeholder="Any special requirements for plumbing materials..."></textarea>
         </div>
       </div>
     </section>
