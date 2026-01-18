@@ -111,13 +111,7 @@ function getAppHtml(maxPhotos) {
       </div>
       <div id="total" class="total-section"></div>
 
-      <div style="margin-top: 20px; margin-bottom: 12px;">
-        <label for="quote-email" style="display: block; font-weight: 600; margin-bottom: 8px;">Send Quote To:</label>
-        <input id="quote-email" type="email" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
-      </div>
-
-      <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button id="email-btn" class="btn btn-primary" disabled>Email Quote</button>
+      <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 20px;">
         <button id="share-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📤 Share PDF</button>
         <button id="print-btn" class="btn btn-secondary">Print / Save PDF</button>
         <button id="reset-btn" class="btn btn-secondary" style="margin-left:auto;">Clear All</button>
@@ -422,68 +416,8 @@ async function uploadToSupabase(blob, fileName) {
   return publicUrl;
 }
 
-/* ---------- Email Quote (Show PDF in Modal) ---------- */
+/* ---------- Share PDF (Store current PDF URL) ---------- */
 let currentPdfUrl = null; // Store the current PDF URL for sharing
-
-document.getElementById('email-btn')?.addEventListener('click', async () => {
-  const emailBtn = document.getElementById('email-btn');
-  const originalText = emailBtn.textContent;
-
-  const selections = getSelections();
-  const summaryEl = document.getElementById('summary');
-  const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
-
-  if (!hasSelections) {
-    alert('Please select some items before viewing the quote.');
-    return;
-  }
-
-  try {
-    emailBtn.disabled = true;
-    emailBtn.textContent = 'Generating PDF...';
-
-    // Step 1: Generate the PDF
-    const { blob } = await generateQuotePDF({
-      logo: state.logo,
-      photos: state.photos,
-      fileName: 'quote.pdf'
-    });
-
-    emailBtn.textContent = 'Uploading PDF...';
-
-    // Step 2: Upload PDF to Supabase Storage
-    const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
-    currentPdfUrl = pdfUrl; // Store for sharing
-
-    emailBtn.textContent = 'Opening PDF...';
-
-    // Step 3: Show modal
-    const modal = document.getElementById('pdf-modal');
-    modal.style.display = 'block';
-
-    // Save to Supabase for tracking
-    try {
-      const customer = getCustomerInfo();
-      await supabase.from('quotes_sent').insert([{
-        customer_name: customer.name,
-        customer_email: customer.email,
-        customer_phone: customer.phone,
-        pdf_url: pdfUrl,
-        created_at: new Date().toISOString()
-      }]);
-      console.log('Quote saved to Supabase');
-    } catch (dbError) {
-      console.warn('Failed to save to database:', dbError);
-    }
-
-  } catch (error) {
-    console.error('Email error:', error);
-    alert('Error preparing PDF: ' + error.message);
-  } finally {
-    emailBtn.disabled = false;
-    emailBtn.textContent = originalText;
-  }
-});
 
 /* ---------- Modal Close Button ---------- */
 document.getElementById('modal-close-btn')?.addEventListener('click', () => {
@@ -567,11 +501,12 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
   const shareBtn = document.getElementById('share-btn');
   const originalText = shareBtn.textContent;
 
+  const selections = getSelections();
   const summaryEl = document.getElementById('summary');
   const hasSelections = summaryEl && !summaryEl.querySelector('.empty-message');
 
   if (!hasSelections) {
-    alert('Please select some items before sharing a quote.');
+    alert('Please select some items before sharing the quote.');
     return;
   }
 
@@ -579,7 +514,7 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     shareBtn.disabled = true;
     shareBtn.textContent = 'Generating PDF...';
 
-    // Generate the PDF
+    // Step 1: Generate the PDF
     const { blob } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
@@ -588,32 +523,29 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
 
     shareBtn.textContent = 'Uploading PDF...';
 
-    // Upload PDF to Supabase
+    // Step 2: Upload PDF to Supabase Storage
     const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
+    currentPdfUrl = pdfUrl; // Store for sharing
 
-    shareBtn.textContent = 'Preparing share...';
+    shareBtn.textContent = 'Opening...';
 
-    // Try to use Web Share API (works great on mobile!)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Bathroom Estimate Quote - 1 Stop Bath Shop',
-          text: 'Here is your bathroom estimate quote from 1 Stop Bath Shop',
-          url: pdfUrl
-        });
-        alert('Share completed! ✅');
-      } catch (shareError) {
-        // User cancelled share or share failed
-        if (shareError.name !== 'AbortError') {
-          console.warn('Share failed:', shareError);
-          // Fallback: open PDF in new tab
-          window.open(pdfUrl, '_blank');
-        }
-      }
-    } else {
-      // No Web Share API (desktop) - just open the PDF
-      window.open(pdfUrl, '_blank');
-      alert('PDF opened in new tab! You can download or share from there. ✅');
+    // Step 3: Show modal
+    const modal = document.getElementById('pdf-modal');
+    modal.style.display = 'block';
+
+    // Save to Supabase for tracking
+    try {
+      const customer = getCustomerInfo();
+      await supabase.from('quotes_sent').insert([{
+        customer_name: customer.name,
+        customer_email: customer.email,
+        customer_phone: customer.phone,
+        pdf_url: pdfUrl,
+        created_at: new Date().toISOString()
+      }]);
+      console.log('Quote saved to Supabase');
+    } catch (dbError) {
+      console.warn('Failed to save to database:', dbError);
     }
 
   } catch (error) {
@@ -688,7 +620,6 @@ document.getElementById('reset-btn')?.addEventListener('click', () => {
   // Reset summary
   document.getElementById('summary').innerHTML = '<p class="empty-message">Select items to see your estimate</p>';
   document.getElementById('total').innerHTML = '';
-  document.getElementById('email-btn').disabled = true;
 });
 
 // Export state for other modules

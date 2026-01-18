@@ -127,6 +127,50 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: 'WM366 - 2¼" Flat Edge', price: 2.10 },
     { id: "3", name: 'WM445 - 3¼" Colonial', price: 2.50 },
     { id: "4", name: "Custom", price: 0 }
+  ],
+  tile_materials: [
+    { id: "1", name: "KERDI ROLL", price: 0 },
+    { id: "2", name: "KERDI SHOWER KIT", price: 0 },
+    { id: "3", name: "DRAIN GRATE", price: 0 },
+    { id: "4", name: "NICHE", price: 0 },
+    { id: "5", name: "PAN SHELF", price: 0 },
+    { id: "6", name: "SHOWER WALL TILE", price: 0 },
+    { id: "7", name: "SHOWER FLOOR TILE / BACK OF NICHE", price: 0 },
+    { id: "8", name: "SHOWER PAN", price: 0 },
+    { id: "9", name: "SCHLUTER JOLLY", price: 0 },
+    { id: "10", name: "SHOWER SILL", price: 0 },
+    { id: "11", name: "KERDI BAND", price: 0 },
+    { id: "12", name: "LEVELING KIT", price: 0 },
+    { id: "13", name: "MOLD MOISTURE DRYWALL", price: 0 },
+    { id: "14", name: "DITRA HEAT WIRE / OUTLET", price: 0 },
+    { id: "15", name: "DITRA HEAT WIRE", price: 0 },
+    { id: "16", name: "DITRA HEAT STAT", price: 0 },
+    { id: "17", name: "CORK", price: 0 },
+    { id: "18", name: "GROUT", price: 0 },
+    { id: "19", name: "COLOR MATCH SILICONE", price: 0 },
+    { id: "20", name: "TRIM", price: 0 },
+    { id: "21", name: "SHELF", price: 0 },
+    { id: "22", name: "DELIVERY SHIPPING", price: 0 },
+    { id: "23", name: "CARTRIDGE VALVE", price: 0 },
+    { id: "24", name: "TRANSITIONS", price: 0 },
+    { id: "25", name: "DROP EAR EL", price: 0 },
+    { id: "26", name: "STAPLES PLUG", price: 0 },
+    { id: "27", name: "EXTENDERS", price: 0 },
+    { id: "28", name: "PIPE / FITTINGS / SOLDER / PRIMER / GLUE PLUMBING", price: 0 },
+    { id: "29", name: "SHOWER TRIM KIT", price: 0 },
+    { id: "30", name: "HANDHELD SHOWER", price: 0 },
+    { id: "31", name: "GRAB BAR", price: 0 },
+    { id: "32", name: "BN TUB DRAIN / OVERFLOW TRIM", price: 0 },
+    { id: "33", name: "SHOWER DRAIN", price: 0 },
+    { id: "34", name: "DROP EL - AZISBN", price: 0 },
+    { id: "35", name: "VANITY FAUCET", price: 0 },
+    { id: "36", name: "TUB SPOUT", price: 0 },
+    { id: "37", name: "VANITY P-TRAP", price: 0 },
+    { id: "38", name: "VANITY EXTENSION DRAIN", price: 0 },
+    { id: "39", name: "WAX RING", price: 0 },
+    { id: "40", name: "TOILET / TOILET SUPPLY LINE", price: 0 },
+    { id: "41", name: "VANITY / TOILET SHUT-OFF VALVES", price: 0 },
+    { id: "42", name: "TENSION CURTAIN ROD", price: 0 }
   ]
 };
 
@@ -835,6 +879,30 @@ function buildQuoteSections() {
         </div>
       </div>
     </section>
+
+    <!-- Section 12: Tile -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">🔧 Tile</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select materials and quantities:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${products.tile_materials.map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="tile-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <span style="flex: 1; font-size: 14px;">${item.name}</span>
+              <input type="number" class="tile-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Tile Notes:</label>
+          <textarea id="tile-notes" rows="2" class="select-input" placeholder="Any special requirements for tile work or materials..."></textarea>
+        </div>
+      </div>
+    </section>
   `;
 
   // Make toggle function global
@@ -889,28 +957,37 @@ function updateSummary() {
   const fieldMapping = {
     'plumbing-color': { key: 'plumbing_color', label: 'Plumbing Color' },
     'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style' },
-    'plumbing-type': { key: 'plumbing_type', label: 'Plumbing Type' },
+    'electrical-color': { key: 'electrical_color', label: 'Electrical Color' },
     'exhaust-fan': { key: 'exhaust_fan', label: 'Exhaust Fan' },
+    'shower-color': { key: 'shower_color', label: 'Shower Color' },
     'shower-size': { key: 'shower_size', label: 'Shower Size' },
+    'shower-drain': { key: 'shower_drain', label: 'Shower Drain Location' },
+    'tub-depth': { key: 'tub_depth', label: 'Tub Depth' },
+    'tub-length': { key: 'tub_length', label: 'Tub Length' },
+    'wall-color': { key: 'wall_color', label: 'Wall Color' },
+    'wall-pattern': { key: 'wall_pattern', label: 'Wall Pattern' },
     'wall-type': { key: 'wall_type', label: 'Wall Type' },
     'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
-    'flooring-type': { key: 'flooring_type', label: 'Flooring' }
+    'flooring-type': { key: 'flooring_type', label: 'Flooring Type' },
+    'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
+    'window-style': { key: 'window_style', label: 'Window Style' }
   };
 
   // Build summary
-  let total = 0;
   let html = '';
+  let total = 0;
 
+  // Add Scope of Work first if selected
   if (selections.scope_of_work) {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-      <strong>Scope:</strong> ${selections.scope_of_work.name} <span style="color: #059669;">$${selections.scope_of_work.price.toFixed(2)}</span>
+      <strong>Scope of Work:</strong> ${selections.scope_of_work}
     </div>`;
-    total += selections.scope_of_work.price;
   }
 
-  if (selections.demo_items.length > 0) {
+  // Add demolition items
+  if (selections.demo_items && selections.demo_items.length > 0) {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-      <strong>Demo:</strong> ${selections.demo_items.join(', ')}
+      <strong>Demolition Items:</strong> ${selections.demo_items.join(', ')}
     </div>`;
   }
 
