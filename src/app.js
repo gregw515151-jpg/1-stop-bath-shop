@@ -211,6 +211,11 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "1", name: "1/4\"", price: 0 },
     { id: "2", name: "3/8\"", price: 0 },
     { id: "3", name: "Other", price: 0 }
+  ],
+  splash_options: [
+    { id: "1", name: "Back Splash", price: 0 },
+    { id: "2", name: "Left Splash", price: 0 },
+    { id: "3", name: "Right Splash", price: 0 }
   ]
 };
 
@@ -241,6 +246,14 @@ const DROPDOWN_MAPPINGS = {
   'shower-door-style': 'shower_door_styles',
   'shower-door-thickness': 'shower_door_thickness'
 };
+
+// Checkbox category mappings for dynamic admin controls
+const CHECKBOX_MAPPINGS = {
+  'tile-materials': 'tile_materials',
+  'plumbing-materials': 'plumbing_materials',
+  'splash-options': 'splash_options'
+};
+
 
 export let products = { ...DEFAULT_QUOTE_DATA };
 
@@ -770,16 +783,14 @@ function buildQuoteSections() {
         </div>
         <div class="form-group" style="margin-top: 12px;">
           <label>Splash Options:</label>
-          <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
-              <input type="checkbox" id="splash-back" style="width: 18px; height: 18px;"> Back Splash
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
-              <input type="checkbox" id="splash-left" style="width: 18px; height: 18px;"> Left Splash
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
-              <input type="checkbox" id="splash-right" style="width: 18px; height: 18px;"> Right Splash
-            </label>
+          <div id="splash-options" style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+            ${products.splash_options.map(item => `
+              <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+                <input type="checkbox" class="splash-option" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+                <span>${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </label>
+            `).join('')}
           </div>
         </div>
         
@@ -1273,7 +1284,8 @@ function renderAdminCategories() {
     { id: 'baseboard_styles', name: 'Baseboard Styles', description: 'Controls: BASEBOARD STYLE dropdown' },
     { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
     { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
-    { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' }
+    { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
+    { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' }
   ];
 
   container.innerHTML = CATEGORIES.map(cat => renderCategory(cat)).join('');
@@ -1447,10 +1459,260 @@ function injectAdminControlsToAllDropdowns() {
   });
 
   console.log('Admin control injection complete');
+
+  // Also inject checkbox controls
+  injectAdminControlsToCheckboxes();
 }
 
-function removeAdminControlsFromAllDropdowns() {
-  document.querySelectorAll('.dynamic-admin-controls').forEach(el => el.remove());
+function injectAdminControlsToCheckboxes() {
+  console.log('Injecting admin controls to checkboxes...');
+
+  // 1. Tile Materials
+  const tileSection = document.getElementById('tile-notes')?.closest('.section-content');
+  if (tileSection) {
+    const container = tileSection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('tile_materials');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('tile_materials', controlsDiv);
+    }
+  }
+
+  // 2. Plumbing Materials
+  const plumbingSection = document.getElementById('plumbing-notes')?.closest('.section-content');
+  if (plumbingSection) {
+    const container = plumbingSection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('plumbing_materials');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('plumbing_materials', controlsDiv);
+    }
+  }
+
+  // 3. Splash Options (Cabinetry)
+  const splashContainer = document.getElementById('splash-options');
+  if (splashContainer && !splashContainer.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+    const controlsDiv = createCheckboxAdminControls('splash_options');
+    splashContainer.parentNode.insertBefore(controlsDiv, splashContainer.nextElementSibling);
+    setupDynamicAdminControlsForCheckboxes('splash_options', controlsDiv);
+  }
+}
+
+function createCheckboxAdminControls(category) {
+  const controlsDiv = document.createElement('div');
+  controlsDiv.className = 'dynamic-admin-controls admin-control';
+  controlsDiv.style.cssText = 'margin-top: 12px; padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;';
+
+  controlsDiv.innerHTML = `
+    <div style="font-size: 13px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">Edit Selected Item:</div>
+    <input type="text" placeholder="Item name" class="admin-name-input" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+    <input type="number" placeholder="Price" step="0.01" class="admin-price-input" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-primary admin-add-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ Add</button>
+      <button class="btn btn-secondary admin-edit-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ Edit</button>
+      <button class="btn btn-secondary admin-delete-btn" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ Delete</button>
+      <button class="btn btn-secondary admin-cancel-btn" style="display: none; flex: 1; padding: 6px 12px; font-size: 12px; background: #6b7280;">❌ Cancel</button>
+    </div>
+    <div style="font-size: 11px; color: #6b7280; margin-top: 6px; font-style: italic;">* Select a checkbox above to populate fields</div>
+  `;
+
+  return controlsDiv;
+}
+
+function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
+  const nameInput = controlsDiv.querySelector('.admin-name-input');
+  const priceInput = controlsDiv.querySelector('.admin-price-input');
+  const addBtn = controlsDiv.querySelector('.admin-add-btn');
+  const editBtn = controlsDiv.querySelector('.admin-edit-btn');
+  const deleteBtn = controlsDiv.querySelector('.admin-delete-btn');
+  const cancelBtn = controlsDiv.querySelector('.admin-cancel-btn');
+
+  // Find the container of checkboxes
+  let checkboxContainer;
+  if (category === 'splash_options') {
+    checkboxContainer = document.getElementById('splash-options');
+  } else if (category === 'tile_materials') {
+    checkboxContainer = document.getElementById('tile-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'plumbing_materials') {
+    checkboxContainer = document.getElementById('plumbing-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  }
+
+  // Add click listener to checkboxes to populate form
+  if (checkboxContainer) {
+    checkboxContainer.addEventListener('change', (e) => {
+      if (e.target.type === 'checkbox' && document.body.classList.contains('admin-mode')) {
+        // Uncheck others to focus on one edit at a time (visual only for admin convenience)
+        // checkboxContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        //   if (cb !== e.target) cb.checked = false;
+        // });
+
+        const itemId = e.target.value;
+        const item = products[category]?.find(p => String(p.id) === String(itemId));
+
+        if (item) {
+          nameInput.value = item.name;
+          priceInput.value = item.price;
+
+          addBtn.textContent = '✅ Update';
+          addBtn.dataset.editingId = itemId;
+          cancelBtn.style.display = 'block';
+
+          // Highlight the selected item row
+          // e.target.closest('label').style.background = '#dbeafe';
+        }
+      }
+    });
+  }
+
+  // Reuse the logic from setupDynamicAdminControls - but adapted for this context
+
+  // Add/Update Button
+  addBtn.addEventListener('click', async () => {
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value) || 0;
+
+    if (!name) {
+      alert('Please enter an item name');
+      return;
+    }
+
+    if (addBtn.dataset.editingId) {
+      // Update
+      await editItem(category, addBtn.dataset.editingId, name, price);
+      // Reset UI
+      addBtn.textContent = '➕ Add';
+      delete addBtn.dataset.editingId;
+      cancelBtn.style.display = 'none';
+      alert(`Updated "${name}"`);
+    } else {
+      // Add
+      await addItem(category, name, price);
+      alert(`Added "${name}"`);
+    }
+
+    nameInput.value = '';
+    priceInput.value = '';
+
+    // Refresh UI
+    if (category === 'splash_options') {
+      // Re-render splash options
+      const container = document.getElementById('splash-options');
+      container.innerHTML = products.splash_options.map(item => `
+        <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+          <input type="checkbox" class="splash-option" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+          <span>${item.name}</span>
+          <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+        </label>
+      `).join('');
+    } else {
+      // Re-render the app to update checkbox lists
+      // Ideally we'd just re-render the section, but re-init is safer to ensure consistency
+      // But re-init closes admin... let's try to just re-render the specific section HTML
+
+      if (category === 'tile_materials') {
+        checkboxContainer.innerHTML = products.tile_materials.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="tile-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 14px;">${item.name}</span>
+              <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+            </div>
+            <input type="number" class="tile-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+          </label>
+        `).join('');
+      } else if (category === 'plumbing_materials') {
+        checkboxContainer.innerHTML = products.plumbing_materials.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="plumbing-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 14px;">${item.name}</span>
+              <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+            </div>
+            <input type="number" class="plumbing-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+          </label>
+        `).join('');
+      }
+    }
+
+    // Re-attach listeners just in case
+    setupListeners();
+  });
+
+  // Edit Button (manual triggering)
+  editBtn.addEventListener('click', () => {
+    // If user manually clicks edit without selecting a checkbox, prompt them
+    if (!addBtn.dataset.editingId) {
+      alert('Please select a checkbox item above to edit it.');
+    }
+  });
+
+  // Delete Button
+  deleteBtn.addEventListener('click', async () => {
+    if (!addBtn.dataset.editingId) {
+      alert('Please select a checkbox item above to delete it.');
+      return;
+    }
+
+    const itemId = addBtn.dataset.editingId;
+    const item = products[category]?.find(p => String(p.id) === String(itemId));
+
+    if (confirm(`Delete "${item?.name}"?`)) {
+      await deleteItem(category, itemId);
+
+      // Clear form
+      nameInput.value = '';
+      priceInput.value = '';
+      addBtn.textContent = '➕ Add';
+      delete addBtn.dataset.editingId;
+      cancelBtn.style.display = 'none';
+
+      // Refresh UI (COPY PASTE from above - could be refactored)
+      if (category === 'splash_options') {
+        const container = document.getElementById('splash-options');
+        container.innerHTML = products.splash_options.map(item => `
+          <label style="display: flex; align-items: center; gap: 6px; font-weight: normal;">
+            <input type="checkbox" class="splash-option" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+            <span>${item.name}</span>
+            <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+          </label>
+        `).join('');
+      } else if (category === 'tile_materials') {
+        checkboxContainer.innerHTML = products.tile_materials.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="tile-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 14px;">${item.name}</span>
+              <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+            </div>
+            <input type="number" class="tile-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+          </label>
+        `).join('');
+      } else if (category === 'plumbing_materials') {
+        checkboxContainer.innerHTML = products.plumbing_materials.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="plumbing-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 14px;">${item.name}</span>
+              <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+            </div>
+            <input type="number" class="plumbing-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+          </label>
+        `).join('');
+      }
+
+      setupListeners();
+      alert(`Deleted "${item.name}"`);
+    }
+  });
+
+  // Cancel Button
+  cancelBtn.addEventListener('click', () => {
+    nameInput.value = '';
+    priceInput.value = '';
+    addBtn.textContent = '➕ Add';
+    delete addBtn.dataset.editingId;
+    cancelBtn.style.display = 'none';
+  });
 }
 
 function setupDynamicAdminControls(selectId, category, controlsDiv) {
