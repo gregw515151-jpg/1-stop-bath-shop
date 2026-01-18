@@ -1202,25 +1202,25 @@ function renderAdminCategories() {
   if (!container) return;
 
   const CATEGORIES = [
-    { id: 'scope_of_work', name: 'Scope of Work' },
-    { id: 'plumbing_colors', name: 'Plumbing Colors' },
-    { id: 'plumbing_styles', name: 'Plumbing Styles' },
-    { id: 'electrical_colors', name: 'Electrical Colors' },
-    { id: 'exhaust_fans', name: 'Exhaust Fans' },
-    { id: 'shower_colors', name: 'Shower Colors' },
-    { id: 'shower_sizes', name: 'Shower Sizes' },
-    { id: 'drain_locations', name: 'Drain Locations' },
-    { id: 'tub_depths', name: 'Tub Depths' },
-    { id: 'tub_lengths', name: 'Tub Lengths' },
-    { id: 'wall_colors', name: 'Wall Colors' },
-    { id: 'wall_patterns', name: 'Wall Patterns' },
-    { id: 'wall_types', name: 'Wall Types' },
-    { id: 'vanity_lengths', name: 'Vanity Lengths' },
-    { id: 'flooring_types', name: 'Flooring Types' },
-    { id: 'baseboard_styles', name: 'Baseboard Styles' },
-    { id: 'window_styles', name: 'Window Styles' },
-    { id: 'tile_materials', name: 'Tile Materials' },
-    { id: 'plumbing_materials', name: 'Plumbing Materials' }
+    { id: 'scope_of_work', name: 'Scope of Work', description: 'Controls: Scope of Work checkboxes' },
+    { id: 'plumbing_colors', name: 'Plumbing Colors', description: 'Controls: TRIM COLOR dropdown' },
+    { id: 'plumbing_styles', name: 'Plumbing Styles', description: 'Controls: TRIM STYLE dropdown' },
+    { id: 'electrical_colors', name: 'Electrical Colors', description: 'Controls: Electrical color options' },
+    { id: 'exhaust_fans', name: 'Exhaust Fans', description: 'Controls: EXHAUST FAN dropdown' },
+    { id: 'shower_colors', name: 'Shower Colors', description: 'Controls: Shower COLOR dropdown' },
+    { id: 'shower_sizes', name: 'Shower Sizes', description: 'Controls: Shower SIZE dropdown' },
+    { id: 'drain_locations', name: 'Drain Locations', description: 'Controls: DRAIN LOCATION dropdown' },
+    { id: 'tub_depths', name: 'Tub Depths', description: 'Controls: Bathtub DEPTH dropdown' },
+    { id: 'tub_lengths', name: 'Tub Lengths', description: 'Controls: Bathtub LENGTH dropdown' },
+    { id: 'wall_colors', name: 'Wall Colors', description: 'Controls: Walls COLOR dropdown' },
+    { id: 'wall_patterns', name: 'Wall Patterns', description: 'Controls: Walls PATTERN dropdown' },
+    { id: 'wall_types', name: 'Wall Types', description: 'Controls: Walls WALL TYPE dropdown' },
+    { id: 'vanity_lengths', name: 'Vanity Lengths', description: 'Controls: Vanity LENGTH dropdown' },
+    { id: 'flooring_types', name: 'Flooring Types', description: 'Controls: Flooring TYPE dropdown' },
+    { id: 'baseboard_styles', name: 'Baseboard Styles', description: 'Controls: BASEBOARD STYLE dropdown' },
+    { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
+    { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
+    { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' }
   ];
 
   container.innerHTML = CATEGORIES.map(cat => renderCategory(cat)).join('');
@@ -1250,7 +1250,8 @@ function renderCategory(cat) {
 
   return `
     <div style="margin-bottom: 32px; padding: 20px; background: #f9fafb; border-radius: 12px;">
-      <h2 style="margin: 0 0 16px; font-size: 1.3rem; color: #111827;">${cat.name}</h2>
+      <h2 style="margin: 0 0 4px; font-size: 1.3rem; color: #111827;">${cat.name}</h2>
+      <p style="margin: 0 0 16px; font-size: 13px; color: #6b7280; font-style: italic;">${cat.description || ''}</p>
       <div style="display: flex; gap: 8px; margin-bottom: 16px;">
         <input type="text" id="add-name-${cat.id}" placeholder="Item Name" style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
         <input type="number" id="add-price-${cat.id}" placeholder="Price" step="0.01" style="width: 120px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
