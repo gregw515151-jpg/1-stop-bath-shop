@@ -1104,12 +1104,21 @@ export function generateEmailBody(selections) {
 }
 
 function setupAdminControls() {
+  const ADMIN_PASSWORD = 'admin123';
+  let isAdminVisible = false;
+
   document.getElementById('admin-btn')?.addEventListener('click', () => {
-    const password = prompt('Enter admin password:');
-    if (password && loginAdmin(password)) {
-      alert('Admin mode activated!');
-    } else if (password) {
-      alert('Incorrect password');
+    if (!isAdminVisible) {
+      const password = prompt('Enter admin password:');
+      if (password && password === ADMIN_PASSWORD) {
+        showAdminPanel();
+        isAdminVisible = true;
+      } else if (password) {
+        alert('Incorrect password');
+      }
+    } else {
+      hideAdminPanel();
+      isAdminVisible = false;
     }
   });
 
@@ -1124,6 +1133,213 @@ function setupAdminControls() {
       alert('Data reset! Page will reload.');
       window.location.reload();
     }
+  });
+}
+
+function showAdminPanel() {
+  // Create admin overlay if it doesn't exist
+  let overlay = document.getElementById('admin-overlay');
+  if (!overlay) {
+    overlay = createAdminOverlay();
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden'; // Prevent scrolling
+  renderAdminCategories();
+}
+
+function hideAdminPanel() {
+  const overlay = document.getElementById('admin-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }
+}
+
+function createAdminOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'admin-overlay';
+  overlay.style.cssText = `
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    overflow-y: auto;
+    padding: 20px;
+  `;
+
+  overlay.innerHTML = `
+    <div style="max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e5e7eb;">
+        <h1 style="margin: 0; font-size: 1.8rem; color: #111827;">🔧 Admin Panel</h1>
+        <button id="admin-close-btn" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;">✕ Close</button>
+      </div>
+      <div id="admin-categories-container"></div>
+    </div>
+  `;
+
+  // Close button handler
+  overlay.querySelector('#admin-close-btn').addEventListener('click', () => {
+    hideAdminPanel();
+  });
+
+  // Close on overlay click (outside the panel)
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      hideAdminPanel();
+    }
+  });
+
+  return overlay;
+}
+
+function renderAdminCategories() {
+  const container = document.getElementById('admin-categories-container');
+  if (!container) return;
+
+  const CATEGORIES = [
+    { id: 'scope_of_work', name: 'Scope of Work' },
+    { id: 'plumbing_colors', name: 'Plumbing Colors' },
+    { id: 'plumbing_styles', name: 'Plumbing Styles' },
+    { id: 'electrical_colors', name: 'Electrical Colors' },
+    { id: 'exhaust_fans', name: 'Exhaust Fans' },
+    { id: 'shower_colors', name: 'Shower Colors' },
+    { id: 'shower_sizes', name: 'Shower Sizes' },
+    { id: 'drain_locations', name: 'Drain Locations' },
+    { id: 'tub_depths', name: 'Tub Depths' },
+    { id: 'tub_lengths', name: 'Tub Lengths' },
+    { id: 'wall_colors', name: 'Wall Colors' },
+    { id: 'wall_patterns', name: 'Wall Patterns' },
+    { id: 'wall_types', name: 'Wall Types' },
+    { id: 'vanity_lengths', name: 'Vanity Lengths' },
+    { id: 'flooring_types', name: 'Flooring Types' },
+    { id: 'baseboard_styles', name: 'Baseboard Styles' },
+    { id: 'window_styles', name: 'Window Styles' },
+    { id: 'tile_materials', name: 'Tile Materials' },
+    { id: 'plumbing_materials', name: 'Plumbing Materials' }
+  ];
+
+  container.innerHTML = CATEGORIES.map(cat => renderCategory(cat)).join('');
+
+  // Attach event listeners for all categories
+  CATEGORIES.forEach(cat => {
+    setupCategoryHandlers(cat.id);
+  });
+}
+
+function renderCategory(cat) {
+  const items = products[cat.id] || [];
+  const itemsHTML = items.length === 0
+    ? '<p style="color: #6b7280; font-size: 14px;">No items in this category.</p>'
+    : items.map(item => `
+        <div class="admin-item-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px;">
+          <div style="flex: 1;">
+            <strong>${item.name}</strong>
+            <span style="color: #6b7280; margin-left: 8px;">$${parseFloat(item.price).toFixed(2)}</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="admin-edit-btn" data-category="${cat.id}" data-id="${item.id}" style="background: #3b82f6; color: white; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">EDIT</button>
+            <button class="admin-delete-btn" data-category="${cat.id}" data-id="${item.id}" style="background: #ef4444; color: white; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+  return `
+    <div style="margin-bottom: 32px; padding: 20px; background: #f9fafb; border-radius: 12px;">
+      <h2 style="margin: 0 0 16px; font-size: 1.3rem; color: #111827;">${cat.name}</h2>
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <input type="text" id="add-name-${cat.id}" placeholder="Item Name" style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+        <input type="number" id="add-price-${cat.id}" placeholder="Price" step="0.01" style="width: 120px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+        <button class="admin-add-btn" data-category="${cat.id}" style="background: #10b981; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">ADD</button>
+      </div>
+      <div id="list-${cat.id}">
+        ${itemsHTML}
+      </div>
+    </div>
+  `;
+}
+
+function setupCategoryHandlers(categoryId) {
+  // Add button handler
+  const addBtn = document.querySelector(`.admin-add-btn[data-category="${categoryId}"]`);
+  if (addBtn) {
+    addBtn.addEventListener('click', async () => {
+      const nameInput = document.getElementById(`add-name-${categoryId}`);
+      const priceInput = document.getElementById(`add-price-${categoryId}`);
+      const name = nameInput.value.trim();
+      const price = parseFloat(priceInput.value);
+
+      if (!name || isNaN(price)) {
+        alert('Please enter a valid name and price.');
+        return;
+      }
+
+      try {
+        await addItem(categoryId, name, price);
+        nameInput.value = '';
+        priceInput.value = '';
+        renderAdminCategories();
+        populateDropdowns(); // Update dropdowns in main form
+      } catch (err) {
+        console.error(err);
+        alert('Error adding item. Check console for details.');
+      }
+    });
+  }
+
+  // Edit button handlers
+  document.querySelectorAll(`.admin-edit-btn[data-category="${categoryId}"]`).forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const itemId = e.target.dataset.id;
+      const item = products[categoryId]?.find(p => p.id === itemId);
+      if (!item) return;
+
+      const newName = prompt('Enter new name:', item.name);
+      if (!newName) return;
+
+      const newPrice = prompt('Enter new price:', item.price);
+      if (newPrice === null) return;
+
+      const price = parseFloat(newPrice);
+      if (isNaN(price)) {
+        alert('Invalid price');
+        return;
+      }
+
+      try {
+        await deleteItem(categoryId, itemId);
+        await addItem(categoryId, newName, price);
+        renderAdminCategories();
+        populateDropdowns();
+      } catch (err) {
+        console.error(err);
+        alert('Error updating item.');
+      }
+    });
+  });
+
+  // Delete button handlers
+  document.querySelectorAll(`.admin-delete-btn[data-category="${categoryId}"]`).forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const itemId = e.target.dataset.id;
+      const item = products[categoryId]?.find(p => p.id === itemId);
+
+      if (!confirm(`Delete "${item?.name}"?`)) return;
+
+      try {
+        await deleteItem(categoryId, itemId);
+        renderAdminCategories();
+        populateDropdowns();
+        updateSummary();
+      } catch (err) {
+        console.error(err);
+        alert('Error deleting item.');
+      }
+    });
   });
 }
 // Dynamic Admin Controls - Append to end of app.js
