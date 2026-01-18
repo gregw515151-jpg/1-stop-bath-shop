@@ -1111,14 +1111,22 @@ function setupAdminControls() {
     if (!isAdminVisible) {
       const password = prompt('Enter admin password:');
       if (password && password === ADMIN_PASSWORD) {
-        showAdminPanel();
+        // Activate inline admin mode
+        injectAdminControlsToAllDropdowns();
         isAdminVisible = true;
+        document.getElementById('admin-btn').textContent = '🔓 Exit Admin';
+        document.getElementById('admin-btn').style.background = '#10b981';
+        alert('Admin mode activated! Admin controls now appear under each dropdown.');
       } else if (password) {
         alert('Incorrect password');
       }
     } else {
-      hideAdminPanel();
+      // Deactivate inline admin mode
+      document.querySelectorAll('.dynamic-admin-controls').forEach(el => el.remove());
       isAdminVisible = false;
+      document.getElementById('admin-btn').textContent = '🔐 Admin';
+      document.getElementById('admin-btn').style.background = '#3b82f6';
+      alert('Admin mode deactivated.');
     }
   });
 
