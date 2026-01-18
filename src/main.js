@@ -300,6 +300,39 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   const totalEl = document.getElementById('total');
   const customer = getCustomerInfo();
 
+  // Collect all section notes
+  const noteFields = [
+    { id: 'demolition-notes', label: 'Demolition Notes' },
+    { id: 'electrical-notes', label: 'Electrical Notes' },
+    { id: 'fixtures-notes', label: 'Fixtures & Finishes Notes' },
+    { id: 'cabinetry-notes', label: 'Cabinetry Notes' },
+    { id: 'trim-notes', label: 'Trim Notes' },
+    { id: 'flooring-notes', label: 'Flooring Notes' },
+    { id: 'tile-notes', label: 'Tile Notes' },
+    { id: 'plumbing-notes', label: 'Plumbing Notes' },
+    { id: 'bathroom-notes', label: 'Additional Notes' }
+  ];
+
+  let allNotesHTML = '';
+
+  // Add main customer notes first if they exist
+  if (customer.notes) {
+    allNotesHTML += `<div style="margin-bottom: 12px;">${esc(customer.notes)}</div>`;
+  }
+
+  // Add section notes
+  noteFields.forEach(field => {
+    const val = document.getElementById(field.id)?.value;
+    if (val && val.trim()) {
+      allNotesHTML += `
+        <div style="margin-top: 8px;">
+          <strong>${field.label}:</strong>
+          <div style="margin-top: 2px; white-space: pre-wrap;">${esc(val)}</div>
+        </div>
+      `;
+    }
+  });
+
   // Temporary off-screen container for clean render
   const pdfRoot = document.createElement('div');
   pdfRoot.style.width = '800px';
@@ -323,8 +356,8 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
       <div><strong>Email:</strong> ${esc(customer.email)}</div>
       <div style="margin-top:6px;"><strong>Address:</strong><br>${esc(customer.address).replace(/\n/g, '<br>')}</div>
     </div>
-    <h2 style="font-size:16px; margin: 16px 0 8px;">Notes</h2>
-    <div style="font-size:14px; white-space:pre-wrap;">${esc(customer.notes)}</div>
+    
+    ${allNotesHTML ? `<h2 style="font-size:16px; margin: 16px 0 8px;">Notes</h2><div style="font-size:14px;">${allNotesHTML}</div>` : ''}
   `;
 
   const photosGridHTML = (photos || []).map((p) => `
