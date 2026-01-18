@@ -173,6 +173,44 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "18", name: "TOILET / TOILET SUPPLY LINE", price: 0 },
     { id: "19", name: "VANITY / TOILET SHUT-OFF VALVES", price: 0 },
     { id: "20", name: "TENSION CURTAIN ROD", price: 0 }
+  ],
+  shelf_types: [
+    { id: "1", name: "Single Shelf", price: 0 },
+    { id: "2", name: "Double Shelf", price: 0 },
+    { id: "3", name: "None", price: 0 }
+  ],
+  seat_types: [
+    { id: "1", name: "Hexagon", price: 0 },
+    { id: "2", name: "Bench", price: 0 },
+    { id: "3", name: "LH (Left Hand)", price: 0 },
+    { id: "4", name: "RH (Right Hand)", price: 0 },
+    { id: "5", name: "Folding", price: 0 },
+    { id: "6", name: "None", price: 0 }
+  ],
+  grab_bar_sizes: [
+    { id: "1", name: "16\"", price: 0 },
+    { id: "2", name: "24\"", price: 0 },
+    { id: "3", name: "None", price: 0 }
+  ],
+  enclosure_types: [
+    { id: "1", name: "Curtain Rod - Bowed", price: 0 },
+    { id: "2", name: "Curtain Rod - Straight", price: 0 },
+    { id: "3", name: "Shower Door", price: 0 }
+  ],
+  window_kits: [
+    { id: "1", name: "Yes", price: 0 },
+    { id: "2", name: "No", price: 0 }
+  ],
+  shower_door_styles: [
+    { id: "1", name: "Bypass Slider", price: 0 },
+    { id: "2", name: "Panel Pivot", price: 0 },
+    { id: "3", name: "Pivot", price: 0 },
+    { id: "4", name: "Other", price: 0 }
+  ],
+  shower_door_thickness: [
+    { id: "1", name: "1/4\"", price: 0 },
+    { id: "2", name: "3/8\"", price: 0 },
+    { id: "3", name: "Other", price: 0 }
   ]
 };
 
@@ -194,7 +232,14 @@ const DROPDOWN_MAPPINGS = {
   'vanity-length': 'vanity_lengths',
   'flooring-type': 'flooring_types',
   'baseboard-style': 'baseboard_styles',
-  'window-style': 'window_styles'
+  'window-style': 'window_styles',
+  'shelves-type': 'shelf_types',
+  'seat-type': 'seat_types',
+  'grab-bars-size': 'grab_bar_sizes',
+  'enclosure-type': 'enclosure_types',
+  'window-kit': 'window_kits',
+  'shower-door-style': 'shower_door_styles',
+  'shower-door-thickness': 'shower_door_thickness'
 };
 
 export let products = { ...DEFAULT_QUOTE_DATA };
