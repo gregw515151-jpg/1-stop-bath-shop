@@ -559,6 +559,10 @@ function buildQuoteSections() {
           <label>Demolition Notes:</label>
           <textarea id="demolition-notes" rows="2" class="select-input" placeholder="Any special demolition requirements or notes..."></textarea>
         </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Demo & Disposal Cost:</label>
+          <input type="number" id="demo-disposal-cost" min="0" step="0.01" class="select-input" placeholder="Enter total cost (e.g., 500.00)">
+        </div>
       </div>
     </section>
 
@@ -1112,7 +1116,7 @@ function setupListeners() {
   const inputs = [
     'plumbing-color', 'plumbing-style', 'electrical-color', 'exhaust-fan',
     'switches', 'outlets', 'recessed-lights', 'electrical-notes',
-    'demolition-notes', 'fixtures-notes', 'bathroom-notes', 'flooring-notes',
+    'demolition-notes', 'demo-disposal-cost', 'fixtures-notes', 'bathroom-notes', 'flooring-notes',
     'shower-color', 'shower-size', 'shower-drain',
     'tub-depth', 'tub-length',
     'wall-color', 'wall-pattern', 'wall-type',
@@ -1222,6 +1226,19 @@ function updateSummary() {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
       <strong>Demolition Items:</strong> ${selections.demo_items.join(', ')}
     </div>`;
+  }
+
+  // Add demo & disposal cost
+  const demoDisposalCost = document.getElementById('demo-disposal-cost');
+  if (demoDisposalCost && demoDisposalCost.value) {
+    const cost = parseFloat(demoDisposalCost.value) || 0;
+    if (cost > 0) {
+      total += cost;
+      html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
+        <strong>Demo & Disposal Cost:</strong> $${cost.toFixed(2)}
+      </div>`;
+      selections.demo_disposal_cost = cost;
+    }
   }
 
   // Calculate Tile Materials
