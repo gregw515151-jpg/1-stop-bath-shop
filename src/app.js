@@ -212,6 +212,11 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: "3/8\"", price: 0 },
     { id: "3", name: "Other", price: 0 }
   ],
+  shower_door_glass_types: [
+    { id: "1", name: "Clear", price: 0 },
+    { id: "2", name: "Rain", price: 0 },
+    { id: "3", name: "Other", price: 0 }
+  ],
   splash_options: [
     { id: "1", name: "Back Splash", price: 0 },
     { id: "2", name: "Left Splash", price: 0 },
@@ -245,7 +250,8 @@ const DROPDOWN_MAPPINGS = {
   'enclosure-type': 'enclosure_types',
   'window-kit': 'window_kits',
   'shower-door-style': 'shower_door_styles',
-  'shower-door-thickness': 'shower_door_thickness'
+  'shower-door-thickness': 'shower_door_thickness',
+  'shower-door-glass-type': 'shower_door_glass_types'
 };
 
 // Checkbox category mappings for dynamic admin controls
@@ -736,6 +742,15 @@ function buildQuoteSections() {
             </select>
           </div>
           <div class="form-group">
+            <label>Glass Type:</label>
+            <select id="shower-door-glass-type" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="clear">Clear</option>
+              <option value="rain">Rain</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>Glass Thickness:</label>
             <select id="shower-door-thickness" class="select-input">
               <option value="">-- Select --</option>
@@ -1035,7 +1050,7 @@ function setupListeners() {
     'vanity-length', 'flooring-type', 'flooring-sqft',
     'baseboard-style', 'window-style',
     'grab-bars-size', 'grab-bars-qty',
-    'grab-bars-size-2'
+    'grab-bars-size-2', 'shower-door-style', 'shower-door-thickness', 'shower-door-glass-type'
   ];
 
   inputs.forEach(id => {
@@ -1075,7 +1090,10 @@ function updateSummary() {
     'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
     'window-style': { key: 'window_style', label: 'Window Style' },
     'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size' },
-    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size (2)' }
+    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size (2)' },
+    'shower-door-style': { key: 'shower_door_style', label: 'Shower Door Style' },
+    'shower-door-thickness': { key: 'shower_door_thickness', label: 'Shower Door Thickness' },
+    'shower-door-glass-type': { key: 'shower_door_glass_type', label: 'Shower Door Glass Type' },
   };
 
   // Build summary
@@ -1302,7 +1320,10 @@ function renderAdminCategories() {
     { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
     { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
     { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
-    { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' }
+    { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' },
+    { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
+    { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
+    { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' }
   ];
 
   container.innerHTML = CATEGORIES.map(cat => renderCategory(cat)).join('');
