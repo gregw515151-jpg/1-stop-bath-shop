@@ -133,7 +133,7 @@ function getAppHtml(maxPhotos) {
           <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
             <button id="modal-view-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️ View PDF</button>
             <button id="modal-share-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px;">📤 Share PDF</button>
-            <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">📋 Copy Link</button>
+            <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">💾 Download PDF</button>
           </div>
         </div>
       </div>
@@ -507,8 +507,9 @@ async function uploadToSupabase(blob, fileName) {
   return publicUrl;
 }
 
-/* ---------- Share PDF (Store current PDF URL) ---------- */
-let currentPdfUrl = null; // Store the current PDF URL for sharing
+/* ---------- Share PDF (Store current PDF blob for direct sharing) ---------- */
+let currentPdfBlob = null; // Store the current PDF blob for sharing
+let currentPdfBlobUrl = null; // Store temporary blob URL for viewing
 
 /* ---------- Modal Close Button ---------- */
 document.getElementById('modal-close-btn')?.addEventListener('click', () => {
@@ -525,65 +526,87 @@ document.getElementById('pdf-modal')?.addEventListener('click', (e) => {
 
 /* ---------- Modal View PDF Button ---------- */
 document.getElementById('modal-view-btn')?.addEventListener('click', () => {
-  if (!currentPdfUrl) {
+  if (!currentPdfBlobUrl) {
     alert('No PDF to view. Please generate a quote first.');
     return;
   }
 
-  // Open PDF in new tab
-  window.open(currentPdfUrl, '_blank');
+  // Open PDF in new tab using blob URL
+  window.open(currentPdfBlobUrl, '_blank');
 });
 
 /* ---------- Modal Share Button ---------- */
 document.getElementById('modal-share-btn')?.addEventListener('click', async () => {
-  if (!currentPdfUrl) {
+  if (!currentPdfBlob) {
     alert('No PDF to share. Please generate a quote first.');
     return;
   }
 
   try {
-    // Try to use Web Share API (works great on mobile!)
-    if (navigator.share) {
+    const customer = getCustomerInfo();
+    const fileName = `${customer.name || 'Quote'}_BathroomEstimate.pdf`.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    // Create a File object from the blob
+    const pdfFile = new File([currentPdfBlob], fileName, { type: 'application/pdf' });
+
+    // Try to use Web Share API with file sharing (works great on mobile!)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
       await navigator.share({
         title: 'Bathroom Estimate Quote - 1 Stop Bath Shop',
         text: 'Here is your bathroom estimate quote from 1 Stop Bath Shop',
-        url: currentPdfUrl
+        files: [pdfFile]
       });
       console.log('Share completed!');
+    } else if (navigator.share) {
+      // Web Share API exists but doesn't support files - fallback to download
+      alert('Your browser doesn\'t support file sharing. Downloading PDF instead...');
+      const a = document.createElement('a');
+      a.href = currentPdfBlobUrl;
+      a.download = fileName;
+      a.click();
     } else {
-      // Fallback: Copy to clipboard
-      await navigator.clipboard.writeText(currentPdfUrl);
-      alert('Web Share not supported. PDF link copied to clipboard! You can now paste and share it. 📋');
+      // No Web Share API - download the file
+      alert('Downloading PDF for sharing...');
+      const a = document.createElement('a');
+      a.href = currentPdfBlobUrl;
+      a.download = fileName;
+      a.click();
     }
   } catch (error) {
     // User cancelled or error occurred
     if (error.name !== 'AbortError') {
       console.error('Share error:', error);
-      // Try clipboard fallback
-      try {
-        await navigator.clipboard.writeText(currentPdfUrl);
-        alert('PDF link copied to clipboard! 📋');
-      } catch (clipError) {
-        alert('Share failed. PDF URL: ' + currentPdfUrl);
-      }
+      // Fallback to download
+      const customer = getCustomerInfo();
+      const fileName = `${customer.name || 'Quote'}_BathroomEstimate.pdf`.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const a = document.createElement('a');
+      a.href = currentPdfBlobUrl;
+      a.download = fileName;
+      a.click();
     }
   }
 });
 
-/* ---------- Modal Copy Link Button ---------- */
+/* ---------- Modal Download PDF Button ---------- */
 document.getElementById('modal-copy-link-btn')?.addEventListener('click', async () => {
-  if (!currentPdfUrl) {
-    alert('No PDF link to copy. Please generate a quote first.');
+  if (!currentPdfBlobUrl) {
+    alert('No PDF to download. Please generate a quote first.');
     return;
   }
 
   try {
-    await navigator.clipboard.writeText(currentPdfUrl);
-    alert('PDF link copied to clipboard! ✅');
+    const customer = getCustomerInfo();
+    const fileName = `${customer.name || 'Quote'}_BathroomEstimate.pdf`.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    const a = document.createElement('a');
+    a.href = currentPdfBlobUrl;
+    a.download = fileName;
+    a.click();
+
+    alert('PDF downloaded successfully! ✅');
   } catch (error) {
-    console.error('Copy error:', error);
-    // Fallback: show the URL
-    prompt('Copy this PDF link:', currentPdfUrl);
+    console.error('Download error:', error);
+    alert('Error downloading PDF. Please try again.');
   }
 });
 
@@ -605,6 +628,11 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     shareBtn.disabled = true;
     shareBtn.textContent = 'Generating PDF...';
 
+    // Clean up previous blob URL if it exists
+    if (currentPdfBlobUrl) {
+      URL.revokeObjectURL(currentPdfBlobUrl);
+    }
+
     // Step 1: Generate the PDF
     const { blob } = await generateQuotePDF({
       logo: state.logo,
@@ -612,31 +640,29 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
       fileName: 'quote.pdf'
     });
 
-    shareBtn.textContent = 'Uploading PDF...';
+    // Step 2: Store blob and create temporary URL for viewing
+    currentPdfBlob = blob;
+    currentPdfBlobUrl = URL.createObjectURL(blob);
 
-    // Step 2: Upload PDF to Supabase Storage
-    const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
-    currentPdfUrl = pdfUrl; // Store for sharing
-
-    shareBtn.textContent = 'Opening...';
+    shareBtn.textContent = 'Ready!';
 
     // Step 3: Show modal
     const modal = document.getElementById('pdf-modal');
     modal.style.display = 'block';
 
-    // Save to Supabase for tracking
+    // Optional: Save to Supabase for tracking (without uploading the file)
     try {
       const customer = getCustomerInfo();
       await supabase.from('quotes_sent').insert([{
         customer_name: customer.name,
         customer_email: customer.email,
         customer_phone: customer.phone,
-        pdf_url: pdfUrl,
+        pdf_url: 'direct-share', // Indicate this was a direct share, not a storage URL
         created_at: new Date().toISOString()
       }]);
-      console.log('Quote saved to Supabase');
+      console.log('Quote tracking saved to Supabase');
     } catch (dbError) {
-      console.warn('Failed to save to database:', dbError);
+      console.warn('Failed to save tracking to database:', dbError);
     }
 
   } catch (error) {
