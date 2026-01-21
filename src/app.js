@@ -687,13 +687,6 @@ function buildQuoteSections() {
             </select>
           </div>
           <div class="form-group">
-            <label>Number of Grab Bars:</label>
-            <input type="number" id="grab-bars-qty" min="0" max="10" class="select-input" placeholder="How many?">
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
-          <div class="form-group">
             <label>Grab Bars Size (2):</label>
             <select id="grab-bars-size-2" class="select-input">
               <option value="">-- Select --</option>
@@ -703,10 +696,12 @@ function buildQuoteSections() {
             </select>
           </div>
           <div class="form-group">
-            <label>Number of Grab Bars (2):</label>
-            <input type="number" id="grab-bars-qty-2" min="0" max="10" class="select-input" placeholder="How many?">
+            <label>Number of Grab Bars:</label>
+            <input type="number" id="grab-bars-qty" min="0" max="10" class="select-input" placeholder="How many?">
           </div>
         </div>
+
+
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
           <div class="form-group">
@@ -1040,7 +1035,7 @@ function setupListeners() {
     'vanity-length', 'flooring-type', 'flooring-sqft',
     'baseboard-style', 'window-style',
     'grab-bars-size', 'grab-bars-qty',
-    'grab-bars-size-2', 'grab-bars-qty-2'
+    'grab-bars-size-2'
   ];
 
   inputs.forEach(id => {
