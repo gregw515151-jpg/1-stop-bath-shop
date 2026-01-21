@@ -58,8 +58,8 @@ function getAppHtml(maxPhotos) {
         <label style="text-decoration: underline; display: block; text-align: center; font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;">Scope of Work</label>
         <div id="scope-of-work-checkboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
           <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
-            <input type="checkbox" class="scope-item" value="Title Shower" style="width: 18px; height: 18px;">
-            <span>Title Shower</span>
+            <input type="checkbox" class="scope-item" value="Tile Shower" style="width: 18px; height: 18px;">
+            <span>Tile Shower</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
             <input type="checkbox" class="scope-item" value="Tub to Shower Conversion" style="width: 18px; height: 18px;">
