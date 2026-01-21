@@ -1058,9 +1058,38 @@ function setupListeners() {
     if (el) el.addEventListener('change', updateSummary);
   });
 
-  // Demo checkboxes
-  document.querySelectorAll('.demo-item').forEach(cb => {
-    cb.addEventListener('change', updateSummary);
+  // Checkboxes (including demo, tile, and plumbing items)
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      // If checked and qty is 0/empty, set to 1 for tile/plumbing items
+      if (e.target.checked) {
+        if (e.target.classList.contains('tile-item')) {
+          const item = products.tile_materials.find(p => p.id === e.target.value);
+          if (item) {
+            const qtyInput = document.querySelector(`.tile-qty[data-item="${item.id}"]`);
+            if (qtyInput && (qtyInput.value === '' || qtyInput.value === '0')) {
+              qtyInput.value = 1;
+            }
+          }
+        } else if (e.target.classList.contains('plumbing-item')) {
+          const item = products.plumbing_materials.find(p => p.id === e.target.value);
+          if (item) {
+            const qtyInput = document.querySelector(`.plumbing-qty[data-item="${item.id}"]`);
+            if (qtyInput && (qtyInput.value === '' || qtyInput.value === '0')) {
+              qtyInput.value = 1;
+            }
+          }
+        }
+      }
+      updateSummary();
+    });
+  });
+
+  // Quantity inputs for tile and plumbing
+  const qtyInputs = document.querySelectorAll('.tile-qty, .plumbing-qty');
+  qtyInputs.forEach(input => {
+    input.addEventListener('input', updateSummary);
   });
 }
 
@@ -1112,6 +1141,48 @@ function updateSummary() {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
       <strong>Demolition Items:</strong> ${selections.demo_items.join(', ')}
     </div>`;
+  }
+
+  // Calculate Tile Materials
+  const tileCheckboxes = document.querySelectorAll('.tile-item:checked');
+  if (tileCheckboxes.length > 0) {
+    let tileHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Tile Materials:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    tileCheckboxes.forEach(cb => {
+      const item = products.tile_materials.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.tile-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
+          const cost = item.price * qty;
+          total += cost;
+          tileHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          selections[`tile_material_${item.id}`] = `${item.name} (x${qty})`;
+        }
+      }
+    });
+    tileHtml += '</ul></div>';
+    if (tileHtml.includes('<li>')) html += tileHtml;
+  }
+
+  // Calculate Plumbing Materials
+  const plumbingCheckboxes = document.querySelectorAll('.plumbing-item:checked');
+  if (plumbingCheckboxes.length > 0) {
+    let plumbingHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Plumbing Materials:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    plumbingCheckboxes.forEach(cb => {
+      const item = products.plumbing_materials.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.plumbing-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
+          const cost = item.price * qty;
+          total += cost;
+          plumbingHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          selections[`plumbing_material_${item.id}`] = `${item.name} (x${qty})`;
+        }
+      }
+    });
+    plumbingHtml += '</ul></div>';
+    if (plumbingHtml.includes('<li>')) html += plumbingHtml;
   }
 
   // Update other selections and build HTML
