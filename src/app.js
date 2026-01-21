@@ -241,6 +241,7 @@ const DROPDOWN_MAPPINGS = {
   'shelves-type': 'shelf_types',
   'seat-type': 'seat_types',
   'grab-bars-size': 'grab_bar_sizes',
+  'grab-bars-size-2': 'grab_bar_sizes',
   'enclosure-type': 'enclosure_types',
   'window-kit': 'window_kits',
   'shower-door-style': 'shower_door_styles',
@@ -690,6 +691,22 @@ function buildQuoteSections() {
             <input type="number" id="grab-bars-qty" min="0" max="10" class="select-input" placeholder="How many?">
           </div>
         </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label>Grab Bars Size (2):</label>
+            <select id="grab-bars-size-2" class="select-input">
+              <option value="">-- Select --</option>
+              <option value="16">16"</option>
+              <option value="24">24"</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Number of Grab Bars (2):</label>
+            <input type="number" id="grab-bars-qty-2" min="0" max="10" class="select-input" placeholder="How many?">
+          </div>
+        </div>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
           <div class="form-group">
@@ -1021,7 +1038,9 @@ function setupListeners() {
     'tub-depth', 'tub-length',
     'wall-color', 'wall-pattern', 'wall-type',
     'vanity-length', 'flooring-type', 'flooring-sqft',
-    'baseboard-style', 'window-style'
+    'baseboard-style', 'window-style',
+    'grab-bars-size', 'grab-bars-qty',
+    'grab-bars-size-2', 'grab-bars-qty-2'
   ];
 
   inputs.forEach(id => {
@@ -1059,7 +1078,9 @@ function updateSummary() {
     'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
     'flooring-type': { key: 'flooring_type', label: 'Flooring Type' },
     'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
-    'window-style': { key: 'window_style', label: 'Window Style' }
+    'window-style': { key: 'window_style', label: 'Window Style' },
+    'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size' },
+    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size (2)' }
   };
 
   // Build summary
