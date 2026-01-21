@@ -217,6 +217,28 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: "Rain", price: 0 },
     { id: "3", name: "Other", price: 0 }
   ],
+  trim_baseboard_styles: [
+    { id: "1", name: "WM623 3 1/4\" Colonial - Primed", price: 0 },
+    { id: "2", name: "WM623 3 1/4\" Colonial - Clear", price: 0 },
+    { id: "3", name: "WM713 3 1/4\" Clamshell - Primed", price: 0 },
+    { id: "4", name: "WM713 3 1/4\" Clamshell - Clear", price: 0 },
+    { id: "5", name: "WM663 3 1/4\" Ogee - Primed", price: 0 },
+    { id: "6", name: "WM663 3 1/4\" Ogee - Clear", price: 0 },
+    { id: "7", name: "WM163E 5 1/4\" Base w/Cap - Primed", price: 0 },
+    { id: "8", name: "WM163E 5 1/4\" Base w/Cap - Clear", price: 0 },
+    { id: "9", name: "Other", price: 0 }
+  ],
+  trim_window_door_styles: [
+    { id: "1", name: "WM376 2 1/4\" Colonial - Primed", price: 0 },
+    { id: "2", name: "WM376 2 1/4\" Colonial - Clear", price: 0 },
+    { id: "3", name: "WM366 2 1/4\" Flat Edge Colonial - Primed", price: 0 },
+    { id: "4", name: "WM366 2 1/4\" Flat Edge Colonial - Clear", price: 0 },
+    { id: "5", name: "WM445 3 1/4\" Colonial - Primed", price: 0 },
+    { id: "6", name: "WM445 3 1/4\" Colonial - Clear", price: 0 },
+    { id: "7", name: "WM327 2 1/4\" Clamshell - Primed", price: 0 },
+    { id: "8", name: "WM327 2 1/4\" Clamshell - Clear", price: 0 },
+    { id: "9", name: "Other", price: 0 }
+  ],
   splash_options: [
     { id: "1", name: "Back Splash", price: 0 },
     { id: "2", name: "Left Splash", price: 0 },
@@ -241,7 +263,8 @@ const DROPDOWN_MAPPINGS = {
   'wall-type': 'wall_types',
   'vanity-length': 'vanity_lengths',
   'flooring-type': 'flooring_types',
-  'baseboard-style': 'baseboard_styles',
+  'baseboard-style': 'trim_baseboard_styles',
+  'window-door-style': 'trim_window_door_styles',
   'window-style': 'window_styles',
   'shelves-type': 'shelf_types',
   'seat-type': 'seat_types',
@@ -918,6 +941,18 @@ function buildQuoteSections() {
       <div class="section-content">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
           <div class="form-group">
+            <label>Baseboard Style:</label>
+            <select id="baseboard-style" class="select-input">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Window/Door Style:</label>
+            <select id="window-door-style" class="select-input">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>Casing (Linear Ft):</label>
             <input type="number" id="trim-casing-ft" min="0" class="select-input" placeholder="Linear feet">
           </div>
@@ -1048,7 +1083,7 @@ function setupListeners() {
     'tub-depth', 'tub-length',
     'wall-color', 'wall-pattern', 'wall-type',
     'vanity-length', 'flooring-type', 'flooring-sqft',
-    'baseboard-style', 'window-style',
+    'baseboard-style', 'window-door-style', 'window-style',
     'grab-bars-size', 'grab-bars-qty',
     'grab-bars-size-2', 'shower-door-style', 'shower-door-thickness', 'shower-door-glass-type'
   ];
@@ -1117,6 +1152,7 @@ function updateSummary() {
     'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
     'flooring-type': { key: 'flooring_type', label: 'Flooring Type' },
     'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
+    'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style' },
     'window-style': { key: 'window_style', label: 'Window Style' },
     'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size' },
     'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size (2)' },
@@ -1387,7 +1423,9 @@ function renderAdminCategories() {
     { id: 'wall_types', name: 'Wall Types', description: 'Controls: Walls WALL TYPE dropdown' },
     { id: 'vanity_lengths', name: 'Vanity Lengths', description: 'Controls: Vanity LENGTH dropdown' },
     { id: 'flooring_types', name: 'Flooring Types', description: 'Controls: Flooring TYPE dropdown' },
-    { id: 'baseboard_styles', name: 'Baseboard Styles', description: 'Controls: BASEBOARD STYLE dropdown' },
+    { id: 'trim_baseboard_styles', name: 'Baseboard Styles', description: 'Controls: Baseboard Style dropdown' },
+    { id: 'trim_window_door_styles', name: 'Window/Door Trim Styles', description: 'Controls: Window/Door Trim Style dropdown' },
+    { id: 'baseboard_styles', name: 'Baseboard Styles (Legacy)', description: 'Controls: BASEBOARD STYLE dropdown (Old)' },
     { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
     { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
     { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
