@@ -21,6 +21,13 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "3", name: "Oil Rubbed Bronze", price: 0 },
     { id: "4", name: "Black", price: 0 }
   ],
+  accessories_finishes: [
+    { id: "1", name: "Chrome", price: 0 },
+    { id: "2", name: "Brushed Nickel", price: 0 },
+    { id: "3", name: "Oil Rubbed Bronze", price: 0 },
+    { id: "4", name: "Black", price: 0 },
+    { id: "5", name: "Custom", price: 0 }
+  ],
   plumbing_colors: [
     { id: "1", name: "Chrome", price: 0 },
     { id: "2", name: "Brushed Nickel", price: 50 },
@@ -266,6 +273,7 @@ const DROPDOWN_MAPPINGS = {
   'plumbing-style': 'plumbing_styles',
   'electrical-color': 'electrical_colors',
   'exhaust-fan': 'exhaust_fans',
+  'accessories-finish': 'accessories_finishes',
   'shower-color': 'shower_colors',
   'shower-size': 'shower_sizes',
   'shower-drain': 'drain_locations',
@@ -493,7 +501,8 @@ function populateDropdowns() {
   Object.entries(DROPDOWN_MAPPINGS).forEach(([selectId, category]) => {
     const select = document.getElementById(selectId);
     if (select && products[category]) {
-      select.innerHTML = '<option value="">-- Select --</option>' +
+      const defaultText = select.getAttribute('data-default-text') || '-- Select --';
+      select.innerHTML = `<option value="">${defaultText}</option>` +
         products[category].map(item =>
           `<option value="${item.id}">${item.name}${item.price > 0 ? ' (+$' + item.price.toFixed(2) + ')' : item.price < 0 ? ' (-$' + Math.abs(item.price).toFixed(2) + ')' : ''}</option>`
         ).join('');
@@ -881,13 +890,8 @@ function buildQuoteSections() {
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Accessories Finish:</label>
-          <select id="accessories-finish" class="select-input">
+          <select id="accessories-finish" class="select-input" data-default-text="-- Same as Plumbing Fixtures --">
             <option value="">-- Same as Plumbing Fixtures --</option>
-            <option value="chrome">Chrome</option>
-            <option value="brushed-nickel">Brushed Nickel</option>
-            <option value="oil-rubbed-bronze">Oil Rubbed Bronze</option>
-            <option value="black">Black</option>
-            <option value="custom">Custom</option>
           </select>
         </div>
         <div class="form-group" style="margin-top: 16px;">
@@ -1421,6 +1425,7 @@ function renderAdminCategories() {
     { id: 'plumbing_styles', name: 'Plumbing Styles', description: 'Controls: TRIM STYLE dropdown' },
     { id: 'electrical_colors', name: 'Electrical Colors', description: 'Controls: Electrical color options' },
     { id: 'exhaust_fans', name: 'Exhaust Fans', description: 'Controls: EXHAUST FAN dropdown' },
+    { id: 'accessories_finishes', name: 'Accessories Finishes', description: 'Controls: ACCESSORIES FINISH dropdown' },
     { id: 'shower_colors', name: 'Shower Colors', description: 'Controls: Shower COLOR dropdown' },
     { id: 'shower_sizes', name: 'Shower Sizes', description: 'Controls: Shower SIZE dropdown' },
     { id: 'drain_locations', name: 'Drain Locations', description: 'Controls: DRAIN LOCATION dropdown' },
