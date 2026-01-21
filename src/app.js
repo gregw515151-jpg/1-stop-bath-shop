@@ -499,6 +499,7 @@ function buildQuoteSections() {
             <option value="tub">Tub</option>
             <option value="shower">Shower</option>
             <option value="tub-shower">Tub/Shower Combo</option>
+            <option value="lavatory-faucet">Lavatory Faucet</option>
           </select>
         </div>
         <div class="form-group">
