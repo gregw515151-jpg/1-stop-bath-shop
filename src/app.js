@@ -3,11 +3,23 @@
 import { supabase } from './supabaseClient.js';
 export const DEFAULT_QUOTE_DATA = {
   scope_of_work: [
-    { id: "1", name: "Title Shower", price: 0 },
+    { id: "1", name: "Tile Shower", price: 0 },
     { id: "2", name: "Tub to Shower Conversion", price: 0 },
     { id: "3", name: "Replacement Tub", price: 0 },
     { id: "4", name: "Replacement Shower", price: 0 },
     { id: "5", name: "Bathroom Remodel", price: 0 }
+  ],
+  fixture_types: [
+    { id: "1", name: "Tub", price: 0 },
+    { id: "2", name: "Shower", price: 0 },
+    { id: "3", name: "Tub/Shower Combo", price: 0 },
+    { id: "4", name: "Lavatory Faucet", price: 0 }
+  ],
+  trim_colors: [
+    { id: "1", name: "Chrome", price: 0 },
+    { id: "2", name: "Brushed Nickel", price: 0 },
+    { id: "3", name: "Oil Rubbed Bronze", price: 0 },
+    { id: "4", name: "Black", price: 0 }
   ],
   plumbing_colors: [
     { id: "1", name: "Chrome", price: 0 },
@@ -249,6 +261,7 @@ export const DEFAULT_QUOTE_DATA = {
 // Dropdown mappings for dynamic admin controls
 const DROPDOWN_MAPPINGS = {
   'scope_of_work-select': 'scope_of_work',
+  'fixture-type': 'fixture_types',
   'plumbing-color': 'plumbing_colors',
   'plumbing-style': 'plumbing_styles',
   'electrical-color': 'electrical_colors',
@@ -263,6 +276,7 @@ const DROPDOWN_MAPPINGS = {
   'wall-type': 'wall_types',
   'vanity-length': 'vanity_lengths',
   'flooring-type': 'flooring_types',
+  'trim-color': 'trim_colors',
   'baseboard-style': 'trim_baseboard_styles',
   'window-door-style': 'trim_window_door_styles',
   'window-style': 'window_styles',
@@ -526,10 +540,6 @@ function buildQuoteSections() {
           <label>Fixture Type:</label>
           <select id="fixture-type" class="select-input">
             <option value="">-- Select --</option>
-            <option value="tub">Tub</option>
-            <option value="shower">Shower</option>
-            <option value="tub-shower">Tub/Shower Combo</option>
-            <option value="lavatory-faucet">Lavatory Faucet</option>
           </select>
         </div>
         <div class="form-group">
@@ -669,10 +679,6 @@ function buildQuoteSections() {
             <label>Trim Color:</label>
             <select id="trim-color" class="select-input">
               <option value="">-- Select --</option>
-              <option value="chrome">Chrome</option>
-              <option value="brushed-nickel">Brushed Nickel</option>
-              <option value="oil-rubbed-bronze">Oil Rubbed Bronze</option>
-              <option value="black">Black</option>
             </select>
           </div>
         </div>
@@ -1409,7 +1415,9 @@ function renderAdminCategories() {
 
   const CATEGORIES = [
     { id: 'scope_of_work', name: 'Scope of Work', description: 'Controls: Scope of Work checkboxes' },
+    { id: 'fixture_types', name: 'Fixture Types', description: 'Controls: FIXTURE TYPE dropdown' },
     { id: 'plumbing_colors', name: 'Plumbing Colors', description: 'Controls: TRIM COLOR dropdown' },
+    { id: 'trim_colors', name: 'Options: Trim Colors', description: 'Controls: Options > TRIM COLOR dropdown' },
     { id: 'plumbing_styles', name: 'Plumbing Styles', description: 'Controls: TRIM STYLE dropdown' },
     { id: 'electrical_colors', name: 'Electrical Colors', description: 'Controls: Electrical color options' },
     { id: 'exhaust_fans', name: 'Exhaust Fans', description: 'Controls: EXHAUST FAN dropdown' },
