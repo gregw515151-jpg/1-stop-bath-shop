@@ -1094,8 +1094,19 @@ function setupListeners() {
     'wall-color', 'wall-pattern', 'wall-type',
     'vanity-length', 'flooring-type', 'flooring-sqft',
     'baseboard-style', 'window-door-style', 'window-style',
-    'grab-bars-size', 'grab-bars-qty',
-    'grab-bars-size-2', 'shower-door-style', 'shower-door-thickness', 'shower-door-glass-type'
+    'grab-bars-size', 'grab-bars-qty', 'grab-bars-size-2',
+    'shower-door-style', 'shower-door-thickness', 'shower-door-glass-type',
+    // Options section
+    'shelves-type', 'shelves-qty',
+    // Vanity Top section
+    'vanity-top-bowl', 'vanity-top-drill', 'vanity-top-faucets',
+    // Accessories section
+    'towel-bar-qty', 'towel-ring-qty', 'tp-holder-qty', 'accessories-finish', 'accessories-notes',
+    // Drywall & Paint section
+    'drywall-linear-ft', 'drywall-sheets', 'drywall-notes',
+    'paint-walls', 'paint-trim', 'paint-ceiling', 'point-up-drywall',
+    // Trim section
+    'trim-casing-ft', 'trim-baseboard-ft', 'trim-qtr-round-ft', 'trim-doors-qty', 'trim-notes'
   ];
 
   inputs.forEach(id => {
@@ -1229,6 +1240,360 @@ function updateSummary() {
     });
     plumbingHtml += '</ul></div>';
     if (plumbingHtml.includes('<li>')) html += plumbingHtml;
+  }
+
+  // Calculate Options Section - Shelves
+  const shelvesType = document.getElementById('shelves-type');
+  const shelvesQty = document.getElementById('shelves-qty');
+  if (shelvesType && shelvesType.value && shelvesQty && shelvesQty.value) {
+    const qty = parseInt(shelvesQty.value) || 0;
+    if (qty > 0) {
+      const selectedOption = shelvesType.options[shelvesType.selectedIndex];
+      const item = products.shelf_types?.find(p => p.id === shelvesType.value);
+      if (item) {
+        const cost = item.price * qty;
+        total += cost;
+        html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
+          <strong>Shelves:</strong> ${item.name} (x${qty}) - $${cost.toFixed(2)}
+        </div>`;
+        selections.shelves = `${item.name} (x${qty})`;
+      }
+    }
+  }
+
+  // Calculate Options Section - Grab Bars
+  const grabBarsSize = document.getElementById('grab-bars-size');
+  const grabBarsSize2 = document.getElementById('grab-bars-size-2');
+  const grabBarsQty = document.getElementById('grab-bars-qty');
+  if (grabBarsQty && grabBarsQty.value) {
+    const qty = parseInt(grabBarsQty.value) || 0;
+    if (qty > 0) {
+      let grabBarsHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Grab Bars:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+      let hasGrabBars = false;
+
+      if (grabBarsSize && grabBarsSize.value) {
+        const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize.value);
+        if (item && item.name !== 'None') {
+          const cost = item.price * qty;
+          total += cost;
+          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasGrabBars = true;
+        }
+      }
+
+      if (grabBarsSize2 && grabBarsSize2.value) {
+        const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize2.value);
+        if (item && item.name !== 'None') {
+          const cost = item.price * qty;
+          total += cost;
+          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasGrabBars = true;
+        }
+      }
+
+      grabBarsHtml += '</ul></div>';
+      if (hasGrabBars) html += grabBarsHtml;
+    }
+  }
+
+  // Calculate Electrical Section
+  const switches = document.getElementById('switches');
+  const outlets = document.getElementById('outlets');
+  const recessedLights = document.getElementById('recessed-lights');
+  const electricalNotes = document.getElementById('electrical-notes');
+
+  let electricalHtml = '';
+  let hasElectrical = false;
+
+  if ((switches && switches.value) || (outlets && outlets.value) || (recessedLights && recessedLights.value)) {
+    electricalHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Electrical:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (switches && switches.value) {
+      const qty = parseInt(switches.value) || 0;
+      if (qty > 0) {
+        // For now, price is 0 until Phase 2 when we add pricing
+        electricalHtml += `<li>Switches (x${qty})</li>`;
+        hasElectrical = true;
+        selections.switches = qty;
+      }
+    }
+
+    if (outlets && outlets.value) {
+      const qty = parseInt(outlets.value) || 0;
+      if (qty > 0) {
+        electricalHtml += `<li>Outlets (x${qty})</li>`;
+        hasElectrical = true;
+        selections.outlets = qty;
+      }
+    }
+
+    if (recessedLights && recessedLights.value) {
+      const qty = parseInt(recessedLights.value) || 0;
+      if (qty > 0) {
+        electricalHtml += `<li>Recessed Lights (x${qty})</li>`;
+        hasElectrical = true;
+        selections.recessed_lights = qty;
+      }
+    }
+
+    electricalHtml += '</ul>';
+
+    if (electricalNotes && electricalNotes.value.trim()) {
+      electricalHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${electricalNotes.value.trim()}</em></div>`;
+      selections.electrical_notes = electricalNotes.value.trim();
+    }
+
+    electricalHtml += '</div>';
+    if (hasElectrical) html += electricalHtml;
+  }
+
+  // Calculate Vanity Top Section
+  const vanityTopBowl = document.getElementById('vanity-top-bowl');
+  const vanityTopDrill = document.getElementById('vanity-top-drill');
+  const vanityTopFaucets = document.getElementById('vanity-top-faucets');
+  const splashOptions = document.querySelectorAll('.splash-option:checked');
+
+  let vanityTopHtml = '';
+  let hasVanityTop = false;
+
+  if ((vanityTopBowl && vanityTopBowl.value) || (vanityTopDrill && vanityTopDrill.value) || (vanityTopFaucets && vanityTopFaucets.value) || splashOptions.length > 0) {
+    vanityTopHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Vanity Top:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (vanityTopBowl && vanityTopBowl.value) {
+      vanityTopHtml += `<li>Bowl Style: ${vanityTopBowl.options[vanityTopBowl.selectedIndex].text}</li>`;
+      hasVanityTop = true;
+    }
+
+    if (vanityTopDrill && vanityTopDrill.value) {
+      vanityTopHtml += `<li>Faucet Drill: ${vanityTopDrill.options[vanityTopDrill.selectedIndex].text}</li>`;
+      hasVanityTop = true;
+    }
+
+    if (vanityTopFaucets && vanityTopFaucets.value) {
+      vanityTopHtml += `<li>Faucet Count: ${vanityTopFaucets.options[vanityTopFaucets.selectedIndex].text}</li>`;
+      hasVanityTop = true;
+    }
+
+    if (splashOptions.length > 0) {
+      splashOptions.forEach(cb => {
+        const item = products.splash_options?.find(p => p.id === cb.value);
+        if (item) {
+          const cost = item.price;
+          total += cost;
+          vanityTopHtml += `<li>${item.name} - $${cost.toFixed(2)}</li>`;
+          hasVanityTop = true;
+        }
+      });
+    }
+
+    vanityTopHtml += '</ul></div>';
+    if (hasVanityTop) html += vanityTopHtml;
+  }
+
+  // Calculate Accessories Section
+  const towelBarQty = document.getElementById('towel-bar-qty');
+  const towelRingQty = document.getElementById('towel-ring-qty');
+  const tpHolderQty = document.getElementById('tp-holder-qty');
+  const accessoriesFinish = document.getElementById('accessories-finish');
+  const accessoriesNotes = document.getElementById('accessories-notes');
+
+  let accessoriesHtml = '';
+  let hasAccessories = false;
+
+  if ((towelBarQty && towelBarQty.value) || (towelRingQty && towelRingQty.value) || (tpHolderQty && tpHolderQty.value)) {
+    accessoriesHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Accessories:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (towelBarQty && towelBarQty.value) {
+      const qty = parseInt(towelBarQty.value) || 0;
+      if (qty > 0) {
+        // For now, price is 0 until Phase 2 when we add pricing
+        accessoriesHtml += `<li>Towel Bar (x${qty})</li>`;
+        hasAccessories = true;
+      }
+    }
+
+    if (towelRingQty && towelRingQty.value) {
+      const qty = parseInt(towelRingQty.value) || 0;
+      if (qty > 0) {
+        accessoriesHtml += `<li>Towel Ring (x${qty})</li>`;
+        hasAccessories = true;
+      }
+    }
+
+    if (tpHolderQty && tpHolderQty.value) {
+      const qty = parseInt(tpHolderQty.value) || 0;
+      if (qty > 0) {
+        accessoriesHtml += `<li>T.P. Holder (x${qty})</li>`;
+        hasAccessories = true;
+      }
+    }
+
+    if (accessoriesFinish && accessoriesFinish.value) {
+      accessoriesHtml += `<li>Finish: ${accessoriesFinish.options[accessoriesFinish.selectedIndex].text}</li>`;
+    }
+
+    accessoriesHtml += '</ul>';
+
+    if (accessoriesNotes && accessoriesNotes.value.trim()) {
+      accessoriesHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${accessoriesNotes.value.trim()}</em></div>`;
+    }
+
+    accessoriesHtml += '</div>';
+    if (hasAccessories) html += accessoriesHtml;
+  }
+
+  // Calculate Drywall & Paint Section
+  const drywallLinearFt = document.getElementById('drywall-linear-ft');
+  const drywallSheets = document.getElementById('drywall-sheets');
+  const paintWalls = document.getElementById('paint-walls');
+  const paintTrim = document.getElementById('paint-trim');
+  const paintCeiling = document.getElementById('paint-ceiling');
+  const pointUpDrywall = document.getElementById('point-up-drywall');
+  const drywallNotes = document.getElementById('drywall-notes');
+
+  let drywallHtml = '';
+  let hasDrywall = false;
+
+  if ((drywallLinearFt && drywallLinearFt.value) || (drywallSheets && drywallSheets.value) ||
+    (paintWalls && paintWalls.checked) || (paintTrim && paintTrim.checked) ||
+    (paintCeiling && paintCeiling.checked) || (pointUpDrywall && pointUpDrywall.checked)) {
+    drywallHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Drywall & Paint:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (drywallLinearFt && drywallLinearFt.value) {
+      const qty = parseInt(drywallLinearFt.value) || 0;
+      if (qty > 0) {
+        // For now, price is 0 until Phase 2 when we add pricing
+        drywallHtml += `<li>Drywall Linear Footage: ${qty} ft</li>`;
+        hasDrywall = true;
+      }
+    }
+
+    if (drywallSheets && drywallSheets.value) {
+      const qty = parseInt(drywallSheets.value) || 0;
+      if (qty > 0) {
+        drywallHtml += `<li>Drywall Sheets: ${qty}</li>`;
+        hasDrywall = true;
+      }
+    }
+
+    if (paintWalls && paintWalls.checked) {
+      drywallHtml += `<li>2 Coats Walls</li>`;
+      hasDrywall = true;
+    }
+
+    if (paintTrim && paintTrim.checked) {
+      drywallHtml += `<li>Trim Paint</li>`;
+      hasDrywall = true;
+    }
+
+    if (paintCeiling && paintCeiling.checked) {
+      drywallHtml += `<li>Ceiling</li>`;
+      hasDrywall = true;
+    }
+
+    if (pointUpDrywall && pointUpDrywall.checked) {
+      drywallHtml += `<li>Point Up Drywall</li>`;
+      hasDrywall = true;
+    }
+
+    drywallHtml += '</ul>';
+
+    if (drywallNotes && drywallNotes.value.trim()) {
+      drywallHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${drywallNotes.value.trim()}</em></div>`;
+    }
+
+    drywallHtml += '</div>';
+    if (hasDrywall) html += drywallHtml;
+  }
+
+  // Calculate Trim Section
+  const trimCasingFt = document.getElementById('trim-casing-ft');
+  const trimBaseboardFt = document.getElementById('trim-baseboard-ft');
+  const trimQtrRoundFt = document.getElementById('trim-qtr-round-ft');
+  const trimDoorsQty = document.getElementById('trim-doors-qty');
+  const trimNotes = document.getElementById('trim-notes');
+
+  let trimHtml = '';
+  let hasTrim = false;
+
+  if ((trimCasingFt && trimCasingFt.value) || (trimBaseboardFt && trimBaseboardFt.value) ||
+    (trimQtrRoundFt && trimQtrRoundFt.value) || (trimDoorsQty && trimDoorsQty.value)) {
+    trimHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Trim:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (trimCasingFt && trimCasingFt.value) {
+      const qty = parseInt(trimCasingFt.value) || 0;
+      if (qty > 0) {
+        // For now, price is 0 until Phase 2 when we add pricing
+        trimHtml += `<li>Casing: ${qty} linear ft</li>`;
+        hasTrim = true;
+      }
+    }
+
+    if (trimBaseboardFt && trimBaseboardFt.value) {
+      const qty = parseInt(trimBaseboardFt.value) || 0;
+      if (qty > 0) {
+        trimHtml += `<li>Baseboard: ${qty} linear ft</li>`;
+        hasTrim = true;
+      }
+    }
+
+    if (trimQtrRoundFt && trimQtrRoundFt.value) {
+      const qty = parseInt(trimQtrRoundFt.value) || 0;
+      if (qty > 0) {
+        trimHtml += `<li>Qtr Round: ${qty} linear ft</li>`;
+        hasTrim = true;
+      }
+    }
+
+    if (trimDoorsQty && trimDoorsQty.value) {
+      const qty = parseInt(trimDoorsQty.value) || 0;
+      if (qty > 0) {
+        trimHtml += `<li>Doors: ${qty}</li>`;
+        hasTrim = true;
+      }
+    }
+
+    trimHtml += '</ul>';
+
+    if (trimNotes && trimNotes.value.trim()) {
+      trimHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${trimNotes.value.trim()}</em></div>`;
+    }
+
+    trimHtml += '</div>';
+    if (hasTrim) html += trimHtml;
+  }
+
+  // Calculate Flooring Section
+  const flooringType = document.getElementById('flooring-type');
+  const flooringSqft = document.getElementById('flooring-sqft');
+  const flooringNotes = document.getElementById('flooring-notes');
+
+  if ((flooringType && flooringType.value) || (flooringSqft && flooringSqft.value) || (flooringNotes && flooringNotes.value.trim())) {
+    let flooringHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Flooring:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+
+    if (flooringType && flooringType.value) {
+      const item = products.flooring_types?.find(p => p.id === flooringType.value);
+      if (item) {
+        flooringHtml += `<li>Type: ${item.name}</li>`;
+      }
+    }
+
+    if (flooringSqft && flooringSqft.value) {
+      const sqft = parseInt(flooringSqft.value) || 0;
+      if (sqft > 0) {
+        // For now, price is 0 until Phase 2 when we add pricing
+        flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
+      }
+    }
+
+    flooringHtml += '</ul>';
+
+    if (flooringNotes && flooringNotes.value.trim()) {
+      flooringHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${flooringNotes.value.trim()}</em></div>`;
+    }
+
+    flooringHtml += '</div>';
+    html += flooringHtml;
   }
 
   // Update other selections and build HTML
