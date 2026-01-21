@@ -262,6 +262,30 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "1", name: "Back Splash", price: 0 },
     { id: "2", name: "Left Splash", price: 0 },
     { id: "3", name: "Right Splash", price: 0 }
+  ],
+  electrical_items: [
+    { id: "1", name: "Switch", price: 0 },
+    { id: "2", name: "Outlet", price: 0 },
+    { id: "3", name: "Recessed Light", price: 0 }
+  ],
+  accessory_items: [
+    { id: "1", name: "Towel Bar", price: 0 },
+    { id: "2", name: "Towel Ring", price: 0 },
+    { id: "3", name: "T.P. Holder", price: 0 }
+  ],
+  drywall_paint_items: [
+    { id: "1", name: "Drywall (per linear ft)", price: 0 },
+    { id: "2", name: "Drywall Sheet", price: 0 },
+    { id: "3", name: "Paint - 2 Coats Walls", price: 0 },
+    { id: "4", name: "Paint - Trim", price: 0 },
+    { id: "5", name: "Paint - Ceiling", price: 0 },
+    { id: "6", name: "Point Up Drywall", price: 0 }
+  ],
+  trim_items: [
+    { id: "1", name: "Casing (per linear ft)", price: 0 },
+    { id: "2", name: "Baseboard (per linear ft)", price: 0 },
+    { id: "3", name: "Qtr Round (per linear ft)", price: 0 },
+    { id: "4", name: "Door", price: 0 }
   ]
 };
 
@@ -1311,28 +1335,42 @@ function updateSummary() {
     if (switches && switches.value) {
       const qty = parseInt(switches.value) || 0;
       if (qty > 0) {
-        // For now, price is 0 until Phase 2 when we add pricing
-        electricalHtml += `<li>Switches (x${qty})</li>`;
-        hasElectrical = true;
-        selections.switches = qty;
+        const item = products.electrical_items?.find(p => p.name === 'Switch');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          electricalHtml += `<li>Switches (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasElectrical = true;
+          selections.switches = qty;
+        }
       }
     }
 
     if (outlets && outlets.value) {
       const qty = parseInt(outlets.value) || 0;
       if (qty > 0) {
-        electricalHtml += `<li>Outlets (x${qty})</li>`;
-        hasElectrical = true;
-        selections.outlets = qty;
+        const item = products.electrical_items?.find(p => p.name === 'Outlet');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          electricalHtml += `<li>Outlets (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasElectrical = true;
+          selections.outlets = qty;
+        }
       }
     }
 
     if (recessedLights && recessedLights.value) {
       const qty = parseInt(recessedLights.value) || 0;
       if (qty > 0) {
-        electricalHtml += `<li>Recessed Lights (x${qty})</li>`;
-        hasElectrical = true;
-        selections.recessed_lights = qty;
+        const item = products.electrical_items?.find(p => p.name === 'Recessed Light');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          electricalHtml += `<li>Recessed Lights (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasElectrical = true;
+          selections.recessed_lights = qty;
+        }
       }
     }
 
@@ -1406,25 +1444,39 @@ function updateSummary() {
     if (towelBarQty && towelBarQty.value) {
       const qty = parseInt(towelBarQty.value) || 0;
       if (qty > 0) {
-        // For now, price is 0 until Phase 2 when we add pricing
-        accessoriesHtml += `<li>Towel Bar (x${qty})</li>`;
-        hasAccessories = true;
+        const item = products.accessory_items?.find(p => p.name === 'Towel Bar');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          accessoriesHtml += `<li>Towel Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasAccessories = true;
+        }
       }
     }
 
     if (towelRingQty && towelRingQty.value) {
       const qty = parseInt(towelRingQty.value) || 0;
       if (qty > 0) {
-        accessoriesHtml += `<li>Towel Ring (x${qty})</li>`;
-        hasAccessories = true;
+        const item = products.accessory_items?.find(p => p.name === 'Towel Ring');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          accessoriesHtml += `<li>Towel Ring (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasAccessories = true;
+        }
       }
     }
 
     if (tpHolderQty && tpHolderQty.value) {
       const qty = parseInt(tpHolderQty.value) || 0;
       if (qty > 0) {
-        accessoriesHtml += `<li>T.P. Holder (x${qty})</li>`;
-        hasAccessories = true;
+        const item = products.accessory_items?.find(p => p.name === 'T.P. Holder');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          accessoriesHtml += `<li>T.P. Holder (x${qty}) - $${cost.toFixed(2)}</li>`;
+          hasAccessories = true;
+        }
       }
     }
 
@@ -1462,38 +1514,63 @@ function updateSummary() {
     if (drywallLinearFt && drywallLinearFt.value) {
       const qty = parseInt(drywallLinearFt.value) || 0;
       if (qty > 0) {
-        // For now, price is 0 until Phase 2 when we add pricing
-        drywallHtml += `<li>Drywall Linear Footage: ${qty} ft</li>`;
-        hasDrywall = true;
+        const item = products.drywall_paint_items?.find(p => p.name === 'Drywall (per linear ft)');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          drywallHtml += `<li>Drywall Linear Footage: ${qty} ft - $${cost.toFixed(2)}</li>`;
+          hasDrywall = true;
+        }
       }
     }
 
     if (drywallSheets && drywallSheets.value) {
       const qty = parseInt(drywallSheets.value) || 0;
       if (qty > 0) {
-        drywallHtml += `<li>Drywall Sheets: ${qty}</li>`;
-        hasDrywall = true;
+        const item = products.drywall_paint_items?.find(p => p.name === 'Drywall Sheet');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          drywallHtml += `<li>Drywall Sheets: ${qty} - $${cost.toFixed(2)}</li>`;
+          hasDrywall = true;
+        }
       }
     }
 
     if (paintWalls && paintWalls.checked) {
-      drywallHtml += `<li>2 Coats Walls</li>`;
-      hasDrywall = true;
+      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - 2 Coats Walls');
+      if (item) {
+        total += item.price;
+        drywallHtml += `<li>2 Coats Walls - $${item.price.toFixed(2)}</li>`;
+        hasDrywall = true;
+      }
     }
 
     if (paintTrim && paintTrim.checked) {
-      drywallHtml += `<li>Trim Paint</li>`;
-      hasDrywall = true;
+      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Trim');
+      if (item) {
+        total += item.price;
+        drywallHtml += `<li>Trim Paint - $${item.price.toFixed(2)}</li>`;
+        hasDrywall = true;
+      }
     }
 
     if (paintCeiling && paintCeiling.checked) {
-      drywallHtml += `<li>Ceiling</li>`;
-      hasDrywall = true;
+      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Ceiling');
+      if (item) {
+        total += item.price;
+        drywallHtml += `<li>Ceiling - $${item.price.toFixed(2)}</li>`;
+        hasDrywall = true;
+      }
     }
 
     if (pointUpDrywall && pointUpDrywall.checked) {
-      drywallHtml += `<li>Point Up Drywall</li>`;
-      hasDrywall = true;
+      const item = products.drywall_paint_items?.find(p => p.name === 'Point Up Drywall');
+      if (item) {
+        total += item.price;
+        drywallHtml += `<li>Point Up Drywall - $${item.price.toFixed(2)}</li>`;
+        hasDrywall = true;
+      }
     }
 
     drywallHtml += '</ul>';
@@ -1523,33 +1600,52 @@ function updateSummary() {
     if (trimCasingFt && trimCasingFt.value) {
       const qty = parseInt(trimCasingFt.value) || 0;
       if (qty > 0) {
-        // For now, price is 0 until Phase 2 when we add pricing
-        trimHtml += `<li>Casing: ${qty} linear ft</li>`;
-        hasTrim = true;
+        const item = products.trim_items?.find(p => p.name === 'Casing (per linear ft)');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          trimHtml += `<li>Casing: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
+          hasTrim = true;
+        }
       }
     }
 
     if (trimBaseboardFt && trimBaseboardFt.value) {
       const qty = parseInt(trimBaseboardFt.value) || 0;
       if (qty > 0) {
-        trimHtml += `<li>Baseboard: ${qty} linear ft</li>`;
-        hasTrim = true;
+        const item = products.trim_items?.find(p => p.name === 'Baseboard (per linear ft)');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          trimHtml += `<li>Baseboard: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
+          hasTrim = true;
+        }
       }
     }
 
     if (trimQtrRoundFt && trimQtrRoundFt.value) {
       const qty = parseInt(trimQtrRoundFt.value) || 0;
       if (qty > 0) {
-        trimHtml += `<li>Qtr Round: ${qty} linear ft</li>`;
-        hasTrim = true;
+        const item = products.trim_items?.find(p => p.name === 'Qtr Round (per linear ft)');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          trimHtml += `<li>Qtr Round: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
+          hasTrim = true;
+        }
       }
     }
 
     if (trimDoorsQty && trimDoorsQty.value) {
       const qty = parseInt(trimDoorsQty.value) || 0;
       if (qty > 0) {
-        trimHtml += `<li>Doors: ${qty}</li>`;
-        hasTrim = true;
+        const item = products.trim_items?.find(p => p.name === 'Door');
+        if (item) {
+          const cost = item.price * qty;
+          total += cost;
+          trimHtml += `<li>Doors: ${qty} - $${cost.toFixed(2)}</li>`;
+          hasTrim = true;
+        }
       }
     }
 
@@ -1581,8 +1677,18 @@ function updateSummary() {
     if (flooringSqft && flooringSqft.value) {
       const sqft = parseInt(flooringSqft.value) || 0;
       if (sqft > 0) {
-        // For now, price is 0 until Phase 2 when we add pricing
-        flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
+        if (flooringType && flooringType.value) {
+          const item = products.flooring_types?.find(p => p.id === flooringType.value);
+          if (item && item.price > 0) {
+            const cost = item.price * sqft;
+            total += cost;
+            flooringHtml += `<li>Square Footage: ${sqft} sq ft × $${item.price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+          } else {
+            flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
+          }
+        } else {
+          flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
+        }
       }
     }
 
@@ -1808,6 +1914,12 @@ function renderAdminCategories() {
     { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
     { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
     { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' },
+    { id: 'electrical_items', name: 'Electrical Items', description: 'Pricing: Switches, Outlets, Recessed Lights' },
+    { id: 'accessory_items', name: 'Accessory Items', description: 'Pricing: Towel Bars, Rings, TP Holders' },
+    { id: 'drywall_paint_items', name: 'Drywall & Paint Items', description: 'Pricing: Drywall, Sheets, Paint options' },
+    { id: 'trim_items', name: 'Trim Items', description: 'Pricing: Casing, Baseboard, Qtr Round, Doors' },
+    { id: 'grab_bar_sizes', name: 'Grab Bar Sizes', description: 'Pricing: 16" and 24" grab bars' },
+    { id: 'shelf_types', name: 'Shelf Types', description: 'Pricing: Single and Double shelves' },
     { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
     { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
     { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' }
