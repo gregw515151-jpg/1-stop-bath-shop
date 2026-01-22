@@ -4,6 +4,7 @@ import { supabase } from './supabaseClient.js'
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 import { initAdmin } from './admin.js'
+import { saveDraft, loadDraft, getDrafts } from './drafts.js'
 
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
@@ -18,6 +19,8 @@ function getAppHtml(maxPhotos) {
       <button id="admin-btn" class="admin-toggle-btn" style="position: absolute; top: 0; right: 0; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🔐 Admin</button>
       <button id="admin-logout-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 120px; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">Logout</button>
       <button id="admin-reset-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 240px; padding: 8px 16px; background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🔄 Reset Data</button>
+      <button id="save-draft-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 480px; padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; margin-right: 8px;">💾 Save Draft</button>
+      <button id="load-draft-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 580px; padding: 8px 16px; background: #8b5cf6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">📂 Load Draft</button>
       <button id="company-info-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 360px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;" onclick="document.getElementById('admin-overlay').style.display='flex'">🏢 Company Info</button>
       <img id="company-logo" class="header-logo" alt="1 STOP BATH SHOP" src="" />
       <h1 style="margin: 16px 0 4px;">Bathroom Quote System</h1>
@@ -211,6 +214,61 @@ initAdmin().catch(console.error);
 document.getElementById('admin-btn')?.addEventListener('click', () => {
   const overlay = document.getElementById('admin-overlay');
   if (overlay) overlay.style.display = 'flex';
+});
+
+// Save Draft Button
+document.getElementById('save-draft-btn')?.addEventListener('click', async () => {
+  const name = prompt("Enter a name for this draft:");
+  if (!name) return;
+
+  const { error } = await saveDraft(name);
+  if (error) {
+    if (error.message && error.message.includes('relation "public.drafts" does not exist')) {
+      alert("Drafts table missing! Please run the SQL setup script.");
+      console.error(error);
+    } else {
+      alert("Error saving draft: " + error.message);
+    }
+  } else {
+    alert("Draft saved successfully!");
+  }
+});
+
+// Load Draft Button
+document.getElementById('load-draft-btn')?.addEventListener('click', async () => {
+  const { data: drafts, error } = await getDrafts();
+  if (error) {
+    alert("Error loading drafts: " + error.message);
+    return;
+  }
+
+  if (!drafts || drafts.length === 0) {
+    alert("No drafts found.");
+    return;
+  }
+
+  const draftList = drafts.map(d =>
+    `${new Date(d.created_at).toLocaleString()} - ${d.name} (ID: ${d.id.slice(0, 8)}...)`
+  ).join('\n');
+
+  const input = prompt("Enter the Name (exact) or ID of the draft to load:\n\n" + draftList);
+  if (!input) return;
+
+  // find ID based on name or ID match
+  const selectedDraft = drafts.find(d => d.id === input || d.name === input || d.id.startsWith(input));
+  const idToLoad = selectedDraft ? selectedDraft.id : null;
+
+  if (!idToLoad) {
+    alert("Draft not found.");
+    return;
+  }
+
+  const result = await loadDraft(idToLoad);
+  if (result.error) {
+    alert("Error loading draft: " + result.error.message);
+  } else {
+    alert("Draft loaded successfully!");
+  }
 });
 
 /* ---------- App State ---------- */
