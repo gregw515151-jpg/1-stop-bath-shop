@@ -1,6 +1,63 @@
 // Comprehensive Contractor Quote System - Complete Implementation
 // Based on handwritten specifications
 import { supabase } from './supabaseClient.js';
+export const DEFAULT_TERMS = `
+      <div style="font-size: 10px; line-height: 1.4; text-align: justify;">
+        <p style="margin-bottom: 8px;"><strong>Purchaser hereby accepts the equipment/products and service described in the scope of work/contract and agrees to pay 1 Stop Bath Shop, LLC the price as described before any unforeseen conditions.</strong></p>
+        
+        <p style="margin-bottom: 8px;">Materials and work in addition to that described herein will be furnished only on Purchaser's authorization and will be paid by Purchaser as an extra charge.</p>
+        
+        <p style="margin-bottom: 8px;">Upon failure to pay any sums due here under, Purchaser agrees to pay 1 Stop Bath Shop, LLC interest at the rate of 2 percent (2%) per month (annual rate of 24%) on all outstanding balances.</p>
+        
+        <p style="margin-bottom: 8px;">1 Stop Bath Shop, LLC shall not be liable for any default caused by events beyond its control, including but not limited to, fire, flood, pandemic, shipping, lightning strikes, accidents, or delays affecting this work or other operations in which it is involved, directly or indirectly.</p>
+        
+        <p style="margin-bottom: 8px;">Purchaser shall permit 1 Stop Bath Shop, LLC and its representatives reasonable access to the property on which materials/equipment is to be installed. Title to all materials/equipment provided remains with 1 Stop Bath Shop, LLC until all amounts due thereon are paid in full, whether such materials/equipment is affixed to the reality or not, and shall remain personal property and be deemed sever-able without injury to the freehold. On any payment default by Purchaser, or if in 1 Stop Bath Shop, LLC's judgement, reasonably exercised, its equity appears to be imperiled, then, 1 Stop Bath Shop may without further notice enter the premises and remove or resell the materials/equipment and Purchaser shall be liable for any deficiency or loss sustained by 1 Stop Bath Shop, LLC in connection therewith.</p>
+        
+        <p style="margin-bottom: 8px;">Once the material/equipment is installed/connected to Purchaser's property, Purchaser assumes all risks of loss or damage to such materials/equipment and shall ensure same to fully protect all interests of 1 Stop Bath Shop, LLC, the cost of insurance to be paid for by Purchaser. 1 Stop Bath Shop, LLC carries an MHIC license and liability insurance.</p>
+        
+        <p style="margin-bottom: 8px;">There are no warranties, expressed or implied, for existing materials/equipment not installed by 1 Stop Bath Shop, LLC.</p>
+        
+        <p style="margin-bottom: 8px;">There are no warranties, expressed or implied, for materials/equipment not supplied by 1 Stop Bath Shop, LLC.</p>
+        
+        <p style="margin-bottom: 8px;">All warranty/service call work will be performed during 1 Stop Bath Shop, LLC's normal working hours 8:00am to 5:00pm, Monday through Friday.</p>
+        
+        <p style="margin-bottom: 8px;">Purchaser is responsible for all costs and reasonable attorney fees incurred by 1 Stop Bath Shop, LLC in connection with any action or proceeding (including arbitration and appeals) arising out of this Agreement, including a collection of any outstanding amounts due, whether or not suit is filed.</p>
+        
+        <p style="margin-bottom: 8px;">Except as provided herein 1 Stop Bath Shop makes no other representations or warranties, either or implied, including but not limited to, any implied warranties of merchantability or fitness for a particular purpose 1 Stop Bath Shop, LLC expressly disclaims all other warranties. 1 Stop Bath Shop, LLC's maximum liability hereunder shall consist of refunding all money paid to it by Purchaser hereunder subject to removal and return to 1 Stop Bath Shop, LLC of all equipment provided hereunder. Under no circumstances will 1 Stop Bath Shop be liable to Purchaser or any other person for any damages, including, without limitation, any indirect, incidental, special, or consequential damages, expenses, costs, profits, lost savings or earnings, lost or corrupted data, or other liability arising out of or related to this Agreement, or the services or materials/equipment provided hereunder.</p>
+        
+        <p style="margin-bottom: 8px;">This agreement shall be governed and construed solely according to the internal laws of the State of Maryland, without reference to any conflicts of laws.</p>
+        
+        <p style="margin-bottom: 8px;">This agreement is the complete and exclusive statement of the agreement between Purchaser and 1 Stop Bath Shop, LLC. and it supersedes all oral and written proposals.</p>
+        
+        <p style="margin-bottom: 8px;"><strong>Warranty:</strong> The work within this purposely will be performed to the manufacturer's specifications and current industry standards. The material warranties are governed by the manufacturer. 1 Stop Bath Shop, LLC guarantees workmanship for a period of (1) year beginning on the date of completion.</p>
+        
+        <p style="margin-bottom: 8px;">1 Stop Bath Shop, LLC takes many precautions for dust during the remodeling process. There is, however, dust that escapes while working. 1 Stop Bath Shop, LLC will not be held liable for a house cleaning.</p>
+        
+        <p style="margin-bottom: 8px;"><strong>***This quote does not cover conditions unforeseen before the job has begun***</strong> (Ex: rotted floors, warped floors, uneven floors, mold or mildew, broken toilet flanges, hidden electrical devices, leaking windows, damage due to infestation, etc.)</p>
+        
+        <p style="margin-bottom: 8px;"><strong>*** This quote does not cover any permit fees unless otherwise noted***</strong></p>
+        
+        <p style="margin-bottom: 8px;">This agreement is good for 30 days and at which time is subject to reevaluation by 1 Stop Bath Shop, LLC. Additional adaptations may be made to this agreement with ink notations and initialed by both parties.</p>
+        
+        <p style="margin-bottom: 8px; font-weight: bold; font-size: 11px;">Terms: 1/3 Deposit is required to order materials and schedule.<br>Final balance due at completion</p>
+        
+        <p style="margin-bottom: 8px;">The customer has the right to cancel up to 4 days after signing the agreement.</p>
+        
+        <p style="margin-bottom: 16px;"><strong>1 Stop Bath Shop, LLC MHIC# 135893</strong></p>
+        
+        <h3 style="font-size: 14px; margin-bottom: 8px;">Acceptance:</h3>
+        <p style="margin-bottom: 24px;">As the Purchaser or owner/agent on behalf of the above-mentioned property, I hereby authorize 1 Stop Bath Shop, LLC. to perform work/services specified in this agreement. I agree to meet the terms of payment as specified. I have read and understand the terms and conditions as well as the warranty statements herein this agreement. There are no oral representations related to this agreement not included herein. My signature represents an agreement to the price as well as the terms and conditions.</p>
+        
+        <div style="margin-top: 40px; border-top: 1px solid #000; display: inline-block; width: 60%; padding-top: 4px;">
+          <span style="font-size: 14px;">Signed</span>
+        </div>
+        <div style="display: inline-block; width: 5%; "></div>
+        <div style="border-top: 1px solid #000; display: inline-block; width: 30%; padding-top: 4px;">
+          <span style="font-size: 14px;">Date</span>
+        </div>
+      </div>
+`;
+
 export const DEFAULT_QUOTE_DATA = {
   scope_of_work: [
     { id: "1", name: "Tile Shower", price: 0 },

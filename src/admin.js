@@ -1,4 +1,4 @@
-import { initializeApp, products, addItem, deleteItem, loginAdmin, logoutAdmin } from './app.js';
+import { initializeApp, products, addItem, deleteItem, loginAdmin, logoutAdmin, DEFAULT_TERMS } from './app.js';
 import duckHuntMemories from './assets/duck-hunt-memories.mp4';
 import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
@@ -190,7 +190,7 @@ function renderCategories(container) {
             </div>
             <div style="grid-column: 1 / -1;">
                 <label style="display: block; font-weight: 600; margin-bottom: 4px;">Terms and Conditions (HTML supported):</label>
-                <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 200px; font-family: monospace;">${companyInfo.terms || ''}</textarea>
+                <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 200px; font-family: monospace;">${companyInfo.terms || DEFAULT_TERMS}</textarea>
             </div>
             <button class="btn btn-primary" onclick="window.saveCompanyInfo()" style="margin-top: 8px;">💾 Save Company Info</button>
         </div>
