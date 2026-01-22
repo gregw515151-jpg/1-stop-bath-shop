@@ -91,39 +91,35 @@ export async function loadDraft(id) {
     }
 
     // Trigger necessary UI updates
-    // For dropdowns, we might need to manually trigger change events if the app relies on them
-    // But since getSelections() object is updated, any *future* reads will be correct.
-    // The visual dropdowns need to be set to match the state.
     restoreDropdownsFromState(draft.selections);
 
     return { data };
 }
 
 function restoreDropdownsFromState(selections) {
-    // Helper to set dropdown values based on restored state
-    // This assumes the keys in `selections` match the IDs of the dropdowns or we have a mapping
-    // Looking at app.js, `selections` keys often match IDs but not always.
-    // We can try to map them or iterate known inputs.
+    if (!selections) {
+        return;
+    }
 
-    // Simple update for known keys that match element IDs
-    // (This is a simplified approach, may need refinement based on exact app.js logic)
-
-    // Example: selections.plumbing_color -> document.getElementById('plumbing-color')
     Object.entries(selections).forEach(([key, val]) => {
-        // Many selection keys match the element ID directly or with hyphen replacements
         let el = document.getElementById(key);
         if (!el) el = document.getElementById(key.replace(/_/g, '-'));
 
         if (el && (el.tagName === 'SELECT' || el.tagName === 'INPUT')) {
             el.value = val || '';
+            // Trigger change to update summary just in case
+            el.dispatchEvent(new Event('change'));
         }
     });
 
     // Checkboxes for Scope of Work need special handling
     if (selections.scope_of_work) {
-        // This is a bit complex as scope_of_work is array of objects in products
-        // but selection state might track it differently. 
-        // Looking at app.js: populateScopeOfWork() generates inputs with class 'scope-item'
-        // We should re-trigger the checkbox checks based on loaded data if needed.
+        const scopeNames = selections.scope_of_work.split(', ').map(s => s.trim());
+        document.querySelectorAll('.scope-item').forEach(cb => {
+            const cbValue = cb.value.replace(/&quot;/g, '"');
+            if (scopeNames.includes(cbValue)) {
+                cb.checked = true;
+            }
+        });
     }
 }

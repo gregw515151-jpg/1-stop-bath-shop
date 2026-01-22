@@ -1299,6 +1299,14 @@ function updateSummary() {
   let html = '';
   let total = 0;
 
+  // Sync generic inputs to selections state
+  Object.entries(fieldMapping).forEach(([id, config]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      selections[config.key] = el.value;
+    }
+  });
+
   // Add Scope of Work first if selected
   if (selections.scope_of_work) {
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
