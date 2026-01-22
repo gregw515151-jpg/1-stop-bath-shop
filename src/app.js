@@ -377,6 +377,15 @@ export let selections = {
   flooring_notes: ""
 };
 
+// Company information (stored globally, editable in admin)
+export let company_info = {
+  name: "1 Stop Bath Shop",
+  address: "",
+  mhic: "",
+  phone: "",
+  email: ""
+};
+
 let isAdminMode = false;
 
 // Load/Save to Supabase
@@ -1906,7 +1915,7 @@ function renderAdminCategories() {
   if (!container) return;
 
   const CATEGORIES = [
-    { id: 'scope_of_work', name: 'Scope of Work', description: 'Controls: Scope of Work checkboxes' },
+    { id: 'scope_of_work', name: 'Scope of Work', description: 'Editable: Main scope options (Tile Shower, Tub Conversion, etc.)' },
     { id: 'fixture_types', name: 'Fixture Types', description: 'Controls: FIXTURE TYPE dropdown' },
     { id: 'plumbing_colors', name: 'Plumbing Colors', description: 'Controls: TRIM COLOR dropdown' },
     { id: 'trim_colors', name: 'Options: Trim Colors', description: 'Controls: Options > TRIM COLOR dropdown' },
