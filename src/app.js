@@ -449,7 +449,8 @@ export async function saveProductsToStorage() {
 
 // Admin
 export function loginAdmin(password) {
-  if (password === 'admin123') {
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+  if (password === ADMIN_PASSWORD) {
     isAdminMode = true;
     document.body.classList.add('admin-mode');
     setTimeout(() => injectAdminControlsToAllDropdowns(), 100);
@@ -470,6 +471,14 @@ export function isAdmin() {
 
 export function getSelections() {
   return selections;
+}
+
+
+// ... (existing code)
+
+function setupAdminControls() {
+  // Legacy setup removed to prevent conflict with admin.js overlay
+  // Admin button is now handled by inline onclick in main.js and admin.js logic
 }
 
 // Add/Delete with sequential ID system
@@ -1823,31 +1832,7 @@ export function generateEmailBody(selections) {
 }
 
 function setupAdminControls() {
-  const ADMIN_PASSWORD = 'admin123';
-  let isAdminVisible = false;
-
-  document.getElementById('admin-btn')?.addEventListener('click', () => {
-    if (!isAdminVisible) {
-      const password = prompt('Enter admin password:');
-      if (password && password === ADMIN_PASSWORD) {
-        // Activate inline admin mode
-        document.body.classList.add('admin-mode'); // THIS IS THE KEY LINE!
-        injectAdminControlsToAllDropdowns();
-        isAdminVisible = true;
-        document.getElementById('admin-btn').textContent = '🔓 Exit Admin';
-        document.getElementById('admin-btn').style.background = '#10b981';
-      } else if (password) {
-        alert('Incorrect password');
-      }
-    } else {
-      // Deactivate inline admin mode
-      document.body.classList.remove('admin-mode'); // Remove admin-mode class
-      document.querySelectorAll('.dynamic-admin-controls').forEach(el => el.remove());
-      isAdminVisible = false;
-      document.getElementById('admin-btn').textContent = '🔐 Admin';
-      document.getElementById('admin-btn').style.background = '#3b82f6';
-    }
-  });
+  // Legacy setup removed to prevent conflict with admin.js overlay
 
   document.getElementById('admin-logout-btn')?.addEventListener('click', () => {
     logoutAdmin();

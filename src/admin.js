@@ -1,4 +1,4 @@
-import { initializeApp, products, addItem, deleteItem, loginAdmin } from './app.js';
+import { initializeApp, products, addItem, deleteItem, loginAdmin, logoutAdmin } from './app.js';
 import duckHuntMemories from './assets/duck-hunt-memories.mp4';
 import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
@@ -114,6 +114,9 @@ export async function initAdmin() {
     });
 
     logoutBtn.addEventListener('click', () => {
+        // Sync global logout
+        logoutAdmin();
+
         // Play Duck Hunt Dog Jump on logout
         playDuckHuntVideo(duckHuntDogJump, () => {
             adminPanel.style.display = 'none';
