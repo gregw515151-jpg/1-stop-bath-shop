@@ -285,8 +285,14 @@ function attachDraftListeners() {
   }
 }
 
-// Attach listeners immediately (buttons are in index.html, already in DOM)
-attachDraftListeners();
+// Attach listeners after a small delay to ensure DOM is fully ready
+// The buttons are in index.html, but we need to wait for full DOM readiness
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachDraftListeners);
+} else {
+  // DOM already loaded, attach immediately
+  setTimeout(attachDraftListeners, 100);
+}
 
 /* ---------- App State ---------- */
 const state = {
