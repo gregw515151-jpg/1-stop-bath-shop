@@ -102,6 +102,8 @@ export async function initAdmin() {
             playDuckHuntVideo(duckHuntMemories, () => {
                 adminPanel.style.display = 'block';
                 renderCategories(categoriesContainer);
+                // Auto-close overlay after login, requiring explicit click on "Company Info" to re-open
+                if (adminOverlay) adminOverlay.style.display = 'none';
             });
         } else {
             loginError.style.display = 'block';
