@@ -1271,6 +1271,7 @@ function updateSummary() {
 
   // Define all labels for display and selection update
   const fieldMapping = {
+    'fixture-type': { key: 'fixture_type', label: 'Fixture Type' },
     'plumbing-color': { key: 'plumbing_color', label: 'Plumbing Color' },
     'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style' },
     'electrical-color': { key: 'electrical_color', label: 'Electrical Color' },
