@@ -214,60 +214,79 @@ document.getElementById('admin-btn')?.addEventListener('click', () => {
   if (overlay) overlay.style.display = 'flex';
 });
 
-// Save Draft Button
-document.getElementById('save-draft-btn')?.addEventListener('click', async () => {
-  const name = prompt("Enter a name for this draft:");
-  if (!name) return;
+/* ---------- Draft Button Event Listeners ---------- */
+// Wait for DOM to be fully ready before attaching draft button listeners
+function attachDraftListeners() {
+  // Save Draft Button
+  const saveDraftBtn = document.getElementById('save-draft-btn');
+  if (saveDraftBtn) {
+    saveDraftBtn.addEventListener('click', async () => {
+      const name = prompt("Enter a name for this draft:");
+      if (!name) return;
 
-  const { error } = await saveDraft(name);
-  if (error) {
-    if (error.message && error.message.includes('relation "public.drafts" does not exist')) {
-      alert("Drafts table missing! Please run the SQL setup script.");
-      console.error(error);
-    } else {
-      alert("Error saving draft: " + error.message);
-    }
+      const { error } = await saveDraft(name);
+      if (error) {
+        if (error.message && error.message.includes('relation "public.drafts" does not exist')) {
+          alert("Drafts table missing! Please run the SQL setup script.");
+          console.error(error);
+        } else {
+          alert("Error saving draft: " + error.message);
+        }
+      } else {
+        alert("Draft saved successfully!");
+      }
+    });
+    console.log('✅ Save Draft button listener attached');
   } else {
-    alert("Draft saved successfully!");
-  }
-});
-
-// Load Draft Button
-document.getElementById('load-draft-btn')?.addEventListener('click', async () => {
-  const { data: drafts, error } = await getDrafts();
-  if (error) {
-    alert("Error loading drafts: " + error.message);
-    return;
+    console.warn('⚠️ Save Draft button not found');
   }
 
-  if (!drafts || drafts.length === 0) {
-    alert("No drafts found.");
-    return;
-  }
+  // Load Draft Button
+  const loadDraftBtn = document.getElementById('load-draft-btn');
+  if (loadDraftBtn) {
+    loadDraftBtn.addEventListener('click', async () => {
+      const { data: drafts, error } = await getDrafts();
+      if (error) {
+        alert("Error loading drafts: " + error.message);
+        return;
+      }
 
-  const draftList = drafts.map(d =>
-    `${new Date(d.created_at).toLocaleString()} - ${d.name} (ID: ${d.id.slice(0, 8)}...)`
-  ).join('\n');
+      if (!drafts || drafts.length === 0) {
+        alert("No drafts found.");
+        return;
+      }
 
-  const input = prompt("Enter the Name (exact) or ID of the draft to load:\n\n" + draftList);
-  if (!input) return;
+      const draftList = drafts.map(d =>
+        `${new Date(d.created_at).toLocaleString()} - ${d.name} (ID: ${d.id.slice(0, 8)}...)`
+      ).join('\n');
 
-  // find ID based on name or ID match
-  const selectedDraft = drafts.find(d => d.id === input || d.name === input || d.id.startsWith(input));
-  const idToLoad = selectedDraft ? selectedDraft.id : null;
+      const input = prompt("Enter the Name (exact) or ID of the draft to load:\n\n" + draftList);
+      if (!input) return;
 
-  if (!idToLoad) {
-    alert("Draft not found.");
-    return;
-  }
+      // find ID based on name or ID match
+      const selectedDraft = drafts.find(d => d.id === input || d.name === input || d.id.startsWith(input));
+      const idToLoad = selectedDraft ? selectedDraft.id : null;
 
-  const result = await loadDraft(idToLoad);
-  if (result.error) {
-    alert("Error loading draft: " + result.error.message);
+      if (!idToLoad) {
+        alert("Draft not found.");
+        return;
+      }
+
+      const result = await loadDraft(idToLoad);
+      if (result.error) {
+        alert("Error loading draft: " + result.error.message);
+      } else {
+        alert("Draft loaded successfully!");
+      }
+    });
+    console.log('✅ Load Draft button listener attached');
   } else {
-    alert("Draft loaded successfully!");
+    console.warn('⚠️ Load Draft button not found');
   }
-});
+}
+
+// Attach listeners immediately (buttons are in index.html, already in DOM)
+attachDraftListeners();
 
 /* ---------- App State ---------- */
 const state = {
