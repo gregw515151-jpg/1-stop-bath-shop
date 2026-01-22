@@ -134,6 +134,48 @@ function handleLogin() {
 function renderCategories() {
     categoriesContainer.innerHTML = '';
 
+    // Add company info section first
+    const companyInfo = localStorage.getItem('company_info') ? JSON.parse(localStorage.getItem('company_info')) : {
+        name: '1 Stop Bath Shop',
+        address: '',
+        mhic: '',
+        phone: '',
+        email: ''
+    };
+
+    const companySection = document.createElement('section');
+    companySection.className = 'category-section';
+    companySection.style.cssText = 'background: #f0f9ff; border: 2px solid #3b82f6; margin-bottom: 24px;';
+    companySection.innerHTML = `
+        <h2 style="color: #1e40af;">🏢 Company Information</h2>
+        <div style="display: grid; gap: 12px; margin-top: 16px;">
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 4px;">Company Name:</label>
+                <input type="text" id="company-name" value="${companyInfo.name}" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 4px;">Address:</label>
+                <input type="text" id="company-address" value="${companyInfo.address}" placeholder="123 Main St, City, State ZIP" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 4px;">MHIC #:</label>
+                <input type="text" id="company-mhic" value="${companyInfo.mhic}" placeholder="Maryland Home Improvement Commission #" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Phone:</label>
+                    <input type="tel" id="company-phone" value="${companyInfo.phone}" placeholder="(555) 123-4567" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Email:</label>
+                    <input type="email" id="company-email" value="${companyInfo.email}" placeholder="info@company.com" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="window.saveCompanyInfo()" style="margin-top: 8px;">💾 Save Company Info</button>
+        </div>
+    `;
+    categoriesContainer.appendChild(companySection);
+
     CATEGORIES.forEach(cat => {
         const section = document.createElement('section');
         section.className = 'category-section';
@@ -263,6 +305,18 @@ window.handleCancel = (categoryId) => {
     const priceInp = document.getElementById(`add-price-${categoryId}`);
     nameInp.value = '';
     priceInp.value = '';
+};
+
+window.saveCompanyInfo = () => {
+    const companyInfo = {
+        name: document.getElementById('company-name').value,
+        address: document.getElementById('company-address').value,
+        mhic: document.getElementById('company-mhic').value,
+        phone: document.getElementById('company-phone').value,
+        email: document.getElementById('company-email').value
+    };
+    localStorage.setItem('company_info', JSON.stringify(companyInfo));
+    alert('✅ Company information saved successfully!');
 };
 
 init();
