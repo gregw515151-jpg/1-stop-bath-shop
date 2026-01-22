@@ -35,7 +35,7 @@
 3. Fill in customer details
 4. Select products and services
 5. Add photos (optional)
-6. Click "Email Quote" or "Print / Save PDF"
+6. Click "Share PDF" or "Print / Save PDF"
 
 ### For Admins:
 1. Click 🔐 Admin button (or go to /admin.html)
@@ -74,7 +74,7 @@ git push
 ✅ Product selection dropdowns  
 ✅ Photo upload (up to 15)  
 ✅ PDF generation  
-✅ Email quotes (mailto)  
+✅ Share PDF links  
 ✅ Admin product management  
 ✅ Mobile-friendly  
 ✅ Auto-calculating totals  
@@ -89,8 +89,8 @@ git push
 **Admin controls not showing?**  
 → Click 🔐 Admin and enter password
 
-**Email not working?**  
-→ Enter email in "Send Quote To" field
+**PDF Link not opening?**  
+→ Check internet connection/popup blocker
 
 **Changes not saving?**  
 → Check internet connection, refresh page

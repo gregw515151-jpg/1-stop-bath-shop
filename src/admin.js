@@ -70,42 +70,44 @@ function playDuckHuntVideo(videoSrc, onComplete) {
     };
 }
 
-const loginScreen = document.getElementById('login-screen');
-const adminPanel = document.getElementById('admin-panel');
-const passwordInput = document.getElementById('admin-password');
-const loginBtn = document.getElementById('login-btn');
-const loginError = document.getElementById('login-error');
-const logoutBtn = document.getElementById('logout-btn');
-const categoriesContainer = document.getElementById('categories-container');
 
-const CATEGORIES = [
-    { id: 'scope_of_work', name: 'Scope of Work' },
-    { id: 'plumbing_colors', name: 'Plumbing Colors' },
-    { id: 'plumbing_styles', name: 'Plumbing Styles' },
-    { id: 'electrical_colors', name: 'Electrical Colors' },
-    { id: 'exhaust_fans', name: 'Exhaust Fans' },
-    { id: 'shower_colors', name: 'Shower Colors' },
-    { id: 'shower_sizes', name: 'Shower Sizes' },
-    { id: 'drain_locations', name: 'Drain Locations' },
-    { id: 'tub_depths', name: 'Tub Depths' },
-    { id: 'tub_lengths', name: 'Tub Lengths' },
-    { id: 'wall_colors', name: 'Wall Colors' },
-    { id: 'wall_patterns', name: 'Wall Patterns' },
-    { id: 'wall_types', name: 'Wall Types' },
-    { id: 'vanity_lengths', name: 'Vanity Lengths' },
-    { id: 'flooring_types', name: 'Flooring Types' },
-    { id: 'baseboard_styles', name: 'Baseboard Styles' },
-    { id: 'window_styles', name: 'Window Styles' },
-    { id: 'tile_materials', name: 'Tile Materials' },
-    { id: 'plumbing_materials', name: 'Plumbing Materials' }
-];
+export async function initAdmin() {
+    console.log('Initializing Admin Panel...');
 
-async function init() {
+    // Re-select elements inside init to ensure they exist
+    const loginScreen = document.getElementById('login-screen');
+    const adminPanel = document.getElementById('admin-panel');
+    const passwordInput = document.getElementById('admin-password');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+    const categoriesContainer = document.getElementById('categories-container');
+    const closeAdminBtn = document.getElementById('close-admin-btn');
+    const adminOverlay = document.getElementById('admin-overlay');
+
+    if (!loginScreen || !adminPanel) {
+        console.error('Admin elements not found!');
+        return;
+    }
+
     await initializeApp();
 
-    loginBtn.addEventListener('click', handleLogin);
+    const handleLoginWrapper = () => {
+        if (passwordInput.value === ADMIN_PASSWORD) {
+            loginScreen.style.display = 'none';
+            // Play Duck Hunt Memories on login
+            playDuckHuntVideo(duckHuntMemories, () => {
+                adminPanel.style.display = 'block';
+                renderCategories(categoriesContainer);
+            });
+        } else {
+            loginError.style.display = 'block';
+        }
+    };
+
+    loginBtn.addEventListener('click', handleLoginWrapper);
     passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLogin();
+        if (e.key === 'Enter') handleLoginWrapper();
     });
 
     logoutBtn.addEventListener('click', () => {
@@ -114,25 +116,22 @@ async function init() {
             adminPanel.style.display = 'none';
             loginScreen.style.display = 'block';
             passwordInput.value = '';
+            // Close the overlay too if desired, or just reset to login screen
+            if (adminOverlay) adminOverlay.style.display = 'none';
         });
     });
-}
 
-function handleLogin() {
-    if (passwordInput.value === ADMIN_PASSWORD) {
-        loginScreen.style.display = 'none';
-        // Play Duck Hunt Memories on login
-        playDuckHuntVideo(duckHuntMemories, () => {
-            adminPanel.style.display = 'block';
-            renderCategories();
+    // Close button functionality
+    if (closeAdminBtn && adminOverlay) {
+        closeAdminBtn.addEventListener('click', () => {
+            adminOverlay.style.display = 'none';
         });
-    } else {
-        loginError.style.display = 'block';
     }
 }
 
-function renderCategories() {
-    categoriesContainer.innerHTML = '';
+function renderCategories(container) {
+    if (!container) return;
+    container.innerHTML = '';
 
     // Add company info section first
     const companyInfo = localStorage.getItem('company_info') ? JSON.parse(localStorage.getItem('company_info')) : {
@@ -174,7 +173,7 @@ function renderCategories() {
             <button class="btn btn-primary" onclick="window.saveCompanyInfo()" style="margin-top: 8px;">💾 Save Company Info</button>
         </div>
     `;
-    categoriesContainer.appendChild(companySection);
+    container.appendChild(companySection);
 
     CATEGORIES.forEach(cat => {
         const section = document.createElement('section');
@@ -192,7 +191,7 @@ function renderCategories() {
                 ${renderItemList(cat.id)}
             </div>
         `;
-        categoriesContainer.appendChild(section);
+        container.appendChild(section);
     });
 }
 

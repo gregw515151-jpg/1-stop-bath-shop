@@ -3,41 +3,11 @@ import { initializeApp, getSelections, generateEmailBody } from './app.js'
 import { supabase } from './supabaseClient.js'
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
+import { initAdmin } from './admin.js'
 
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
 const MAX_PHOTOS = 15;
-// const SITE_PASSWORD = "bath2025"; // Password protection disabled
-
-/* ---------- Password Protection ---------- */
-// Password protection has been disabled for public access
-// Uncomment the code below to re-enable password protection
-/*
-function checkSiteAccess() {
-  const accessGranted = sessionStorage.getItem('siteAccess');
-  if (accessGranted === 'true') {
-    return true;
-  }
-
-  const password = prompt('Enter site password to access:');
-  if (password === SITE_PASSWORD) {
-    sessionStorage.setItem('siteAccess', 'true');
-    return true;
-  } else if (password !== null) {
-    alert('Incorrect password. Access denied.');
-    document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;"><h1>Access Denied</h1></div>';
-    return false;
-  } else {
-    document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;"><h1>Access Required</h1></div>';
-    return false;
-  }
-}
-
-// Check access before loading app
-if (!checkSiteAccess()) {
-  throw new Error('Access denied');
-}
-*/
 
 /* ---------- HTML Template ---------- */
 function getAppHtml(maxPhotos) {
@@ -45,10 +15,10 @@ function getAppHtml(maxPhotos) {
   <div class="container">
     <!-- Header -->
     <header style="text-align:center; margin-bottom: 16px; position: relative;">
-      <button id="admin-btn" class="admin-toggle-btn" style="position: absolute; top: 0; right: 0; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;" onclick="window.open('/admin.html', '_blank')">🔐 Admin</button>
+      <button id="admin-btn" class="admin-toggle-btn" style="position: absolute; top: 0; right: 0; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🔐 Admin</button>
       <button id="admin-logout-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 120px; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">Logout</button>
       <button id="admin-reset-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 240px; padding: 8px 16px; background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🔄 Reset Data</button>
-      <button id="company-info-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 360px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;" onclick="window.open('/admin.html', '_blank')">🏢 Company Info</button>
+      <button id="company-info-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 360px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;" onclick="document.getElementById('admin-overlay').style.display='flex'">🏢 Company Info</button>
       <img id="company-logo" class="header-logo" alt="1 STOP BATH SHOP" src="" />
       <h1 style="margin: 16px 0 4px;">Bathroom Quote System</h1>
     </header>
@@ -140,6 +110,92 @@ function getAppHtml(maxPhotos) {
       </div>
     </div>
 
+    <!-- Admin Overlay (Restored) -->
+    <div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto;">
+      <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            position: relative;
+        }
+        .login-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .category-section {
+            margin-bottom: 32px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .item-list {
+            margin-top: 12px;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        .add-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .add-form input {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+      </style>
+      <div class="admin-container">
+          <button id="close-admin-btn" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
+          <div id="login-screen" class="login-screen">
+              <h1>Admin Access</h1>
+              <p>Please enter the admin password to manage products.</p>
+              <div style="margin-top: 20px;">
+                  <input type="password" id="admin-password" placeholder="Password" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                  <button id="login-btn" class="btn btn-primary">Login</button>
+              </div>
+              <p id="login-error" style="color: red; margin-top: 10px; display: none;">Incorrect password.</p>
+          </div>
+
+          <div id="admin-panel" class="admin-panel">
+              <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                  <h1>Product Management</h1>
+                  <button id="logout-btn" class="btn btn-secondary">Logout</button>
+              </header>
+
+              <div id="categories-container">
+                  <!-- Categories will be rendered here -->
+              </div>
+          </div>
+      </div>
+    </div>
+
     <!-- Photos -->
     <section class="card" style="margin-top:16px;">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
@@ -166,6 +222,15 @@ function getAppHtml(maxPhotos) {
 
 /* ---------- Render App ---------- */
 document.querySelector('#app').innerHTML = getAppHtml(MAX_PHOTOS);
+
+// Initialize Admin Module
+initAdmin().catch(console.error);
+
+// Add event listener for main Admin button
+document.getElementById('admin-btn')?.addEventListener('click', () => {
+  const overlay = document.getElementById('admin-overlay');
+  if (overlay) overlay.style.display = 'flex';
+});
 
 /* ---------- App State ---------- */
 const state = {

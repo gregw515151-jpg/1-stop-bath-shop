@@ -56,7 +56,7 @@ Phone: _________________________________
 - Admin panel and user interface
 - Database schema and configuration
 - All product data and categories
-- Email integration system
+- PDF Sharing & Link Generation system
 - PDF generation functionality
 - Photo upload and management system
 
@@ -305,7 +305,7 @@ Date: _________________
 - Web-based quote builder application
 - Admin panel for product management
 - PDF generation system
-- Email integration (mailto functionality)
+- PDF Sharing System (Upload & Link Generation)
 - Photo upload and management (up to 15 photos)
 - Customer information management
 - Supabase database backend

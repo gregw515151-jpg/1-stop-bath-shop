@@ -23,6 +23,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^4.0.0",
     "mailersend": "^2.6.0",
+    "md-to-pdf": "^5.2.5",
     "nodemailer": "^7.0.12",
     "resend": "^6.7.0"
   }

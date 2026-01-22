@@ -153,11 +153,14 @@ Each section contains relevant dropdowns, checkboxes, and input fields.
 
 #### Step 7: Send or Print Quote
 
-**Option A: Email Quote**
-1. Enter recipient email in the "Send Quote To" field
-2. Click **"Email Quote"** button
-3. Your default email app will open with the quote pre-filled
-4. Review and send the email
+**Option A: Share PDF Link**
+1. Click **"Share PDF"** button (next to Print/Save PDF)
+2. A secure link to your quote is generated automatically
+3. In the popup window, you can:
+   - **View PDF:** Preview the documents
+   - **Copy Link:** Copy the URL to clipboard to send via SMS, email, or chat
+   - **Download:** Save the PDF file to your device
+4. Send the copied link to your customer - they can view it on any device without downloading
 
 **Option B: Print/Save PDF**
 1. Click **"Print / Save PDF"** button
@@ -177,7 +180,11 @@ Each section contains relevant dropdowns, checkboxes, and input fields.
 3. Admin controls appear under each dropdown:
    - **Add Item:** Enter name and price, click "➕ Add"
    - **Delete Item:** Select item, click "🗑️ Delete Selected"
-4. Click **Logout** when finished
+4. **Edit Checkbox Prices:**
+   - For Tile, Plumbing, and Splash sections, prices appear next to checkboxes
+   - Click the price (e.g., "$150.00") to edit it directly inline
+   - Press Enter or click away to save changes
+5. Click **Logout** when finished
 
 #### Standalone Admin Panel:
 1. Go to https://one-stop-bath-shop.onrender.com/admin.html
@@ -243,9 +250,9 @@ VITE_ADMIN_PASSWORD=<your-admin-password>
 - **Cause:** Not logged in as admin
 - **Solution:** Click 🔐 Admin button and enter admin password
 
-#### Email Button Not Working
-- **Cause:** No email address entered
-- **Solution:** Enter email in "Send Quote To" field
+#### PDF Link Not Generating
+- **Cause:** Network connection issue or service timeout
+- **Solution:** Check your internet connection and try again. The service relies on the PDF API.
 
 #### Photos Not Uploading
 - **Cause:** Maximum 15 photos reached
