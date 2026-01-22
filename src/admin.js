@@ -100,10 +100,19 @@ export async function initAdmin() {
             loginScreen.style.display = 'none';
             // Play Duck Hunt Memories on login
             playDuckHuntVideo(duckHuntMemories, () => {
+                // 1. Hide the main overlay immediately so it doesn't "pop up"
+                const overlay = document.getElementById('admin-overlay');
+                if (overlay) overlay.style.display = 'none';
+
+                // 2. Prepare the panel for when the user clicks "Company Info"
                 adminPanel.style.display = 'block';
-                renderCategories(categoriesContainer);
-                // Auto-close overlay after login, requiring explicit click on "Company Info" to re-open
-                if (adminOverlay) adminOverlay.style.display = 'none';
+
+                // 3. Render contents (wrapped in try/catch to be safe)
+                try {
+                    renderCategories(categoriesContainer);
+                } catch (e) {
+                    console.error('Error rendering admin categories:', e);
+                }
             });
         } else {
             loginError.style.display = 'block';
