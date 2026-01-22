@@ -2218,6 +2218,14 @@ function injectAdminControlsToCheckboxes() {
     splashContainer.parentNode.insertBefore(controlsDiv, splashContainer.nextElementSibling);
     setupDynamicAdminControlsForCheckboxes('splash_options', controlsDiv);
   }
+
+  // 4. Scope of Work
+  const scopeContainer = document.getElementById('scope-of-work-checkboxes');
+  if (scopeContainer && !scopeContainer.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+    const controlsDiv = createCheckboxAdminControls('scope_of_work');
+    scopeContainer.parentNode.insertBefore(controlsDiv, scopeContainer.nextElementSibling);
+    setupDynamicAdminControlsForCheckboxes('scope_of_work', controlsDiv);
+  }
 }
 
 function createCheckboxAdminControls(category) {
@@ -2257,6 +2265,8 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
     checkboxContainer = document.getElementById('tile-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
   } else if (category === 'plumbing_materials') {
     checkboxContainer = document.getElementById('plumbing-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'scope_of_work') {
+    checkboxContainer = document.getElementById('scope-of-work-checkboxes');
   }
 
   // Add click listener to checkboxes to populate form
@@ -2268,15 +2278,27 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
         //   if (cb !== e.target) cb.checked = false;
         // });
 
-        const itemId = e.target.value;
-        const item = products[category]?.find(p => String(p.id) === String(itemId));
+        const itemName = e.target.value; // Scope uses value as name usually, let's check
+        // For Scope of Work, value IS the name. For others, value is ID.
+        // We need to handle this distinction.
+        let item;
+
+        if (category === 'scope_of_work') {
+          // For scope of work, we rely on finding by name since ID isn't used in value
+          // Value has &quot; replaced back to "
+          const decodedName = itemName.replace(/&quot;/g, '"');
+          item = products[category]?.find(p => p.name === decodedName);
+        } else {
+          const itemId = e.target.value;
+          item = products[category]?.find(p => String(p.id) === String(itemId));
+        }
 
         if (item) {
           nameInput.value = item.name;
           priceInput.value = item.price;
 
           addBtn.textContent = '✅ Update';
-          addBtn.dataset.editingId = itemId;
+          addBtn.dataset.editingId = item.id; // Always use ID for updates
           cancelBtn.style.display = 'block';
 
           // Highlight the selected item row
@@ -2326,6 +2348,8 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
           <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
         </label>
       `).join('');
+    } else if (category === 'scope_of_work') {
+      populateScopeOfWork();
     } else {
       // Re-render the app to update checkbox lists
       // Ideally we'd just re-render the section, but re-init is safer to ensure consistency
@@ -2398,6 +2422,8 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
             <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
           </label>
         `).join('');
+      } else if (category === 'scope_of_work') {
+        populateScopeOfWork();
       } else if (category === 'tile_materials') {
         checkboxContainer.innerHTML = products.tile_materials.map(item => `
           <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
@@ -2426,6 +2452,7 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
       alert(`Deleted "${item.name}"`);
     }
   });
+
 
   // Cancel Button
   cancelBtn.addEventListener('click', () => {
