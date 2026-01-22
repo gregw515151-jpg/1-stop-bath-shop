@@ -321,9 +321,9 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "3", name: "Right Splash", price: 0 }
   ],
   electrical_items: [
-    { id: "1", name: "Switch", price: 0 },
-    { id: "2", name: "Outlet", price: 0 },
-    { id: "3", name: "Recessed Light", price: 0 }
+    { id: "1", name: "Switch", price: 25 },
+    { id: "2", name: "Outlet", price: 30 },
+    { id: "3", name: "Recessed Light", price: 75 }
   ],
   accessory_items: [
     { id: "1", name: "Towel Bar", price: 0 },
