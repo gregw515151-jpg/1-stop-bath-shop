@@ -1853,6 +1853,9 @@ function updateSummary() {
   }
 }
 
+// Expose updateSummary to window so it can be called from drafts.js
+window.updateSummary = updateSummary;
+
 function getSelectedItem(selectId, items) {
   const select = document.getElementById(selectId);
   if (!select || !select.value) return null;

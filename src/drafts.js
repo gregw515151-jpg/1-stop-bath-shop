@@ -4,6 +4,12 @@ import { getSelections, products } from './app.js';
 export async function saveDraft(name) {
     if (!name) return { error: 'Name is required' };
 
+    // CRITICAL: Call updateSummary() to populate selections object from current DOM state
+    // This ensures all form values (dropdowns, checkboxes, inputs) are captured
+    if (typeof window.updateSummary === 'function') {
+        window.updateSummary();
+    }
+
     const selections = getSelections();
 
     // Collect customer info from DOM
@@ -36,6 +42,8 @@ export async function saveDraft(name) {
         // For V1, let's skip photos or warn the user.
         timestamp: new Date().toISOString()
     };
+
+    console.log('💾 Saving draft data:', draftData); // Debug log
 
     const { data, error } = await supabase
         .from('drafts')
@@ -101,14 +109,17 @@ function restoreDropdownsFromState(selections) {
         return;
     }
 
+    console.log('📂 Restoring selections:', selections); // Debug log
+
+    // Restore all dropdown and input values
     Object.entries(selections).forEach(([key, val]) => {
         let el = document.getElementById(key);
         if (!el) el = document.getElementById(key.replace(/_/g, '-'));
 
         if (el && (el.tagName === 'SELECT' || el.tagName === 'INPUT')) {
             el.value = val || '';
-            // Trigger change to update summary just in case
-            el.dispatchEvent(new Event('change'));
+            // Trigger change to update summary
+            el.dispatchEvent(new Event('change', { bubbles: true }));
         }
     });
 
@@ -117,9 +128,20 @@ function restoreDropdownsFromState(selections) {
         const scopeNames = selections.scope_of_work.split(', ').map(s => s.trim());
         document.querySelectorAll('.scope-item').forEach(cb => {
             const cbValue = cb.value.replace(/&quot;/g, '"');
-            if (scopeNames.includes(cbValue)) {
-                cb.checked = true;
-            }
+            cb.checked = scopeNames.includes(cbValue);
         });
     }
+
+    // Restore demo checkboxes
+    if (selections.demo_items && Array.isArray(selections.demo_items)) {
+        document.querySelectorAll('.demo-item').forEach(cb => {
+            cb.checked = selections.demo_items.includes(cb.value);
+        });
+    }
+
+    // Trigger updateSummary to refresh the display
+    if (typeof window.updateSummary === 'function') {
+        window.updateSummary();
+    }
 }
+
