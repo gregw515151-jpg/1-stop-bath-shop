@@ -187,6 +187,11 @@ function renderCategories(container) {
                     <input type="email" id="company-email" value="${companyInfo.email}" placeholder="info@company.com" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                 </div>
             </div>
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label style="display: block; font-weight: 600; margin-bottom: 4px;">Terms and Conditions (HTML supported):</label>
+                <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 200px; font-family: monospace;">${companyInfo.terms || ''}</textarea>
+            </div>
             <button class="btn btn-primary" onclick="window.saveCompanyInfo()" style="margin-top: 8px;">💾 Save Company Info</button>
         </div>
     `;
@@ -329,7 +334,8 @@ window.saveCompanyInfo = () => {
         address: document.getElementById('company-address').value,
         mhic: document.getElementById('company-mhic').value,
         phone: document.getElementById('company-phone').value,
-        email: document.getElementById('company-email').value
+        email: document.getElementById('company-email').value,
+        terms: document.getElementById('company-terms').value
     };
     localStorage.setItem('company_info', JSON.stringify(companyInfo));
     alert('✅ Company information saved successfully!');
