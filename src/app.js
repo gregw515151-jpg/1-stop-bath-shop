@@ -326,9 +326,9 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "3", name: "Recessed Light", price: 75 }
   ],
   accessory_items: [
-    { id: "1", name: "Towel Bar", price: 0 },
-    { id: "2", name: "Towel Ring", price: 0 },
-    { id: "3", name: "T.P. Holder", price: 0 }
+    { id: "1", name: "Towel Bar", price: 35 },
+    { id: "2", name: "Towel Ring", price: 25 },
+    { id: "3", name: "T.P. Holder", price: 20 }
   ],
   drywall_paint_items: [
     { id: "1", name: "Drywall (per linear ft)", price: 0 },
