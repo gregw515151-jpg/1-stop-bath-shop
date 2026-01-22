@@ -1,4 +1,4 @@
-import { initializeApp, products, addItem, deleteItem } from './app.js';
+import { initializeApp, products, addItem, deleteItem, loginAdmin } from './app.js';
 import duckHuntMemories from './assets/duck-hunt-memories.mp4';
 import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
@@ -94,6 +94,9 @@ export async function initAdmin() {
 
     const handleLoginWrapper = () => {
         if (passwordInput.value === ADMIN_PASSWORD) {
+            // Sync with global admin state
+            loginAdmin(passwordInput.value);
+
             loginScreen.style.display = 'none';
             // Play Duck Hunt Memories on login
             playDuckHuntVideo(duckHuntMemories, () => {

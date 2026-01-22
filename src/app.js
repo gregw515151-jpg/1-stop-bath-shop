@@ -524,9 +524,23 @@ export async function initializeApp() {
   await loadProductsFromStorage(); // Now async - loads from Supabase
   renumberAllItems(); // Ensure all items have sequential IDs
   buildQuoteSections(); // Build HTML first
+  populateScopeOfWork(); // Dynamic Scope of Work
   populateDropdowns(); // Then populate with data
   setupAdminControls();
   setupListeners();
+}
+
+function populateScopeOfWork() {
+  const container = document.getElementById('scope-of-work-checkboxes');
+  if (!container || !products.scope_of_work) return;
+
+  container.innerHTML = products.scope_of_work.map(item => `
+    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+      <input type="checkbox" class="scope-item" value="${item.name.replace(/"/g, '&quot;')}" data-price="${item.price}" style="width: 18px; height: 18px;">
+      <span>${item.name}</span>
+      ${item.price > 0 ? `<span style="font-size: 0.85em; color: #666;">(+$${item.price.toFixed(2)})</span>` : ''}
+    </label>
+  `).join('');
 }
 
 function populateDropdowns() {
