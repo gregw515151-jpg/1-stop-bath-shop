@@ -476,10 +476,6 @@ export function getSelections() {
 
 // ... (existing code)
 
-function setupAdminControls() {
-  // Legacy setup removed to prevent conflict with admin.js overlay
-  // Admin button is now handled by inline onclick in main.js and admin.js logic
-}
 
 // Add/Delete with sequential ID system
 export async function addItem(category, name, price) {
