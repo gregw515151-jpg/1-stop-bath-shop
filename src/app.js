@@ -1891,6 +1891,37 @@ function createAdminOverlay() {
         <h1 style="margin: 0; font-size: 1.8rem; color: #111827;">🔧 Admin Panel</h1>
         <button id="admin-close-btn" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;">✕ Close</button>
       </div>
+      
+      <!-- Company Info Section -->
+      <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+        <h2 style="margin: 0 0 16px 0; color: #1e40af; font-size: 1.3rem;">🏢 Company Information</h2>
+        <div style="display: grid; gap: 12px;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">Company Name:</label>
+            <input type="text" id="admin-company-name" value="${company_info.name}" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">Address:</label>
+            <input type="text" id="admin-company-address" value="${company_info.address}" placeholder="123 Main St, City, State ZIP" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">MHIC #:</label>
+            <input type="text" id="admin-company-mhic" value="${company_info.mhic}" placeholder="Maryland Home Improvement Commission #" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">Phone:</label>
+              <input type="tel" id="admin-company-phone" value="${company_info.phone}" placeholder="(555) 123-4567" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">Email:</label>
+              <input type="email" id="admin-company-email" value="${company_info.email}" placeholder="info@company.com" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+            </div>
+          </div>
+          <button id="save-company-info-btn" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px;">💾 Save Company Info</button>
+        </div>
+      </div>
+      
       <div id="admin-categories-container"></div>
     </div>
   `;
@@ -1898,6 +1929,20 @@ function createAdminOverlay() {
   // Close button handler
   overlay.querySelector('#admin-close-btn').addEventListener('click', () => {
     hideAdminPanel();
+  });
+
+  // Save company info button handler
+  overlay.querySelector('#save-company-info-btn').addEventListener('click', () => {
+    company_info.name = document.getElementById('admin-company-name').value;
+    company_info.address = document.getElementById('admin-company-address').value;
+    company_info.mhic = document.getElementById('admin-company-mhic').value;
+    company_info.phone = document.getElementById('admin-company-phone').value;
+    company_info.email = document.getElementById('admin-company-email').value;
+
+    // Save to localStorage
+    localStorage.setItem('company_info', JSON.stringify(company_info));
+
+    alert('✅ Company information saved successfully!');
   });
 
   // Close on overlay click (outside the panel)
