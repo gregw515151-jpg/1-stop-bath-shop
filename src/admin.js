@@ -318,4 +318,5 @@ window.saveCompanyInfo = () => {
     alert('✅ Company information saved successfully!');
 };
 
-init();
+// init(); calls removed, use exported initAdmin()
+
