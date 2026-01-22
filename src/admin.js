@@ -190,7 +190,8 @@ function renderCategories(container) {
             </div>
             <div style="grid-column: 1 / -1;">
                 <label style="display: block; font-weight: 600; margin-bottom: 4px;">Terms and Conditions (HTML supported):</label>
-                <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 200px; font-family: monospace;">${companyInfo.terms || DEFAULT_TERMS}</textarea>
+                <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 400px; font-family: monospace; font-size: 13px;">${companyInfo.terms || DEFAULT_TERMS}</textarea>
+                <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">💡 Tip: You can use HTML tags for formatting (e.g., &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, &lt;p&gt;)</p>
             </div>
             <button class="btn btn-primary" onclick="window.saveCompanyInfo()" style="margin-top: 8px;">💾 Save Company Info</button>
         </div>
