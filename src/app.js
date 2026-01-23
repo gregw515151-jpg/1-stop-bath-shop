@@ -715,13 +715,13 @@ function buildQuoteSections() {
         </div>
         
         <!-- Admin controls for electrical items -->
-        <div class="admin-only" style="margin-top: 12px;">
-          <input type="text" id="add-name-electrical_items" placeholder="Item name" class="select-input" style="margin-bottom: 8px;">
-          <input type="number" id="add-price-electrical_items" placeholder="Price" step="0.01" class="select-input" style="margin-bottom: 8px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-            <button class="admin-add-btn" data-category="electrical_items" style="padding: 8px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">➕ ADD</button>
-            <button class="admin-edit-btn-trigger" data-category="electrical_items" style="padding: 8px; background: #f59e0b; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">✏️ EDIT</button>
-            <button class="admin-delete-btn-trigger" data-category="electrical_items" style="padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">🗑️ DELETE</button>
+        <div class="admin-only" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+          <input type="text" id="add-name-electrical_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <input type="number" id="add-price-electrical_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary admin-add-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ ADD</button>
+            <button class="btn btn-secondary admin-edit-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ EDIT</button>
+            <button class="btn btn-secondary admin-delete-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ DELETE</button>
           </div>
         </div>
         
@@ -1021,13 +1021,13 @@ function buildQuoteSections() {
         </div>
         
         <!-- Admin controls for accessory items -->
-        <div class="admin-only" style="margin-top: 12px;">
-          <input type="text" id="add-name-accessory_items" placeholder="Item name" class="select-input" style="margin-bottom: 8px;">
-          <input type="number" id="add-price-accessory_items" placeholder="Price" step="0.01" class="select-input" style="margin-bottom: 8px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-            <button class="admin-add-btn" data-category="accessory_items" style="padding: 8px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">➕ ADD</button>
-            <button class="admin-edit-btn-trigger" data-category="accessory_items" style="padding: 8px; background: #f59e0b; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">✏️ EDIT</button>
-            <button class="admin-delete-btn-trigger" data-category="accessory_items" style="padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">🗑️ DELETE</button>
+        <div class="admin-only" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+          <input type="text" id="add-name-accessory_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <input type="number" id="add-price-accessory_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary admin-add-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ ADD</button>
+            <button class="btn btn-secondary admin-edit-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ EDIT</button>
+            <button class="btn btn-secondary admin-delete-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ DELETE</button>
           </div>
         </div>
         
