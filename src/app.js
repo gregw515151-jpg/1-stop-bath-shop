@@ -1955,6 +1955,11 @@ function createAdminOverlay() {
               <input type="email" id="admin-company-email" value="${company_info.email}" placeholder="info@company.com" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
             </div>
           </div>
+          <div style="margin-top: 12px;">
+            <label style="display: block; font-weight: 600; margin-bottom: 4px; color: #374151;">Terms and Conditions (HTML Supported):</label>
+            <textarea id="admin-company-terms" rows="12" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: monospace; white-space: pre-wrap;">${company_info.terms || DEFAULT_TERMS}</textarea>
+            <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">Tip: You can use HTML tags for formatting (e.g., &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, &lt;p&gt;)</div>
+          </div>
           <button id="save-company-info-btn" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px;">💾 Save Company Info</button>
         </div>
       </div>
@@ -1975,6 +1980,7 @@ function createAdminOverlay() {
     company_info.mhic = document.getElementById('admin-company-mhic').value;
     company_info.phone = document.getElementById('admin-company-phone').value;
     company_info.email = document.getElementById('admin-company-email').value;
+    company_info.terms = document.getElementById('admin-company-terms').value;
 
     // Save to localStorage
     localStorage.setItem('company_info', JSON.stringify(company_info));
