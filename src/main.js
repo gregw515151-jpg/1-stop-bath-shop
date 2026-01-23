@@ -498,7 +498,8 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     </div>
   `).join('');
 
-  pdfRoot.innerHTML = `
+  // Split content into main and terms
+  const mainContent = `
     <div style="text-align:center; margin-bottom: 10px;">
       ${logoHTML}
     </div>
@@ -513,43 +514,70 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>
     <div>${photosGridHTML || '<div style="font-size:12px;color:#6b7280;">No photos attached.</div>'}</div>
+  `;
 
-    <div style="page-break-before: always; margin-top: 32px; border-top: 2px solid #e5e7eb; padding-top: 24px;">
+  const termsContent = `
+    <div style="padding: 24px;">
       <h2 style="font-size:18px; margin: 0 0 16px; text-align: center; text-transform: uppercase;">Terms and Conditions</h2>
       ${companyInfo.terms || DEFAULT_TERMS}
     </div>
   `;
 
+  // Render main content
+  pdfRoot.innerHTML = mainContent;
   document.body.appendChild(pdfRoot);
 
-  // Render to hi-res canvas
-  const canvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
-  const imgData = canvas.toDataURL('image/png');
+  const mainCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+  const mainImgData = mainCanvas.toDataURL('image/png');
+
+  // Render terms content
+  pdfRoot.innerHTML = termsContent;
+  const termsCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+  const termsImgData = termsCanvas.toDataURL('image/png');
+
+  document.body.removeChild(pdfRoot);
 
   // Create PDF with pagination
   const pdf = new jsPDF('p', 'pt', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
-  const imgWidth = pageWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  // Add main content pages
+  const mainImgWidth = pageWidth;
+  const mainImgHeight = (mainCanvas.height * mainImgWidth) / mainCanvas.width;
 
-  let heightLeft = imgHeight;
+  let heightLeft = mainImgHeight;
   let position = 0;
 
-  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+  pdf.addImage(mainImgData, 'PNG', 0, position, mainImgWidth, mainImgHeight, undefined, 'FAST');
   heightLeft -= pageHeight;
 
   while (heightLeft > 0) {
     pdf.addPage();
-    position = heightLeft - imgHeight;
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+    position = heightLeft - mainImgHeight;
+    pdf.addImage(mainImgData, 'PNG', 0, position, mainImgWidth, mainImgHeight, undefined, 'FAST');
     heightLeft -= pageHeight;
+  }
+
+  // Add terms on a new page
+  pdf.addPage();
+  const termsImgWidth = pageWidth;
+  const termsImgHeight = (termsCanvas.height * termsImgWidth) / termsCanvas.width;
+  pdf.addImage(termsImgData, 'PNG', 0, 0, termsImgWidth, termsImgHeight, undefined, 'FAST');
+
+  // If terms content is longer than one page, add additional pages
+  let termsHeightLeft = termsImgHeight - pageHeight;
+  let termsPosition = 0;
+  while (termsHeightLeft > 0) {
+    pdf.addPage();
+    termsPosition = termsHeightLeft - termsImgHeight;
+    pdf.addImage(termsImgData, 'PNG', 0, termsPosition, termsImgWidth, termsImgHeight, undefined, 'FAST');
+    termsHeightLeft -= pageHeight;
   }
 
   const blob = pdf.output('blob');
   const base64 = pdf.output('datauristring').split(',')[1];
-  document.body.removeChild(pdfRoot);
+  // document.body.removeChild(pdfRoot); // This line was removed as pdfRoot is already removed
 
   const download = () => {
     const url = URL.createObjectURL(blob);
