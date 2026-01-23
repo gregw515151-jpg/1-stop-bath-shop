@@ -517,8 +517,8 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   `;
 
   const termsContent = `
-    <div style="padding: 24px;">
-      <h2 style="font-size:18px; margin: 0 0 16px; text-align: center; text-transform: uppercase;">Terms and Conditions</h2>
+    <div style="padding: 24px; font-size: 10px; line-height: 1.4;">
+      <h2 style="font-size:16px; margin: 0 0 12px; text-align: center; text-transform: uppercase;">Terms and Conditions</h2>
       ${companyInfo.terms || DEFAULT_TERMS}
     </div>
   `;
