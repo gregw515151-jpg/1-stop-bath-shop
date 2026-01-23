@@ -1,4 +1,4 @@
-import { initializeApp, products, addItem, deleteItem, loginAdmin, logoutAdmin, DEFAULT_TERMS, CATEGORIES } from './app.js';
+import { initializeApp, products, addItem, deleteItem, loginAdmin, logoutAdmin, DEFAULT_TERMS } from './app.js';
 import duckHuntMemories from './assets/duck-hunt-memories.mp4';
 import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
