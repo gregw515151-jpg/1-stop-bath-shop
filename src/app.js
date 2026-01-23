@@ -715,7 +715,7 @@ function buildQuoteSections() {
         </div>
         
         <!-- Admin controls for electrical items -->
-        <div class="admin-only" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+        <div class="admin-control" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
           <input type="text" id="add-name-electrical_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
           <input type="number" id="add-price-electrical_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
           <div style="display: flex; gap: 8px;">
@@ -1021,7 +1021,7 @@ function buildQuoteSections() {
         </div>
         
         <!-- Admin controls for accessory items -->
-        <div class="admin-only" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+        <div class="admin-control" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
           <input type="text" id="add-name-accessory_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
           <input type="number" id="add-price-accessory_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
           <div style="display: flex; gap: 8px;">
