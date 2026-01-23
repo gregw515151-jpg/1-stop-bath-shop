@@ -1510,70 +1510,34 @@ function updateSummary() {
     if (hasVanityTop) html += vanityTopHtml;
   }
 
-  // Calculate Accessories Section
-  const towelBarQty = document.getElementById('towel-bar-qty');
-  const towelRingQty = document.getElementById('towel-ring-qty');
-  const tpHolderQty = document.getElementById('tp-holder-qty');
-  const accessoriesFinish = document.getElementById('accessories-finish');
+  // Calculate Accessories
+  const accessoryCheckboxes = document.querySelectorAll('.accessory-item:checked');
   const accessoriesNotes = document.getElementById('accessories-notes');
 
-  let accessoriesHtml = '';
-  let hasAccessories = false;
-
-  if ((towelBarQty && towelBarQty.value) || (towelRingQty && towelRingQty.value) || (tpHolderQty && tpHolderQty.value)) {
-    accessoriesHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Accessories:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
-
-    if (towelBarQty && towelBarQty.value) {
-      const qty = parseInt(towelBarQty.value) || 0;
-      if (qty > 0) {
-        const item = products.accessory_items?.find(p => p.name === 'Towel Bar');
-        if (item) {
+  if (accessoryCheckboxes.length > 0) {
+    let accessoriesHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Accessories:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    accessoryCheckboxes.forEach(cb => {
+      const item = products.accessory_items.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.accessory-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          accessoriesHtml += `<li>Towel Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasAccessories = true;
+          accessoriesHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          selections[`accessory_${item.id}`] = `${item.name} (x${qty})`;
         }
       }
-    }
-
-    if (towelRingQty && towelRingQty.value) {
-      const qty = parseInt(towelRingQty.value) || 0;
-      if (qty > 0) {
-        const item = products.accessory_items?.find(p => p.name === 'Towel Ring');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          accessoriesHtml += `<li>Towel Ring (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasAccessories = true;
-        }
-      }
-    }
-
-    if (tpHolderQty && tpHolderQty.value) {
-      const qty = parseInt(tpHolderQty.value) || 0;
-      if (qty > 0) {
-        const item = products.accessory_items?.find(p => p.name === 'T.P. Holder');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          accessoriesHtml += `<li>T.P. Holder (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasAccessories = true;
-        }
-      }
-    }
-
-    if (accessoriesFinish && accessoriesFinish.value) {
-      accessoriesHtml += `<li>Finish: ${accessoriesFinish.options[accessoriesFinish.selectedIndex].text}</li>`;
-    }
-
+    });
     accessoriesHtml += '</ul>';
 
     if (accessoriesNotes && accessoriesNotes.value.trim()) {
       accessoriesHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${accessoriesNotes.value.trim()}</em></div>`;
+      selections.accessories_notes = accessoriesNotes.value.trim();
     }
 
     accessoriesHtml += '</div>';
-    if (hasAccessories) html += accessoriesHtml;
+    if (accessoriesHtml.includes('<li>')) html += accessoriesHtml;
   }
 
   // Calculate Drywall & Paint Section
