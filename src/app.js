@@ -996,15 +996,15 @@ function buildQuoteSections() {
       <div class="section-content">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
           <div class="form-group">
-            <label>Towel Bar:</label>
+            <label>Towel Bar: <span style="color: #10b981; font-weight: 600;">$35 each</span></label>
             <input type="number" id="towel-bar-qty" min="0" class="select-input" placeholder="How many?">
           </div>
           <div class="form-group">
-            <label>Towel Ring:</label>
+            <label>Towel Ring: <span style="color: #10b981; font-weight: 600;">$25 each</span></label>
             <input type="number" id="towel-ring-qty" min="0" class="select-input" placeholder="How many?">
           </div>
           <div class="form-group">
-            <label>T.P. Holder:</label>
+            <label>T.P. Holder: <span style="color: #10b981; font-weight: 600;">$20 each</span></label>
             <input type="number" id="tp-holder-qty" min="0" class="select-input" placeholder="How many?">
           </div>
         </div>
