@@ -700,25 +700,25 @@ function buildQuoteSections() {
           <select id="exhaust-fan" class="select-input">
           </select>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-          <div class="form-group">
-            <label>Switches: <span style="color: #10b981; font-weight: 600;">$25 each</span></label>
-            <input type="number" id="switches" min="0" class="select-input" placeholder="How many?">
-          </div>
-          <div class="form-group">
-            <label>Outlets: <span style="color: #10b981; font-weight: 600;">$30 each</span></label>
-            <input type="number" id="outlets" min="0" class="select-input" placeholder="How many?">
-          </div>
-          <div class="form-group">
-            <label>Recessed Lights: <span style="color: #10b981; font-weight: 600;">$75 each</span></label>
-            <input type="number" id="recessed-lights" min="0" class="select-input" placeholder="How many?">
+        <label style="font-weight: 600; margin: 16px 0 12px; display: block;">Select electrical items and quantities:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${products.electrical_items.map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="electrical-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
+              <input type="number" class="electrical-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 16px;">
           <label>Device Color:</label>
           <select id="electrical-color" class="select-input">
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 16px;">
           <label>Electrical Notes:</label>
           <textarea id="electrical-notes" rows="2" class="select-input" placeholder="Any special electrical requirements..."></textarea>
         </div>
@@ -994,19 +994,18 @@ function buildQuoteSections() {
         <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
       </div>
       <div class="section-content">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-          <div class="form-group">
-            <label>Towel Bar: <span style="color: #10b981; font-weight: 600;">$35 each</span></label>
-            <input type="number" id="towel-bar-qty" min="0" class="select-input" placeholder="How many?">
-          </div>
-          <div class="form-group">
-            <label>Towel Ring: <span style="color: #10b981; font-weight: 600;">$25 each</span></label>
-            <input type="number" id="towel-ring-qty" min="0" class="select-input" placeholder="How many?">
-          </div>
-          <div class="form-group">
-            <label>T.P. Holder: <span style="color: #10b981; font-weight: 600;">$20 each</span></label>
-            <input type="number" id="tp-holder-qty" min="0" class="select-input" placeholder="How many?">
-          </div>
+        <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select accessories and quantities:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${products.accessory_items.map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="accessory-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
+              <input type="number" class="accessory-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Accessories Finish:</label>
