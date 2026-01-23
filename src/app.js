@@ -1437,60 +1437,25 @@ function updateSummary() {
     }
   }
 
-  // Calculate Electrical Section
-  const switches = document.getElementById('switches');
-  const outlets = document.getElementById('outlets');
-  const recessedLights = document.getElementById('recessed-lights');
+  // Calculate Electrical Items
+  const electricalCheckboxes = document.querySelectorAll('.electrical-item:checked');
   const electricalNotes = document.getElementById('electrical-notes');
 
-  let electricalHtml = '';
-  let hasElectrical = false;
-
-  if ((switches && switches.value) || (outlets && outlets.value) || (recessedLights && recessedLights.value)) {
-    electricalHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Electrical:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
-
-    if (switches && switches.value) {
-      const qty = parseInt(switches.value) || 0;
-      if (qty > 0) {
-        const item = products.electrical_items?.find(p => p.name === 'Switch');
-        if (item) {
+  if (electricalCheckboxes.length > 0) {
+    let electricalHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Electrical:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    electricalCheckboxes.forEach(cb => {
+      const item = products.electrical_items.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.electrical-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          electricalHtml += `<li>Switches (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasElectrical = true;
-          selections.switches = qty;
+          electricalHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          selections[`electrical_${item.id}`] = `${item.name} (x${qty})`;
         }
       }
-    }
-
-    if (outlets && outlets.value) {
-      const qty = parseInt(outlets.value) || 0;
-      if (qty > 0) {
-        const item = products.electrical_items?.find(p => p.name === 'Outlet');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          electricalHtml += `<li>Outlets (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasElectrical = true;
-          selections.outlets = qty;
-        }
-      }
-    }
-
-    if (recessedLights && recessedLights.value) {
-      const qty = parseInt(recessedLights.value) || 0;
-      if (qty > 0) {
-        const item = products.electrical_items?.find(p => p.name === 'Recessed Light');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          electricalHtml += `<li>Recessed Lights (x${qty}) - $${cost.toFixed(2)}</li>`;
-          hasElectrical = true;
-          selections.recessed_lights = qty;
-        }
-      }
-    }
-
+    });
     electricalHtml += '</ul>';
 
     if (electricalNotes && electricalNotes.value.trim()) {
@@ -1499,7 +1464,7 @@ function updateSummary() {
     }
 
     electricalHtml += '</div>';
-    if (hasElectrical) html += electricalHtml;
+    if (electricalHtml.includes('<li>')) html += electricalHtml;
   }
 
   // Calculate Vanity Top Section
