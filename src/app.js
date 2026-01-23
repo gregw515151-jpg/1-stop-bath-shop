@@ -2066,12 +2066,40 @@ function renderCategory(cat) {
 }
 
 function setupCategoryHandlers(categoryId) {
-  // Add button handler
+  const nameInput = document.getElementById(`add-name-${categoryId}`);
+  const priceInput = document.getElementById(`add-price-${categoryId}`);
   const addBtn = document.querySelector(`.admin-add-btn[data-category="${categoryId}"]`);
+  const editBtn = document.querySelector(`.admin-edit-btn[data-category="${categoryId}"]`);
+  const deleteBtn = document.querySelector(`.admin-delete-btn[data-category="${categoryId}"]`);
+
+  if (!addBtn || !nameInput || !priceInput) {
+    console.log(`Skipping ${categoryId} - controls not found`);
+    return;
+  }
+
+  // For checkbox-based categories (electrical_items, accessory_items), add click-to-populate
+  if (categoryId === 'electrical_items' || categoryId === 'accessory_items') {
+    const checkboxClass = categoryId === 'electrical_items' ? '.electrical-item' : '.accessory-item';
+
+    // Add event listener to checkboxes
+    document.addEventListener('change', (e) => {
+      if (e.target.matches(checkboxClass) && document.body.classList.contains('admin-mode')) {
+        const itemId = e.target.value;
+        const item = products[categoryId]?.find(p => String(p.id) === String(itemId));
+
+        if (item && e.target.checked) {
+          nameInput.value = item.name;
+          priceInput.value = item.price;
+          addBtn.textContent = '✅ Update';
+          addBtn.dataset.editingId = item.id;
+        }
+      }
+    });
+  }
+
+  // Add button handler
   if (addBtn) {
     addBtn.addEventListener('click', async () => {
-      const nameInput = document.getElementById(`add-name-${categoryId}`);
-      const priceInput = document.getElementById(`add-price-${categoryId}`);
       const name = nameInput.value.trim();
       const price = parseFloat(priceInput.value);
 
@@ -2081,11 +2109,35 @@ function setupCategoryHandlers(categoryId) {
       }
 
       try {
-        await addItem(categoryId, name, price);
+        if (addBtn.dataset.editingId) {
+          // Update existing item
+          await deleteItem(categoryId, addBtn.dataset.editingId);
+          await addItem(categoryId, name, price);
+          alert(`Updated "${name}"`);
+          delete addBtn.dataset.editingId;
+          addBtn.textContent = '➕ ADD';
+
+          // Uncheck all checkboxes
+          if (categoryId === 'electrical_items') {
+            document.querySelectorAll('.electrical-item').forEach(cb => cb.checked = false);
+          } else if (categoryId === 'accessory_items') {
+            document.querySelectorAll('.accessory-item').forEach(cb => cb.checked = false);
+          }
+        } else {
+          // Add new item
+          await addItem(categoryId, name, price);
+          alert(`Added "${name}"`);
+        }
+
         nameInput.value = '';
         priceInput.value = '';
         renderAdminCategories();
-        populateDropdowns(); // Update dropdowns in main form
+        populateDropdowns();
+
+        // Rebuild the form to show new items
+        buildQuoteSections();
+        setupListeners();
+        updateSummary();
       } catch (err) {
         console.error(err);
         alert('Error adding item. Check console for details.');
@@ -2093,56 +2145,44 @@ function setupCategoryHandlers(categoryId) {
     });
   }
 
-  // Edit button handlers
-  document.querySelectorAll(`.admin-edit-btn[data-category="${categoryId}"]`).forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const itemId = e.target.dataset.id;
-      const item = products[categoryId]?.find(p => p.id === itemId);
-      if (!item) return;
+  // Edit button handler
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      alert('Please click on a checkbox item above to edit it');
+    });
+  }
 
-      const newName = prompt('Enter new name:', item.name);
-      if (!newName) return;
-
-      const newPrice = prompt('Enter new price:', item.price);
-      if (newPrice === null) return;
-
-      const price = parseFloat(newPrice);
-      if (isNaN(price)) {
-        alert('Invalid price');
+  // Delete button handler  
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async () => {
+      if (!addBtn.dataset.editingId) {
+        alert('Please select an item first by clicking its checkbox');
         return;
       }
 
-      try {
-        await deleteItem(categoryId, itemId);
-        await addItem(categoryId, newName, price);
-        renderAdminCategories();
-        populateDropdowns();
-      } catch (err) {
-        console.error(err);
-        alert('Error updating item.');
-      }
-    });
-  });
-
-  // Delete button handlers
-  document.querySelectorAll(`.admin-delete-btn[data-category="${categoryId}"]`).forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const itemId = e.target.dataset.id;
-      const item = products[categoryId]?.find(p => p.id === itemId);
-
+      const item = products[categoryId]?.find(p => p.id === addBtn.dataset.editingId);
       if (!confirm(`Delete "${item?.name}"?`)) return;
 
       try {
-        await deleteItem(categoryId, itemId);
+        await deleteItem(categoryId, addBtn.dataset.editingId);
+        nameInput.value = '';
+        priceInput.value = '';
+        delete addBtn.dataset.editingId;
+        addBtn.textContent = '➕ ADD';
+
         renderAdminCategories();
         populateDropdowns();
+        buildQuoteSections();
+        setupListeners();
         updateSummary();
+
+        alert(`Deleted "${item?.name}"`);
       } catch (err) {
         console.error(err);
         alert('Error deleting item.');
       }
     });
-  });
+  }
 }
 // Dynamic Admin Controls - Append to end of app.js
 
