@@ -350,6 +350,14 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: "Baseboard (per linear ft)", price: 0 },
     { id: "3", name: "Qtr Round (per linear ft)", price: 0 },
     { id: "4", name: "Door", price: 0 }
+  ],
+  change_order_items: [
+    { id: "1", name: "Unforeseen Conditions", price: 0 },
+    { id: "2", name: "Additional Material", price: 0 }
+  ],
+  labor_items: [
+    { id: "1", name: "General Labor (Hours)", price: 75 },
+    { id: "2", name: "Specialized Labor (Hours)", price: 125 }
   ]
 };
 
@@ -714,16 +722,7 @@ function buildQuoteSections() {
           `).join('')}
         </div>
         
-        <!-- Admin controls for electrical items -->
-        <div class="admin-control" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-          <input type="text" id="add-name-electrical_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <input type="number" id="add-price-electrical_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-primary admin-add-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ ADD</button>
-            <button class="btn btn-secondary admin-edit-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ EDIT</button>
-            <button class="btn btn-secondary admin-delete-btn" data-category="electrical_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ DELETE</button>
-          </div>
-        </div>
+        <!-- Admin controls are now injected dynamically -->
         
         <div class="form-group" style="margin-top: 16px;">
           <label>Device Color:</label>
@@ -1020,16 +1019,7 @@ function buildQuoteSections() {
           `).join('')}
         </div>
         
-        <!-- Admin controls for accessory items -->
-        <div class="admin-control" style="margin-top: 8px; padding: 12px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-          <input type="text" id="add-name-accessory_items" placeholder="Item name" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <input type="number" id="add-price-accessory_items" placeholder="Price" step="0.01" style="width: 100%; padding: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb; border-radius: 4px;">
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-primary admin-add-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">➕ ADD</button>
-            <button class="btn btn-secondary admin-edit-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">✏️ EDIT</button>
-            <button class="btn btn-secondary admin-delete-btn" data-category="accessory_items" style="flex: 1; padding: 6px 12px; font-size: 12px;">🗑️ DELETE</button>
-          </div>
-        </div>
+        <!-- Admin controls are now injected dynamically -->
         
         <div class="form-group" style="margin-top: 16px;">
           <label>Accessories Finish:</label>
@@ -1207,6 +1197,60 @@ function buildQuoteSections() {
         </div>
       </div>
     </section>
+
+    <!-- Section 14: Change Order -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">⚠️ Change Order</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+         <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select items and quantities:</label>
+         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${(products.change_order_items || []).map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="change-order-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
+              <input type="number" class="change-order-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Change Order Notes:</label>
+          <textarea id="change-order-notes" rows="2" class="select-input" placeholder="Describe unforeseen conditions or extras..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 15: Labor -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">👷 Labor</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select labor types and hours:</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px;">
+          ${(products.labor_items || []).map(item => `
+            <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" class="labor-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14px;">${item.name}</span>
+                <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+              </div>
+              <input type="number" class="labor-qty" data-item="${item.id}" min="0" placeholder="Hrs" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+            </label>
+          `).join('')}
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Labor Notes:</label>
+          <textarea id="labor-notes" rows="2" class="select-input" placeholder="Notes on labor..."></textarea>
+        </div>
+      </div>
+    </section>
   `;
 
   // Make toggle function global
@@ -1253,7 +1297,9 @@ function setupListeners() {
     'drywall-linear-ft', 'drywall-sheets', 'drywall-notes',
     'paint-walls', 'paint-trim', 'paint-ceiling', 'point-up-drywall',
     // Trim section
-    'trim-casing-ft', 'trim-baseboard-ft', 'trim-qtr-round-ft', 'trim-doors-qty', 'trim-notes'
+    'trim-casing-ft', 'trim-baseboard-ft', 'trim-qtr-round-ft', 'trim-doors-qty', 'trim-notes',
+    // New Sections
+    'change-order-notes', 'labor-notes'
   ];
 
   inputs.forEach(id => {
@@ -1283,14 +1329,26 @@ function setupListeners() {
               qtyInput.value = 1;
             }
           }
+        } else if (e.target.classList.contains('change-order-item')) {
+          const item = products.change_order_items.find(p => p.id === e.target.value);
+          if (item) {
+            const qtyInput = document.querySelector(`.change-order-qty[data-item="${item.id}"]`);
+            if (qtyInput && (qtyInput.value === '' || qtyInput.value === '0')) qtyInput.value = 1;
+          }
+        } else if (e.target.classList.contains('labor-item')) {
+          const item = products.labor_items.find(p => p.id === e.target.value);
+          if (item) {
+            const qtyInput = document.querySelector(`.labor-qty[data-item="${item.id}"]`);
+            if (qtyInput && (qtyInput.value === '' || qtyInput.value === '0')) qtyInput.value = 1;
+          }
         }
       }
       updateSummary();
     });
   });
 
-  // Quantity inputs for tile and plumbing
-  const qtyInputs = document.querySelectorAll('.tile-qty, .plumbing-qty');
+  // Quantity inputs for tile, plumbing, change order, and labor
+  const qtyInputs = document.querySelectorAll('.tile-qty, .plumbing-qty, .change-order-qty, .labor-qty, .electrical-qty, .accessory-qty');
   qtyInputs.forEach(input => {
     input.addEventListener('input', updateSummary);
   });
@@ -1786,6 +1844,64 @@ function updateSummary() {
     html += flooringHtml;
   }
 
+  // Calculate Change Order Section
+  const changeOrderCheckboxes = document.querySelectorAll('.change-order-item:checked');
+  const changeOrderNotes = document.getElementById('change-order-notes');
+  selections.change_order_items_data = [];
+
+  if (changeOrderCheckboxes.length > 0) {
+    let coHtml = '<div style="padding: 8px; background: #FFF4E5; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid #FF9966;"><strong>Change Order:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    changeOrderCheckboxes.forEach(cb => {
+      const item = products.change_order_items.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.change-order-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseFloat(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
+          const cost = item.price * qty;
+          total += cost;
+          coHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          selections.change_order_items_data.push({ id: item.id, qty: qty });
+        }
+      }
+    });
+    coHtml += '</ul>';
+    if (changeOrderNotes && changeOrderNotes.value.trim()) {
+      coHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${changeOrderNotes.value.trim()}</em></div>`;
+      selections.change_order_notes = changeOrderNotes.value.trim();
+    }
+    coHtml += '</div>';
+    if (coHtml.includes('<li>')) html += coHtml;
+  }
+
+  // Calculate Labor Section
+  const laborCheckboxes = document.querySelectorAll('.labor-item:checked');
+  const laborNotes = document.getElementById('labor-notes');
+  selections.labor_items_data = [];
+
+  if (laborCheckboxes.length > 0) {
+    let laborHtml = '<div style="padding: 8px; background: #EBF5FB; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid #2980b9;"><strong>Labor:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    laborCheckboxes.forEach(cb => {
+      const item = products.labor_items.find(p => p.id === cb.value);
+      if (item) {
+        const qtyInput = document.querySelector(`.labor-qty[data-item="${item.id}"]`);
+        const qty = qtyInput ? parseFloat(qtyInput.value) || 0 : 0;
+        if (qty > 0) {
+          const cost = item.price * qty;
+          total += cost;
+          laborHtml += `<li>${item.name}: ${qty} hrs - $${cost.toFixed(2)}</li>`;
+          selections.labor_items_data.push({ id: item.id, qty: qty });
+        }
+      }
+    });
+    laborHtml += '</ul>';
+    if (laborNotes && laborNotes.value.trim()) {
+      laborHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${laborNotes.value.trim()}</em></div>`;
+      selections.labor_notes = laborNotes.value.trim();
+    }
+    laborHtml += '</div>';
+    if (laborHtml.includes('<li>')) html += laborHtml;
+  }
+
   // Update other selections and build HTML
   Object.entries(fieldMapping).forEach(([id, config]) => {
     const el = document.getElementById(id);
@@ -2033,7 +2149,11 @@ export const CATEGORIES = [
   { id: 'shelf_types', name: 'Shelf Types', description: 'Pricing: Single and Double shelves' },
   { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
   { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
-  { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' }
+  { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
+  { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
+  { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' },
+  { id: 'change_order_items', name: 'Change Order Items', description: 'Pricing: Unforeseen conditions, extras' },
+  { id: 'labor_items', name: 'Labor Items', description: 'Pricing: Hourly labor rates' }
 ];
 
 function renderAdminCategories() {
@@ -2296,6 +2416,51 @@ function injectAdminControlsToCheckboxes() {
     scopeContainer.parentNode.insertBefore(controlsDiv, scopeContainer.nextElementSibling);
     setupDynamicAdminControlsForCheckboxes('scope_of_work', controlsDiv);
   }
+
+  // 5. Electrical Items (Standardized)
+  const electricalSection = document.getElementById('electrical-notes')?.closest('.section-content');
+  if (electricalSection) {
+    // Find the grid container - it's the one with grid-template-columns
+    const container = electricalSection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('electrical_items');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('electrical_items', controlsDiv);
+    }
+  }
+
+  // 6. Accessory Items (Standardized)
+  const accessorySection = document.getElementById('accessories-notes')?.closest('.section-content');
+  if (accessorySection) {
+    const container = accessorySection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('accessory_items');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('accessory_items', controlsDiv);
+    }
+  }
+
+  // 7. Change Order Items
+  const changeOrderSection = document.getElementById('change-order-notes')?.closest('.section-content');
+  if (changeOrderSection) {
+    const container = changeOrderSection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('change_order_items');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('change_order_items', controlsDiv);
+    }
+  }
+
+  // 8. Labor Items
+  const laborSection = document.getElementById('labor-notes')?.closest('.section-content');
+  if (laborSection) {
+    const container = laborSection.querySelector('div[style*="grid-template-columns"]');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('labor_items');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('labor_items', controlsDiv);
+    }
+  }
 }
 
 function createCheckboxAdminControls(category) {
@@ -2337,6 +2502,14 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
     checkboxContainer = document.getElementById('plumbing-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
   } else if (category === 'scope_of_work') {
     checkboxContainer = document.getElementById('scope-of-work-checkboxes');
+  } else if (category === 'electrical_items') {
+    checkboxContainer = document.getElementById('electrical-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'accessory_items') {
+    checkboxContainer = document.getElementById('accessories-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'change_order_items') {
+    checkboxContainer = document.getElementById('change-order-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'labor_items') {
+    checkboxContainer = document.getElementById('labor-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
   }
 
   // Add click listener to checkboxes to populate form

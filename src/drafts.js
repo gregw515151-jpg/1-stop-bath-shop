@@ -25,7 +25,8 @@ export async function saveDraft(name) {
     const noteFields = [
         'demolition-notes', 'electrical-notes', 'fixtures-notes',
         'cabinetry-notes', 'trim-notes', 'flooring-notes',
-        'tile-notes', 'plumbing-notes', 'bathroom-notes'
+        'tile-notes', 'plumbing-notes', 'bathroom-notes',
+        'change-order-notes', 'labor-notes'
     ];
 
     const notes = {};
@@ -192,6 +193,30 @@ function restoreDropdownsFromState(selections) {
         selections.splash_options_data.forEach(itemId => {
             const cb = document.querySelector(`.splash-option[value="${itemId}"]`);
             if (cb) cb.checked = true;
+        });
+    }
+
+    // Restore Change Order Items
+    if (selections.change_order_items_data && Array.isArray(selections.change_order_items_data)) {
+        selections.change_order_items_data.forEach(item => {
+            const cb = document.querySelector(`.change-order-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.change-order-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
+        });
+    }
+
+    // Restore Labor Items
+    if (selections.labor_items_data && Array.isArray(selections.labor_items_data)) {
+        selections.labor_items_data.forEach(item => {
+            const cb = document.querySelector(`.labor-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.labor-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
         });
     }
 
