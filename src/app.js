@@ -1227,7 +1227,7 @@ function buildQuoteSections() {
 
     <!-- Section 15: Labor -->
     <section class="card collapsible-section" style="margin-bottom: 16px;">
-      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #434343 0%, #2b2b2b 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
         <h2 style="margin: 0; font-size: 1.25rem;">👷 Labor</h2>
         <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
       </div>
