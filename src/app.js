@@ -1954,46 +1954,47 @@ function createAdminOverlay() {
   return overlay;
 }
 
+// Export CATEGORIES so it can be used in admin.js
+export const CATEGORIES = [
+  { id: 'scope_of_work', name: 'Scope of Work', description: 'Editable: Main scope options (Tile Shower, Tub Conversion, etc.)' },
+  { id: 'fixture_types', name: 'Fixture Types', description: 'Controls: FIXTURE TYPE dropdown' },
+  { id: 'plumbing_colors', name: 'Plumbing Colors', description: 'Controls: TRIM COLOR dropdown' },
+  { id: 'trim_colors', name: 'Options: Trim Colors', description: 'Controls: Options > TRIM COLOR dropdown' },
+  { id: 'plumbing_styles', name: 'Plumbing Styles', description: 'Controls: TRIM STYLE dropdown' },
+  { id: 'electrical_colors', name: 'Electrical Colors', description: 'Controls: Electrical color options' },
+  { id: 'exhaust_fans', name: 'Exhaust Fans', description: 'Controls: EXHAUST FAN dropdown' },
+  { id: 'accessories_finishes', name: 'Accessories Finishes', description: 'Controls: ACCESSORIES FINISH dropdown' },
+  { id: 'shower_colors', name: 'Shower Colors', description: 'Controls: Shower COLOR dropdown' },
+  { id: 'shower_sizes', name: 'Shower Sizes', description: 'Controls: Shower SIZE dropdown' },
+  { id: 'drain_locations', name: 'Drain Locations', description: 'Controls: DRAIN LOCATION dropdown' },
+  { id: 'tub_depths', name: 'Tub Depths', description: 'Controls: Bathtub DEPTH dropdown' },
+  { id: 'tub_lengths', name: 'Tub Lengths', description: 'Controls: Bathtub LENGTH dropdown' },
+  { id: 'wall_colors', name: 'Wall Colors', description: 'Controls: Walls COLOR dropdown' },
+  { id: 'wall_patterns', name: 'Wall Patterns', description: 'Controls: Walls PATTERN dropdown' },
+  { id: 'wall_types', name: 'Wall Types', description: 'Controls: Walls WALL TYPE dropdown' },
+  { id: 'vanity_lengths', name: 'Vanity Lengths', description: 'Controls: Vanity LENGTH dropdown' },
+  { id: 'flooring_types', name: 'Flooring Types', description: 'Controls: Flooring TYPE dropdown' },
+  { id: 'trim_baseboard_styles', name: 'Baseboard Styles', description: 'Controls: Baseboard Style dropdown' },
+  { id: 'trim_window_door_styles', name: 'Window/Door Trim Styles', description: 'Controls: Window/Door Trim Style dropdown' },
+  { id: 'baseboard_styles', name: 'Baseboard Styles (Legacy)', description: 'Controls: BASEBOARD STYLE dropdown (Old)' },
+  { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
+  { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
+  { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
+  { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' },
+  { id: 'electrical_items', name: 'Electrical Items', description: 'Pricing: Switches, Outlets, Recessed Lights' },
+  { id: 'accessory_items', name: 'Accessory Items', description: 'Pricing: Towel Bars, Rings, TP Holders' },
+  { id: 'drywall_paint_items', name: 'Drywall & Paint Items', description: 'Pricing: Drywall, Sheets, Paint options' },
+  { id: 'trim_items', name: 'Trim Items', description: 'Pricing: Casing, Baseboard, Qtr Round, Doors' },
+  { id: 'grab_bar_sizes', name: 'Grab Bar Sizes', description: 'Pricing: 16" and 24" grab bars' },
+  { id: 'shelf_types', name: 'Shelf Types', description: 'Pricing: Single and Double shelves' },
+  { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
+  { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
+  { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' }
+];
+
 function renderAdminCategories() {
   const container = document.getElementById('admin-categories-container');
   if (!container) return;
-
-  const CATEGORIES = [
-    { id: 'scope_of_work', name: 'Scope of Work', description: 'Editable: Main scope options (Tile Shower, Tub Conversion, etc.)' },
-    { id: 'fixture_types', name: 'Fixture Types', description: 'Controls: FIXTURE TYPE dropdown' },
-    { id: 'plumbing_colors', name: 'Plumbing Colors', description: 'Controls: TRIM COLOR dropdown' },
-    { id: 'trim_colors', name: 'Options: Trim Colors', description: 'Controls: Options > TRIM COLOR dropdown' },
-    { id: 'plumbing_styles', name: 'Plumbing Styles', description: 'Controls: TRIM STYLE dropdown' },
-    { id: 'electrical_colors', name: 'Electrical Colors', description: 'Controls: Electrical color options' },
-    { id: 'exhaust_fans', name: 'Exhaust Fans', description: 'Controls: EXHAUST FAN dropdown' },
-    { id: 'accessories_finishes', name: 'Accessories Finishes', description: 'Controls: ACCESSORIES FINISH dropdown' },
-    { id: 'shower_colors', name: 'Shower Colors', description: 'Controls: Shower COLOR dropdown' },
-    { id: 'shower_sizes', name: 'Shower Sizes', description: 'Controls: Shower SIZE dropdown' },
-    { id: 'drain_locations', name: 'Drain Locations', description: 'Controls: DRAIN LOCATION dropdown' },
-    { id: 'tub_depths', name: 'Tub Depths', description: 'Controls: Bathtub DEPTH dropdown' },
-    { id: 'tub_lengths', name: 'Tub Lengths', description: 'Controls: Bathtub LENGTH dropdown' },
-    { id: 'wall_colors', name: 'Wall Colors', description: 'Controls: Walls COLOR dropdown' },
-    { id: 'wall_patterns', name: 'Wall Patterns', description: 'Controls: Walls PATTERN dropdown' },
-    { id: 'wall_types', name: 'Wall Types', description: 'Controls: Walls WALL TYPE dropdown' },
-    { id: 'vanity_lengths', name: 'Vanity Lengths', description: 'Controls: Vanity LENGTH dropdown' },
-    { id: 'flooring_types', name: 'Flooring Types', description: 'Controls: Flooring TYPE dropdown' },
-    { id: 'trim_baseboard_styles', name: 'Baseboard Styles', description: 'Controls: Baseboard Style dropdown' },
-    { id: 'trim_window_door_styles', name: 'Window/Door Trim Styles', description: 'Controls: Window/Door Trim Style dropdown' },
-    { id: 'baseboard_styles', name: 'Baseboard Styles (Legacy)', description: 'Controls: BASEBOARD STYLE dropdown (Old)' },
-    { id: 'window_styles', name: 'Window Styles', description: 'Controls: WINDOW STYLE dropdown' },
-    { id: 'tile_materials', name: 'Tile Materials', description: 'Controls: Tile section checkboxes (22 items)' },
-    { id: 'plumbing_materials', name: 'Plumbing Materials', description: 'Controls: Plumbing section checkboxes (20 items)' },
-    { id: 'splash_options', name: 'Splash Options', description: 'Controls: Splash checkboxes (Cabinetry)' },
-    { id: 'electrical_items', name: 'Electrical Items', description: 'Pricing: Switches, Outlets, Recessed Lights' },
-    { id: 'accessory_items', name: 'Accessory Items', description: 'Pricing: Towel Bars, Rings, TP Holders' },
-    { id: 'drywall_paint_items', name: 'Drywall & Paint Items', description: 'Pricing: Drywall, Sheets, Paint options' },
-    { id: 'trim_items', name: 'Trim Items', description: 'Pricing: Casing, Baseboard, Qtr Round, Doors' },
-    { id: 'grab_bar_sizes', name: 'Grab Bar Sizes', description: 'Pricing: 16" and 24" grab bars' },
-    { id: 'shelf_types', name: 'Shelf Types', description: 'Pricing: Single and Double shelves' },
-    { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
-    { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
-    { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' }
-  ];
 
   container.innerHTML = CATEGORIES.map(cat => renderCategory(cat)).join('');
 
