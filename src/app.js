@@ -325,6 +325,13 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "2", name: "Outlet", price: 30 },
     { id: "3", name: "Recessed Light", price: 75 }
   ],
+  device_colors: [
+    { id: "1", name: "White", price: 0 },
+    { id: "2", name: "Almond", price: 5 },
+    { id: "3", name: "Black", price: 10 },
+    { id: "4", name: "Gray", price: 10 },
+    { id: "5", name: "Stainless Steel", price: 15 }
+  ],
   accessory_items: [
     { id: "1", name: "Towel Bar", price: 35 },
     { id: "2", name: "Towel Ring", price: 25 },
@@ -695,15 +702,15 @@ function buildQuoteSections() {
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
           <div class="form-group">
-            <label>Switches:</label>
+            <label>Switches: <span style="color: #10b981; font-weight: 600;">$25 each</span></label>
             <input type="number" id="switches" min="0" class="select-input" placeholder="How many?">
           </div>
           <div class="form-group">
-            <label>Outlets:</label>
+            <label>Outlets: <span style="color: #10b981; font-weight: 600;">$30 each</span></label>
             <input type="number" id="outlets" min="0" class="select-input" placeholder="How many?">
           </div>
           <div class="form-group">
-            <label>Recessed Lights:</label>
+            <label>Recessed Lights: <span style="color: #10b981; font-weight: 600;">$75 each</span></label>
             <input type="number" id="recessed-lights" min="0" class="select-input" placeholder="How many?">
         </div>
         <div class="form-group">
