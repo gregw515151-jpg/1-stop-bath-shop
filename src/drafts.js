@@ -139,6 +139,62 @@ function restoreDropdownsFromState(selections) {
         });
     }
 
+    // Restore Tile Materials (New Format)
+    if (selections.tile_materials_data && Array.isArray(selections.tile_materials_data)) {
+        selections.tile_materials_data.forEach(item => {
+            const cb = document.querySelector(`.tile-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.tile-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
+        });
+    }
+
+    // Restore Plumbing Materials (New Format)
+    if (selections.plumbing_materials_data && Array.isArray(selections.plumbing_materials_data)) {
+        selections.plumbing_materials_data.forEach(item => {
+            const cb = document.querySelector(`.plumbing-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.plumbing-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
+        });
+    }
+
+    // Restore Electrical Items (New Format)
+    if (selections.electrical_items_data && Array.isArray(selections.electrical_items_data)) {
+        selections.electrical_items_data.forEach(item => {
+            const cb = document.querySelector(`.electrical-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.electrical-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
+        });
+    }
+
+    // Restore Accessory Items (New Format)
+    if (selections.accessory_items_data && Array.isArray(selections.accessory_items_data)) {
+        selections.accessory_items_data.forEach(item => {
+            const cb = document.querySelector(`.accessory-item[value="${item.id}"]`);
+            if (cb) {
+                cb.checked = true;
+                const qtyInput = document.querySelector(`.accessory-qty[data-item="${item.id}"]`);
+                if (qtyInput) qtyInput.value = item.qty;
+            }
+        });
+    }
+
+    // Restore Splash Options (New Format)
+    if (selections.splash_options_data && Array.isArray(selections.splash_options_data)) {
+        selections.splash_options_data.forEach(itemId => {
+            const cb = document.querySelector(`.splash-option[value="${itemId}"]`);
+            if (cb) cb.checked = true;
+        });
+    }
+
     // Trigger updateSummary to refresh the display
     if (typeof window.updateSummary === 'function') {
         window.updateSummary();

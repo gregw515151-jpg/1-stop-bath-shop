@@ -1371,6 +1371,7 @@ function updateSummary() {
 
   // Calculate Tile Materials
   const tileCheckboxes = document.querySelectorAll('.tile-item:checked');
+  selections.tile_materials_data = [];
   if (tileCheckboxes.length > 0) {
     let tileHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Tile Materials:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
     tileCheckboxes.forEach(cb => {
@@ -1383,6 +1384,7 @@ function updateSummary() {
           total += cost;
           tileHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
           selections[`tile_material_${item.id}`] = `${item.name} (x${qty})`;
+          selections.tile_materials_data.push({ id: item.id, qty: qty });
         }
       }
     });
@@ -1392,6 +1394,7 @@ function updateSummary() {
 
   // Calculate Plumbing Materials
   const plumbingCheckboxes = document.querySelectorAll('.plumbing-item:checked');
+  selections.plumbing_materials_data = [];
   if (plumbingCheckboxes.length > 0) {
     let plumbingHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Plumbing Materials:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
     plumbingCheckboxes.forEach(cb => {
@@ -1404,6 +1407,7 @@ function updateSummary() {
           total += cost;
           plumbingHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
           selections[`plumbing_material_${item.id}`] = `${item.name} (x${qty})`;
+          selections.plumbing_materials_data.push({ id: item.id, qty: qty });
         }
       }
     });
@@ -1468,6 +1472,7 @@ function updateSummary() {
   // Calculate Electrical Items
   const electricalCheckboxes = document.querySelectorAll('.electrical-item:checked');
   const electricalNotes = document.getElementById('electrical-notes');
+  selections.electrical_items_data = [];
 
   if (electricalCheckboxes.length > 0) {
     let electricalHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Electrical:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
@@ -1481,6 +1486,7 @@ function updateSummary() {
           total += cost;
           electricalHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
           selections[`electrical_${item.id}`] = `${item.name} (x${qty})`;
+          selections.electrical_items_data.push({ id: item.id, qty: qty });
         }
       }
     });
@@ -1522,8 +1528,10 @@ function updateSummary() {
       hasVanityTop = true;
     }
 
+    selections.splash_options_data = [];
     if (splashOptions.length > 0) {
       splashOptions.forEach(cb => {
+        selections.splash_options_data.push(cb.value);
         const item = products.splash_options?.find(p => p.id === cb.value);
         if (item) {
           const cost = item.price;
@@ -1533,14 +1541,15 @@ function updateSummary() {
         }
       });
     }
-
     vanityTopHtml += '</ul></div>';
     if (hasVanityTop) html += vanityTopHtml;
   }
 
-  // Calculate Accessories
+  // Calculate Accessories Section
+  const accessoriesFinish = document.getElementById('accessories-finish');
   const accessoryCheckboxes = document.querySelectorAll('.accessory-item:checked');
   const accessoriesNotes = document.getElementById('accessories-notes');
+  selections.accessory_items_data = [];
 
   if (accessoryCheckboxes.length > 0) {
     let accessoriesHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Accessories:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
@@ -1554,6 +1563,7 @@ function updateSummary() {
           total += cost;
           accessoriesHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
           selections[`accessory_${item.id}`] = `${item.name} (x${qty})`;
+          selections.accessory_items_data.push({ id: item.id, qty: qty });
         }
       }
     });
