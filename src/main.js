@@ -479,6 +479,20 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     ? `<img src="${logo.dataUrl}" alt="Logo" style="max-height:90px; width:auto; display:block; margin:0 auto; object-fit:contain;">`
     : '';
 
+  // Company Info Section (centered under logo)
+  const companyInfoHTML = `
+    <div style="text-align: center; margin: 12px 0 20px; font-size: 12px; color: #374151; line-height: 1.6;">
+      ${companyInfo.name ? `<div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${esc(companyInfo.name)}</div>` : ''}
+      ${companyInfo.address ? `<div>${esc(companyInfo.address)}</div>` : ''}
+      ${companyInfo.mhic ? `<div>${esc(companyInfo.mhic)}</div>` : ''}
+      <div>
+        ${companyInfo.phone ? `<span>${esc(companyInfo.phone)}</span>` : ''}
+        ${companyInfo.phone && companyInfo.email ? ' | ' : ''}
+        ${companyInfo.email ? `<span>${esc(companyInfo.email)}</span>` : ''}
+      </div>
+    </div>
+  `;
+
   const customerHTML = `
     <h2 style="font-size:16px; margin: 12px 0 8px;">Customer</h2>
     <div style="font-size:14px;">
@@ -502,6 +516,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   const mainContent = `
     <div style="text-align:center; margin-bottom: 10px;">
       ${logoHTML}
+      ${companyInfoHTML}
     </div>
 
     ${customerHTML}
