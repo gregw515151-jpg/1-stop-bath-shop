@@ -235,10 +235,26 @@ function attachDraftListeners() {
   const saveDraftBtn = document.getElementById('save-draft-btn');
   if (saveDraftBtn) {
     saveDraftBtn.addEventListener('click', async () => {
-      const name = prompt("Enter a name for this draft:");
-      if (!name) return;
+      let name = state.currentDraftName;
+      let id = state.currentDraftId;
 
-      const { error } = await saveDraft(name);
+      if (id) {
+        const choice = confirm(`You are currently working on "${name}".\n\nClick OK to UPDATE this draft.\nClick CANCEL to save as a NEW quote.`);
+
+        if (!choice) {
+          // User chose "Save as New"
+          const newName = prompt("Enter a name for the NEW quote:");
+          if (!newName) return;
+          name = newName;
+          id = null; // Clear ID to force a new insert
+        }
+      } else {
+        const newName = prompt("Enter a name for this draft:");
+        if (!newName) return;
+        name = newName;
+      }
+
+      const { data, error } = await saveDraft(name, id);
       if (error) {
         if (error.message && error.message.includes('relation "public.drafts" does not exist')) {
           alert("Drafts table missing! Please run the SQL setup script.");
@@ -247,6 +263,11 @@ function attachDraftListeners() {
           alert("Error saving draft: " + error.message);
         }
       } else {
+        // If it was a new save, store the info
+        if (data && data[0]) {
+          state.currentDraftId = data[0].id;
+          state.currentDraftName = data[0].name;
+        }
         alert("Draft saved successfully!");
       }
     });
@@ -313,6 +334,9 @@ function attachDraftListeners() {
             alert("Error loading draft: " + result.error.message);
             loadModal.style.display = 'none';
           } else {
+            // Track current draft
+            state.currentDraftId = draft.id;
+            state.currentDraftName = draft.name;
             loadModal.style.display = 'none';
           }
         };
@@ -401,7 +425,9 @@ if (document.readyState === 'loading') {
 /* ---------- App State ---------- */
 const state = {
   logo: { name: "", dataUrl: "", source: "none" },
-  photos: []
+  photos: [],
+  currentDraftId: null,
+  currentDraftName: null
 };
 
 /* ---------- Initialize ---------- */
@@ -946,6 +972,10 @@ document.getElementById('reset-btn')?.addEventListener('click', () => {
   // Reset summary
   document.getElementById('summary').innerHTML = '<p class="empty-message">Select items to see your estimate</p>';
   document.getElementById('total').innerHTML = '';
+
+  // Clear current draft state
+  state.currentDraftId = null;
+  state.currentDraftName = null;
 });
 
 // Export state for other modules

@@ -1,18 +1,16 @@
 import { supabase } from './supabaseClient.js';
 import { getSelections, products } from './app.js';
 
-export async function saveDraft(name) {
+export async function saveDraft(name, id = null) {
     if (!name) return { error: 'Name is required' };
 
-    // CRITICAL: Call updateSummary() to populate selections object from current DOM state
-    // This ensures all form values (dropdowns, checkboxes, inputs) are captured
+    // ... (rest of the gathering logic)
     if (typeof window.updateSummary === 'function') {
         window.updateSummary();
     }
 
     const selections = getSelections();
 
-    // Collect customer info from DOM
     const customer = {
         name: document.getElementById('customer-name')?.value || '',
         address: document.getElementById('customer-address')?.value || '',
@@ -21,7 +19,6 @@ export async function saveDraft(name) {
         notes: document.getElementById('customer-notes')?.value || ''
     };
 
-    // Collect all notes
     const noteFields = [
         'demolition-notes', 'electrical-notes', 'fixtures-notes',
         'cabinetry-notes', 'trim-notes', 'flooring-notes',
@@ -38,19 +35,15 @@ export async function saveDraft(name) {
         selections,
         customer,
         notes,
-        // We are NOT saving the entire products definition, just the user choices
-        // Photos are heavy, but we could try to save them if they are small data URLs. 
-        // For V1, let's skip photos or warn the user.
         timestamp: new Date().toISOString()
     };
 
-    console.log('💾 Saving draft data:', draftData); // Debug log
+    const payload = { name: name, data: draftData };
+    if (id) payload.id = id;
 
     const { data, error } = await supabase
         .from('drafts')
-        .insert([
-            { name: name, data: draftData }
-        ])
+        .upsert([payload])
         .select();
 
     return { data, error };
