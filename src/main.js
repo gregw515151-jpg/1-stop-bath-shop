@@ -429,7 +429,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   const customer = getCustomerInfo();
 
   // Get Company Info from Supabase
-  let companyInfo = { name: '1 Stop Bath Shop' };
+  let companyInfo = { company_name: '1 Stop Bath Shop' };
   try {
     const { data } = await supabase.from('company_settings').select('*').eq('id', 'default').single();
     if (data) companyInfo = data;

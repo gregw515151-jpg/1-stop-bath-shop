@@ -152,7 +152,7 @@ async function renderCategories(container) {
 
     // Add company info section first
     let companyInfo = {
-        name: '1 Stop Bath Shop',
+        company_name: '1 Stop Bath Shop',
         address: '',
         mhic: '',
         phone: '',
@@ -175,7 +175,7 @@ async function renderCategories(container) {
         <div style="display: grid; gap: 12px; margin-top: 16px;">
             <div>
                 <label style="display: block; font-weight: 600; margin-bottom: 4px;">Company Name:</label>
-                <input type="text" id="company-name" value="${companyInfo.name}" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                <input type="text" id="company-name" value="${companyInfo.company_name || ''}" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
             </div>
             <div>
                 <label style="display: block; font-weight: 600; margin-bottom: 4px;">Address:</label>
@@ -259,7 +259,7 @@ window.handleAdd = async (categoryId) => {
         await addItem(categoryId, name, price);
         nameInp.value = '';
         priceInp.value = '';
-        renderCategories(); // Refresh all to keep state in sync
+        renderCategories(document.getElementById('categories-container')); // Refresh all to keep state in sync
     } catch (err) {
         console.error(err);
         alert('Error adding item. Check console for details.');
@@ -307,7 +307,7 @@ window.handleSaveEdit = async (categoryId, itemId) => {
         // Save to storage
         await import('./app.js').then(module => module.saveProductsToStorage());
 
-        renderCategories();
+        renderCategories(document.getElementById('categories-container'));
     } catch (err) {
         console.error(err);
         alert('Error updating item. Check console for details.');
@@ -315,7 +315,7 @@ window.handleSaveEdit = async (categoryId, itemId) => {
 };
 
 window.handleCancelEdit = (categoryId) => {
-    renderCategories();
+    renderCategories(document.getElementById('categories-container'));
 };
 
 window.handleDelete = async (categoryId, id) => {
@@ -323,7 +323,7 @@ window.handleDelete = async (categoryId, id) => {
 
     try {
         await deleteItem(categoryId, id);
-        renderCategories();
+        renderCategories(document.getElementById('categories-container'));
     } catch (err) {
         console.error(err);
         alert('Error deleting item.');
