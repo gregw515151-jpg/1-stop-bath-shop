@@ -603,7 +603,7 @@ export async function initializeApp() {
   buildQuoteSections(); // Build HTML first
   populateScopeOfWork(); // Dynamic Scope of Work
   populateDropdowns(); // Then populate with data
-  setupAdminControls();
+  initQuoteAdminControls();
   setupListeners();
 }
 
@@ -1421,7 +1421,7 @@ function updateSummary() {
     if (cost > 0) {
       total += cost;
       html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-        <strong>Demo & Disposal Cost:</strong> $${cost.toFixed(2)}
+        <strong>Demo & Disposal Cost:</strong> <span class="price-text">$${cost.toFixed(2)}</span>
       </div>`;
       selections.demo_disposal_cost = cost;
     }
@@ -1440,7 +1440,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          tileHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          tileHtml += `<li>${item.name} (x${qty}) <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
           selections[`tile_material_${item.id}`] = `${item.name} (x${qty})`;
           selections.tile_materials_data.push({ id: item.id, qty: qty });
         }
@@ -1859,7 +1859,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          coHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          coHtml += `<li>${item.name} (x${qty}) <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
           selections.change_order_items_data.push({ id: item.id, qty: qty });
         }
       }
@@ -1888,7 +1888,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          laborHtml += `<li>${item.name}: ${qty} hrs - $${cost.toFixed(2)}</li>`;
+          laborHtml += `<li>${item.name}: ${qty} hrs <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
           selections.labor_items_data.push({ id: item.id, qty: qty });
         }
       }
@@ -1916,8 +1916,12 @@ function updateSummary() {
           total += parseFloat(priceMatch[1]);
         }
 
+        let itemText = el.options[el.selectedIndex].text;
+        const priceTag = '<span class="price-text">$1</span>';
+        itemText = itemText.replace(/\(\+\$([0-9.]+)\)/, `(${priceTag})`);
+
         html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-          <strong>${config.label}:</strong> ${el.options[el.selectedIndex].text}
+          <strong>${config.label}:</strong> ${itemText}
         </div>`;
       }
     }
@@ -1930,7 +1934,7 @@ function updateSummary() {
   if (html) {
     summaryDiv.innerHTML = html;
     totalDiv.innerHTML = `
-      <div style="padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin-top: 16px;">
+      <div id="pdf-total-section" style="padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin-top: 16px;">
         <div style="font-size: 14px; opacity: 0.9;">Total Estimate</div>
         <div style="font-size: 28px; font-weight: bold; margin-top: 4px;">$${total.toFixed(2)}</div>
       </div>
@@ -1985,7 +1989,7 @@ export function generateEmailBody(selections) {
   return body;
 }
 
-function setupAdminControls() {
+function initQuoteAdminControls() {
   // Legacy setup removed to prevent conflict with admin.js overlay
 
   document.getElementById('admin-logout-btn')?.addEventListener('click', () => {

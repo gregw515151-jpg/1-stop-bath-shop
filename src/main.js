@@ -525,10 +525,15 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
       ${companyInfoHTML}
     </div>
 
+    <style>
+      .price-text { display: none !important; }
+      #pdf-total-section { display: none !important; }
+    </style>
+
     ${customerHTML}
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
-    <div>${summaryEl ? summaryEl.innerHTML.replace(/\s*-\s*\$\d+(\.\d+)?/g, '').replace(/:\s*\$\d+(\.\d+)?/g, '').replace(/\s*×\s*\$\d+(\.\d+)?\s*=\s*\$\d+(\.\d+)?/g, '') : ''}</div>
+    <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
 
     <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
 
