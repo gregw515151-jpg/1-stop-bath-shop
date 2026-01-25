@@ -2827,3 +2827,6 @@ export async function editItem(category, id, name, price) {
   }
 }
 
+
+// Expose for drafts.js
+window.updateSummary = updateSummary;

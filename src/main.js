@@ -22,6 +22,7 @@ function getAppHtml(maxPhotos) {
       <button id="company-info-btn" class="admin-control" style="display: none; position: absolute; top: 0; right: 360px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;" onclick="document.getElementById('admin-overlay').style.display='flex'">🏢 Company Info</button>
       <img id="company-logo" class="header-logo" alt="1 STOP BATH SHOP" src="" />
       <h1 style="margin: 16px 0 4px;">Bathroom Quote System</h1>
+      <div id="current-draft-indicator" style="font-size: 14px; color: #3b82f6; font-weight: 600; min-height: 20px;"></div>
     </header>
 
     <!-- Scope of Work - Centered -->
@@ -239,7 +240,7 @@ function attachDraftListeners() {
       let id = state.currentDraftId;
 
       if (id) {
-        const choice = confirm(`You are currently working on "${name}".\n\nClick OK to UPDATE this draft.\nClick CANCEL to save as a NEW quote.`);
+        const choice = confirm(`DRAFT UPDATE\n\nYou are working on: "${name}"\n\nClick OK to OVERWRITE/UPDATE this draft.\nClick CANCEL to save as a NEW quote instead.`);
 
         if (!choice) {
           // User chose "Save as New"
@@ -249,7 +250,7 @@ function attachDraftListeners() {
           id = null; // Clear ID to force a new insert
         }
       } else {
-        const newName = prompt("Enter a name for this draft:");
+        const newName = prompt("NEW QUOTE: Enter a name for this draft:");
         if (!newName) return;
         name = newName;
       }
@@ -267,6 +268,7 @@ function attachDraftListeners() {
         if (data && data[0]) {
           state.currentDraftId = data[0].id;
           state.currentDraftName = data[0].name;
+          updateDraftIndicator();
         }
         alert("Draft saved successfully!");
       }
@@ -337,6 +339,7 @@ function attachDraftListeners() {
             // Track current draft
             state.currentDraftId = draft.id;
             state.currentDraftName = draft.name;
+            updateDraftIndicator();
             loadModal.style.display = 'none';
           }
         };
@@ -976,7 +979,19 @@ document.getElementById('reset-btn')?.addEventListener('click', () => {
   // Clear current draft state
   state.currentDraftId = null;
   state.currentDraftName = null;
+  updateDraftIndicator();
 });
 
 // Export state for other modules
 window.appState = state;
+
+function updateDraftIndicator() {
+  const el = document.getElementById('current-draft-indicator');
+  if (el) {
+    if (state.currentDraftName) {
+      el.innerHTML = `📄 Current Quote: <span style="color: #111827;">${state.currentDraftName}</span>`;
+    } else {
+      el.innerHTML = '';
+    }
+  }
+}
