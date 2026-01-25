@@ -2153,8 +2153,6 @@ export const CATEGORIES = [
   { id: 'shelf_types', name: 'Shelf Types', description: 'Pricing: Single and Double shelves' },
   { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
   { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
-  { id: 'shower_door_styles', name: 'Shower Door Styles', description: 'Controls: Shower Door STYLE dropdown' },
-  { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
   { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' },
   { id: 'change_order_items', name: 'Change Order Items', description: 'Pricing: Unforeseen conditions, extras' },
   { id: 'labor_items', name: 'Labor Items', description: 'Pricing: Hourly labor rates' }
