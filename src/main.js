@@ -92,6 +92,20 @@ function getAppHtml(maxPhotos) {
       </div>
     </div>
 
+    <!-- Load Draft Modal -->
+    <div id="load-draft-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; overflow: auto;">
+      <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
+        <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 16px 16px 0 0;">
+          <h2 style="margin: 0; font-size: 1.4rem;">📂 Load Saved Quote</h2>
+          <button id="load-modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+        </div>
+        <div id="draft-list-container" style="padding: 24px; max-height: 400px; overflow-y: auto;">
+          <!-- Drafts will be listed here -->
+          <div style="text-align: center; padding: 20px; color: #6b7280;">Loading drafts...</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Admin Overlay (Restored) -->
     <div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto;">
       <style>
@@ -243,45 +257,79 @@ function attachDraftListeners() {
 
   // Load Draft Button
   const loadDraftBtn = document.getElementById('load-draft-btn');
-  if (loadDraftBtn) {
+  const loadModal = document.getElementById('load-draft-modal');
+  const loadModalClose = document.getElementById('load-modal-close-btn');
+  const draftListContainer = document.getElementById('draft-list-container');
+
+  if (loadDraftBtn && loadModal && draftListContainer) {
     loadDraftBtn.addEventListener('click', async () => {
+      loadModal.style.display = 'block';
+      draftListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">Loading drafts...</div>';
+
       const { data: drafts, error } = await getDrafts();
       if (error) {
-        alert("Error loading drafts: " + error.message);
+        draftListContainer.innerHTML = `<div style="color: #ef4444; padding: 20px;">Error: ${error.message}</div>`;
         return;
       }
 
       if (!drafts || drafts.length === 0) {
-        alert("No drafts found.");
+        draftListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">No drafts found.</div>';
         return;
       }
 
-      const draftList = drafts.map(d =>
-        `${new Date(d.created_at).toLocaleString()} - ${d.name} (ID: ${d.id.slice(0, 8)}...)`
-      ).join('\n');
+      draftListContainer.innerHTML = '';
+      drafts.forEach(draft => {
+        const item = document.createElement('div');
+        item.style.cssText = `
+          padding: 16px;
+          border-bottom: 1px solid #f3f4f6;
+          cursor: pointer;
+          transition: background 0.2s;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        `;
 
-      const input = prompt("Enter the Name (exact) or ID of the draft to load:\n\n" + draftList);
-      if (!input) return;
+        item.onmouseenter = () => item.style.background = '#f9fafb';
+        item.onmouseleave = () => item.style.background = 'transparent';
 
-      // find ID based on name or ID match
-      const selectedDraft = drafts.find(d => d.id === input || d.name === input || d.id.startsWith(input));
-      const idToLoad = selectedDraft ? selectedDraft.id : null;
+        const dateStr = new Date(draft.created_at).toLocaleString();
+        item.innerHTML = `
+          <div style="font-weight: 600; color: #111827;">${draft.name}</div>
+          <div style="font-size: 12px; color: #6b7280;">Saved on: ${dateStr}</div>
+        `;
 
-      if (!idToLoad) {
-        alert("Draft not found.");
-        return;
-      }
+        item.onclick = async () => {
+          item.style.background = '#edf2ff';
+          item.innerHTML = `
+            <div style="font-weight: 600; color: #111827;">Loading ${draft.name}...</div>
+          `;
 
-      const result = await loadDraft(idToLoad);
-      if (result.error) {
-        alert("Error loading draft: " + result.error.message);
-      } else {
-        alert("Draft loaded successfully!");
-      }
+          const result = await loadDraft(draft.id);
+          if (result.error) {
+            alert("Error loading draft: " + result.error.message);
+            // reset state
+            loadModal.style.display = 'none';
+          } else {
+            loadModal.style.display = 'none';
+          }
+        };
+
+        draftListContainer.appendChild(item);
+      });
     });
-    console.log('✅ Load Draft button listener attached');
+
+    loadModalClose.addEventListener('click', () => {
+      loadModal.style.display = 'none';
+    });
+
+    loadModal.addEventListener('click', (e) => {
+      if (e.target === loadModal) loadModal.style.display = 'none';
+    });
+
+    console.log('✅ Load Draft modal listeners attached');
   } else {
-    console.warn('⚠️ Load Draft button not found');
+    console.warn('⚠️ Load Draft elements not found');
   }
 }
 
