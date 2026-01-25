@@ -5,6 +5,8 @@ import duckHuntDogJump from './assets/duck-hunt-dog-jump.mp4';
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
+console.log('DEBUG: admin.js module evaluated. supabase defined:', typeof supabase !== 'undefined');
+
 // Function to play Duck Hunt video overlay
 function playDuckHuntVideo(videoSrc, onComplete) {
     // Create overlay
@@ -146,6 +148,49 @@ export async function initAdmin() {
         });
     }
 }
+
+async function saveCompanyInfo() {
+    console.log('DEBUG: saveCompanyInfo called');
+
+    if (typeof supabase === 'undefined') {
+        console.error('DEBUG: supabase is UNDEFINED inside saveCompanyInfo');
+        alert('❌ Error: Supabase client is not initialized. Please try refreshing the page.');
+        return;
+    }
+
+    const nameEl = document.getElementById('company-name');
+    const addressEl = document.getElementById('company-address');
+    const mhicEl = document.getElementById('company-mhic');
+    const phoneEl = document.getElementById('company-phone');
+    const emailEl = document.getElementById('company-email');
+    const termsEl = document.getElementById('company-terms');
+
+    if (!nameEl) {
+        console.error('DEBUG: Could not find company-name input');
+        return;
+    }
+
+    const companyInfo = {
+        company_name: nameEl.value,
+        address: addressEl?.value || '',
+        mhic: mhicEl?.value || '',
+        phone: phoneEl?.value || '',
+        email: emailEl?.value || '',
+        terms: termsEl?.value || ''
+    };
+
+    console.log('DEBUG: Saving company info:', companyInfo);
+
+    try {
+        const { error } = await supabase.from('company_settings').upsert({ id: 'default', ...companyInfo });
+        if (error) throw error;
+        alert('✅ Company information saved to database successfully!');
+    } catch (err) {
+        console.error('DEBUG: Error saving company info:', err);
+        alert('❌ Error saving company info: ' + err.message);
+    }
+}
+window.saveCompanyInfo = saveCompanyInfo;
 
 async function renderCategories(container) {
     if (!container) return;
@@ -338,25 +383,7 @@ window.handleCancel = (categoryId) => {
     priceInp.value = '';
 };
 
-window.saveCompanyInfo = async () => {
-    const companyInfo = {
-        company_name: document.getElementById('company-name').value,
-        address: document.getElementById('company-address').value,
-        mhic: document.getElementById('company-mhic').value,
-        phone: document.getElementById('company-phone').value,
-        email: document.getElementById('company-email').value,
-        terms: document.getElementById('company-terms').value
-    };
-
-    try {
-        const { error } = await supabase.from('company_settings').upsert({ id: 'default', ...companyInfo });
-        if (error) throw error;
-        alert('✅ Company information saved to database successfully!');
-    } catch (err) {
-        console.error('Error saving company info:', err);
-        alert('❌ Error saving company info: ' + err.message);
-    }
-};
+// saveCompanyInfo moved to top
 
 // init(); calls removed, use exported initAdmin()
 
