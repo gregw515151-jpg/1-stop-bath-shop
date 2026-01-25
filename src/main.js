@@ -1,10 +1,10 @@
 import './style.css'
-import { initializeApp, getSelections, generateEmailBody, DEFAULT_TERMS } from './app.js'
+import { initializeApp, getSelections, DEFAULT_TERMS } from './app.js'
 import { supabase } from './supabaseClient.js'
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 import { initAdmin } from './admin.js'
-import { saveDraft, loadDraft, getDrafts } from './drafts.js'
+import { saveDraft, loadDraft, getDrafts, deleteDraft } from './drafts.js'
 
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
@@ -35,185 +35,185 @@ function getAppHtml(maxPhotos) {
     </section>
 
     <!-- Customer Details -->
-    <section class="card" style="margin-bottom:16px;">
-      <h2 style="margin:0 0 8px;">Customer Details</h2>
-      <div class="row" style="gap:12px; display:flex; flex-wrap:wrap;">
-        <input id="customer-name" type="text" placeholder="Customer name" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
-        <input id="customer-phone" type="tel" placeholder="Phone" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
-        <input id="customer-email" type="email" placeholder="Email" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
-      </div>
-      <div style="margin-top:8px;">
-        <textarea id="customer-address" placeholder="Address" rows="2" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></textarea>
-      </div>
-    </section>
-
-    <!-- Notes -->
-    <section class="card" style="margin-bottom:16px;">
-      <h2 style="margin:0 0 8px;">Notes</h2>
-      <textarea id="customer-notes" placeholder="Add any special notes, terms, or scope details here…" rows="3" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></textarea>
-    </section>
-
-    <!-- Quote Sections -->
-    <div id="quote-sections"></div>
-
-    <!-- Summary & Actions -->
-    <section class="card">
-      <h2>Estimate Summary</h2>
-      <div id="summary" class="summary-content">
-        <p class="empty-message">Select items to see your estimate</p>
-      </div>
-      <div id="total" class="total-section"></div>
-
-      <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 20px;">
-        <button id="share-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📤 Share PDF</button>
-        <button id="print-btn" class="btn btn-secondary">Print / Save PDF</button>
-        <button id="reset-btn" class="btn btn-secondary" style="margin-left:auto;">Clear All</button>
-      </div>
-    </section>
-
-    <!--PDF Viewer Modal -->
-    <div id="pdf-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; overflow: auto;">
-      <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
-        <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px 16px 0 0;">
-          <h2 style="margin: 0; font-size: 1.4rem;">📄 Your Quote is Ready!</h2>
-          <button id="modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; hover: background: rgba(255,255,255,0.3);">✕</button>
-        </div>
-        <div style="padding: 32px; text-align: center;">
-          <div style="font-size: 16px; color: #374151; margin-bottom: 24px; line-height: 1.6;">
-            Your bathroom estimate quote has been generated and uploaded successfully! 
-            Use the buttons below to view, share, or download your PDF.
+  <section class="card" style="margin-bottom:16px;">
+    <h2 style="margin:0 0 8px;">Customer Details</h2>
+    <div class="row" style="gap:12px; display:flex; flex-wrap:wrap;">
+      <input id="customer-name" type="text" placeholder="Customer name" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
+      <input id="customer-phone" type="tel" placeholder="Phone" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
+      <input id="customer-email" type="email" placeholder="Email" style="flex:1; min-width:220px; padding:8px; border:1px solid #e5e7eb; border-radius:8px;">
+</div>
+          <div style="margin-top:8px;">
+            <textarea id="customer-address" placeholder="Address" rows="2" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></textarea>
           </div>
-          <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
-            <button id="modal-view-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️ View PDF</button>
-            <button id="modal-share-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px;">📤 Share PDF</button>
-            <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">📋 Copy Link</button>
+        </section>
+
+        <!-- Notes -->
+        <section class="card" style="margin-bottom:16px;">
+          <h2 style="margin:0 0 8px;">Notes</h2>
+          <textarea id="customer-notes" placeholder="Add any special notes, terms, or scope details here…" rows="3" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></textarea>
+        </section>
+
+        <!-- Quote Sections -->
+        <div id="quote-sections"></div>
+
+        <!-- Summary & Actions -->
+        <section class="card">
+          <h2>Estimate Summary</h2>
+          <div id="summary" class="summary-content">
+            <p class="empty-message">Select items to see your estimate</p>
+          </div>
+          <div id="total" class="total-section"></div>
+
+          <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 20px;">
+            <button id="share-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📤 Share PDF</button>
+            <button id="print-btn" class="btn btn-secondary">Print / Save PDF</button>
+            <button id="reset-btn" class="btn btn-secondary" style="margin-left:auto;">Clear All</button>
+          </div>
+        </section>
+
+        <!--PDF Viewer Modal -->
+        <div id="pdf-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; overflow: auto;">
+          <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
+            <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px 16px 0 0;">
+              <h2 style="margin: 0; font-size: 1.4rem;">📄 Your Quote is Ready!</h2>
+              <button id="modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; hover: background: rgba(255,255,255,0.3);">✕</button>
+            </div>
+            <div style="padding: 32px; text-align: center;">
+              <div style="font-size: 16px; color: #374151; margin-bottom: 24px; line-height: 1.6;">
+                Your bathroom estimate quote has been generated and uploaded successfully!
+                Use the buttons below to view, share, or download your PDF.
+              </div>
+              <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
+                <button id="modal-view-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️ View PDF</button>
+                <button id="modal-share-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px;">📤 Share PDF</button>
+                <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">📋 Copy Link</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Load Draft Modal -->
-    <div id="load-draft-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; overflow: auto;">
-      <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
-        <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 16px 16px 0 0;">
-          <h2 style="margin: 0; font-size: 1.4rem;">📂 Load Saved Quote</h2>
-          <button id="load-modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+        <!-- Load Draft Modal -->
+        <div id="load-draft-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; overflow: auto;">
+          <div style="max-width: 600px; margin: 60px auto; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative;">
+            <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 16px 16px 0 0;">
+              <h2 style="margin: 0; font-size: 1.4rem;">📂 Load Saved Quote</h2>
+              <button id="load-modal-close-btn" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size:28px; cursor: pointer; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+            </div>
+            <div id="draft-list-container" style="padding: 24px; max-height: 400px; overflow-y: auto;">
+              <!-- Drafts will be listed here -->
+              <div style="text-align: center; padding: 20px; color: #6b7280;">Loading drafts...</div>
+            </div>
+          </div>
         </div>
-        <div id="draft-list-container" style="padding: 24px; max-height: 400px; overflow-y: auto;">
-          <!-- Drafts will be listed here -->
-          <div style="text-align: center; padding: 20px; color: #6b7280;">Loading drafts...</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Admin Overlay (Restored) -->
-    <div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto;">
-      <style>
-        .admin-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 24px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            position: relative;
-        }
-        .login-screen {
-            text-align: center;
-            padding: 40px;
-        }
-        .admin-panel {
-            display: none;
-        }
-        .category-section {
-            margin-bottom: 32px;
-            padding: 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-        }
-        .item-list {
-            margin-top: 12px;
-        }
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid #f3f4f6;
-        }
-        .item-row:last-child {
-            border-bottom: none;
-        }
-        .add-form {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .add-form input {
-            padding: 8px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-        }
-        .btn-delete {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-delete:hover {
-            background: #fecaca;
-        }
-      </style>
-      <div class="admin-container">
-          <button id="close-admin-btn" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
-          <div id="login-screen" class="login-screen">
+        <!-- Admin Overlay (Restored) -->
+        <div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto;">
+          <style>
+            .admin-container {
+              max-width: 800px;
+              margin: 40px auto;
+              padding: 24px;
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+              position: relative;
+            }
+            .login-screen {
+              text-align: center;
+              padding: 40px;
+            }
+            .admin-panel {
+              display: none;
+            }
+            .category-section {
+              margin-bottom: 32px;
+              padding: 16px;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+            }
+            .item-list {
+              margin-top: 12px;
+            }
+            .item-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 8px;
+              border-bottom: 1px solid #f3f4f6;
+            }
+            .item-row:last-child {
+              border-bottom: none;
+            }
+            .add-form {
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+            }
+            .add-form input {
+              padding: 8px;
+              border: 1px solid #d1d5db;
+              border-radius: 4px;
+            }
+            .btn-delete {
+              background: #fee2e2;
+              color: #dc2626;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+              cursor: pointer;
+              border: none;
+            }
+            .btn-delete:hover {
+              background: #fecaca;
+            }
+          </style>
+          <div class="admin-container">
+            <button id="close-admin-btn" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
+            <div id="login-screen" class="login-screen">
               <h1>Admin Access</h1>
               <p>Please enter the admin password to manage products.</p>
               <div style="margin-top: 20px;">
-                  <input type="password" id="admin-password" placeholder="Password" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="password" id="admin-password" placeholder="Password" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                   <button id="login-btn" class="btn btn-primary">Login</button>
               </div>
               <p id="login-error" style="color: red; margin-top: 10px; display: none;">Incorrect password.</p>
-          </div>
+            </div>
 
-          <div id="admin-panel" class="admin-panel">
+            <div id="admin-panel" class="admin-panel">
               <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                  <h1>Product Management</h1>
-                  <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                <h1>Product Management</h1>
+                <button id="logout-btn" class="btn btn-secondary">Logout</button>
               </header>
 
               <div id="categories-container">
-                  <!-- Categories will be rendered here -->
+                <!-- Categories will be rendered here -->
               </div>
+            </div>
           </div>
-      </div>
-    </div>
-
-    <!-- Photos -->
-    <section class="card" style="margin-top:16px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
-        <h2 style="margin:0;">Photos (up to ${maxPhotos})</h2>
-        <div>
-          <label class="btn btn-primary" style="cursor:pointer;">
-            + Add Photos
-            <input id="photos-input" type="file" accept="image/*" multiple style="display:none;">
-          </label>
-          <button id="photos-clear" class="btn btn-secondary" style="margin-left:8px;">Clear All</button>
         </div>
-      </div>
-      <div id="photos-count" style="font-size:12px; color:#6b7280; margin-top:6px;">0/${maxPhotos} selected</div>
-      <div id="photos-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:12px;"></div>
-    </section>
 
-    <!-- Footer -->
-    <footer style="margin-top: 32px; text-align: center; font-size: 14px; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 16px;">
-      <p>&copy; 2025 1 STOP BATH SHOP. All rights reserved.</p>
-    </footer>
-  </div>
-  `;
+        <!-- Photos -->
+        <section class="card" style="margin-top:16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+            <h2 style="margin:0;">Photos (up to ${maxPhotos})</h2>
+            <div>
+              <label class="btn btn-primary" style="cursor:pointer;">
+                + Add Photos
+                <input id="photos-input" type="file" accept="image/*" multiple style="display:none;">
+              </label>
+              <button id="photos-clear" class="btn btn-secondary" style="margin-left:8px;">Clear All</button>
+            </div>
+          </div>
+          <div id="photos-count" style="font-size:12px; color:#6b7280; margin-top:6px;">0/${maxPhotos} selected</div>
+          <div id="photos-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:12px;"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="margin-top: 32px; text-align: center; font-size: 14px; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+          <p>&copy; 2025 1 STOP BATH SHOP. All rights reserved.</p>
+        </footer>
+    </div>
+    `;
 }
 
 /* ---------- Render App ---------- */
@@ -286,35 +286,91 @@ function attachDraftListeners() {
           cursor: pointer;
           transition: background 0.2s;
           display: flex;
-          flex-direction: column;
-          gap: 4px;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
         `;
 
         item.onmouseenter = () => item.style.background = '#f9fafb';
         item.onmouseleave = () => item.style.background = 'transparent';
 
+        const infoWrapper = document.createElement('div');
+        infoWrapper.style.flex = '1';
         const dateStr = new Date(draft.created_at).toLocaleString();
-        item.innerHTML = `
+        infoWrapper.innerHTML = `
           <div style="font-weight: 600; color: #111827;">${draft.name}</div>
           <div style="font-size: 12px; color: #6b7280;">Saved on: ${dateStr}</div>
         `;
 
-        item.onclick = async () => {
-          item.style.background = '#edf2ff';
-          item.innerHTML = `
+        infoWrapper.onclick = async () => {
+          infoWrapper.style.opacity = '0.5';
+          infoWrapper.innerHTML = `
             <div style="font-weight: 600; color: #111827;">Loading ${draft.name}...</div>
           `;
 
           const result = await loadDraft(draft.id);
           if (result.error) {
             alert("Error loading draft: " + result.error.message);
-            // reset state
             loadModal.style.display = 'none';
           } else {
             loadModal.style.display = 'none';
           }
         };
 
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.style.cssText = `
+          background: #fee2e2;
+          border: none;
+          color: #ef4444;
+          width: 36px;
+          height: 36px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          transition: all 0.2s;
+        `;
+        deleteBtn.onmouseenter = () => {
+          deleteBtn.style.background = '#fecaca';
+          deleteBtn.style.transform = 'scale(1.1)';
+        };
+        deleteBtn.onmouseleave = () => {
+          deleteBtn.style.background = '#fee2e2';
+          deleteBtn.style.transform = 'scale(1)';
+        };
+
+        deleteBtn.onclick = async (e) => {
+          e.stopPropagation();
+
+          // Play delete sound
+          try {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+            audio.play();
+          } catch (soundErr) {
+            console.warn('Sound playback failed:', soundErr);
+          }
+
+          if (confirm(`Are you sure you want to PERMANENTLY delete the quote for "${draft.name}"?`)) {
+            deleteBtn.innerHTML = '⌛';
+            deleteBtn.disabled = true;
+
+            const { error: delErr } = await deleteDraft(draft.id);
+            if (delErr) {
+              alert("Error deleting draft: " + delErr.message);
+              deleteBtn.innerHTML = '🗑️';
+              deleteBtn.disabled = false;
+            } else {
+              // Refresh the list
+              loadDraftBtn.click();
+            }
+          }
+        };
+
+        item.appendChild(infoWrapper);
+        item.appendChild(deleteBtn);
         draftListContainer.appendChild(item);
       });
     });

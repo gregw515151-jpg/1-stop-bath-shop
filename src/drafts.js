@@ -65,6 +65,15 @@ export async function getDrafts() {
     return { data, error };
 }
 
+export async function deleteDraft(id) {
+    const { data, error } = await supabase
+        .from('drafts')
+        .delete()
+        .eq('id', id);
+
+    return { data, error };
+}
+
 export async function loadDraft(id) {
     const { data, error } = await supabase
         .from('drafts')
