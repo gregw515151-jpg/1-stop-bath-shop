@@ -428,8 +428,14 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   const totalEl = document.getElementById('total');
   const customer = getCustomerInfo();
 
-  // Get Company Info
-  const companyInfo = localStorage.getItem('company_info') ? JSON.parse(localStorage.getItem('company_info')) : {};
+  // Get Company Info from Supabase
+  let companyInfo = { name: '1 Stop Bath Shop' };
+  try {
+    const { data } = await supabase.from('company_settings').select('*').eq('id', 'default').single();
+    if (data) companyInfo = data;
+  } catch (e) {
+    console.warn('Failed to fetch company info for PDF, using defaults');
+  }
 
   // Collect all section notes
   const noteFields = [
@@ -482,7 +488,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   // Company Info Section (centered under logo)
   const companyInfoHTML = `
     <div style="text-align: center; margin: 12px 0 20px; font-size: 12px; color: #374151; line-height: 1.6;">
-      ${companyInfo.name ? `<div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${esc(companyInfo.name)}</div>` : ''}
+      ${companyInfo.company_name ? `<div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${esc(companyInfo.company_name)}</div>` : ''}
       ${companyInfo.address ? `<div>${esc(companyInfo.address)}</div>` : ''}
       ${companyInfo.mhic ? `<div>${esc(companyInfo.mhic)}</div>` : ''}
       <div>
@@ -522,10 +528,9 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     ${customerHTML}
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
-    <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
+    <div>${summaryEl ? summaryEl.innerHTML.replace(/\s*-\s*\$\d+(\.\d+)?/g, '').replace(/:\s*\$\d+(\.\d+)?/g, '').replace(/\s*×\s*\$\d+(\.\d+)?\s*=\s*\$\d+(\.\d+)?/g, '') : ''}</div>
 
     <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
-    <div>${totalEl ? totalEl.innerHTML : ''}</div>
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>
     <div>${photosGridHTML || '<div style="font-size:12px;color:#6b7280;">No photos attached.</div>'}</div>

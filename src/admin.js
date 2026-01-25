@@ -146,18 +146,26 @@ export async function initAdmin() {
     }
 }
 
-function renderCategories(container) {
+async function renderCategories(container) {
     if (!container) return;
     container.innerHTML = '';
 
     // Add company info section first
-    const companyInfo = localStorage.getItem('company_info') ? JSON.parse(localStorage.getItem('company_info')) : {
+    let companyInfo = {
         name: '1 Stop Bath Shop',
         address: '',
         mhic: '',
         phone: '',
-        email: ''
+        email: '',
+        terms: DEFAULT_TERMS
     };
+
+    try {
+        const { data, error } = await supabase.from('company_settings').select('*').eq('id', 'default').single();
+        if (data) companyInfo = data;
+    } catch (e) {
+        console.warn('Could not fetch company info from Supabase, using defaults');
+    }
 
     const companySection = document.createElement('section');
     companySection.className = 'category-section';
@@ -329,17 +337,24 @@ window.handleCancel = (categoryId) => {
     priceInp.value = '';
 };
 
-window.saveCompanyInfo = () => {
+window.saveCompanyInfo = async () => {
     const companyInfo = {
-        name: document.getElementById('company-name').value,
+        company_name: document.getElementById('company-name').value,
         address: document.getElementById('company-address').value,
         mhic: document.getElementById('company-mhic').value,
         phone: document.getElementById('company-phone').value,
         email: document.getElementById('company-email').value,
         terms: document.getElementById('company-terms').value
     };
-    localStorage.setItem('company_info', JSON.stringify(companyInfo));
-    alert('✅ Company information saved successfully!');
+
+    try {
+        const { error } = await supabase.from('company_settings').upsert({ id: 'default', ...companyInfo });
+        if (error) throw error;
+        alert('✅ Company information saved to database successfully!');
+    } catch (err) {
+        console.error('Error saving company info:', err);
+        alert('❌ Error saving company info: ' + err.message);
+    }
 };
 
 // init(); calls removed, use exported initAdmin()
