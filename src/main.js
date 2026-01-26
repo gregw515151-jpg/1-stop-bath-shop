@@ -651,6 +651,9 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     </div>
   `).join('');
 
+  // Get the total section HTML to extract payment info
+  const totalSectionHTML = totalEl ? totalEl.innerHTML : '';
+
   // Split content into main and terms
   const mainContent = `
     <div style="text-align:center; margin-bottom: 10px;">
@@ -660,13 +663,16 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
     <style>
       .price-text { display: none !important; }
-      #pdf-total-section { display: none !important; }
     </style>
 
     ${customerHTML}
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
     <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
+
+    <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
+
+    ${totalSectionHTML ? `<div>${totalSectionHTML}</div>` : ''}
 
     <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
 
