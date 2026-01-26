@@ -660,7 +660,7 @@ function buildQuoteSections() {
           <textarea id="demolition-notes" rows="2" class="select-input" placeholder="Any special demolition requirements or notes..."></textarea>
         </div>
         <div class="form-group" style="margin-top: 16px;">
-          <label>Demo & Disposal Cost:</label>
+          <label>Demo & Disposal:</label>
           <input type="number" id="demo-disposal-cost" min="0" step="0.01" class="select-input" placeholder="Enter total cost (e.g., 500.00)">
         </div>
       </div>
@@ -768,7 +768,7 @@ function buildQuoteSections() {
           </select>
           </div>
           <div class="form-group">
-            <label>Length:</label>
+            <label>Tub Size:</label>
             <select id="tub-length" class="select-input">
           </select>
           </div>
@@ -1251,6 +1251,27 @@ function buildQuoteSections() {
         </div>
       </div>
     </section>
+
+    <!-- Section 16: Payments -->
+    <section class="card collapsible-section" style="margin-bottom: 16px;">
+      <div class="section-header" onclick="toggleSection(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 12px; margin: -16px -16px 16px -16px;">
+        <h2 style="margin: 0; font-size: 1.25rem;">💰 Payments</h2>
+        <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
+      </div>
+      <div class="section-content">
+        <p style="margin-bottom: 12px; color: #6b7280; font-size: 14px;">Track customer payments to deduct from total investment.</p>
+        <div id="payments-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+          <!-- Payment entries will be added here -->
+        </div>
+        <button id="add-payment-btn" type="button" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          + Add Payment
+        </button>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Payment Notes:</label>
+          <textarea id="payment-notes" rows="2" class="select-input" placeholder="Notes about payments received..."></textarea>
+        </div>
+      </div>
+    </section>
   `;
 
   // Make toggle function global
@@ -1352,6 +1373,43 @@ function setupListeners() {
   qtyInputs.forEach(input => {
     input.addEventListener('input', updateSummary);
   });
+
+  // Payments handling
+  let paymentCounter = 0;
+  const paymentsContainer = document.getElementById('payments-container');
+  const addPaymentBtn = document.getElementById('add-payment-btn');
+
+  if (addPaymentBtn) {
+    addPaymentBtn.addEventListener('click', () => {
+      paymentCounter++;
+      const paymentId = `payment-${paymentCounter}`;
+      const paymentRow = document.createElement('div');
+      paymentRow.id = paymentId;
+      paymentRow.style.cssText = 'display: flex; gap: 8px; align-items: center; padding: 8px; background: #f9fafb; border-radius: 6px;';
+      paymentRow.innerHTML = `
+        <input type="number" class="payment-amount" data-payment-id="${paymentId}" step="0.01" placeholder="Amount" 
+          style="flex: 1; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+        <input type="text" class="payment-description" data-payment-id="${paymentId}" placeholder="Description (e.g., Deposit)" 
+          style="flex: 2; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+        <button type="button" class="remove-payment-btn" data-payment-id="${paymentId}" 
+          style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+          Remove
+        </button>
+      `;
+      paymentsContainer.appendChild(paymentRow);
+
+      // Add event listeners for the new payment
+      paymentRow.querySelector('.payment-amount').addEventListener('input', updateSummary);
+      paymentRow.querySelector('.remove-payment-btn').addEventListener('click', (e) => {
+        const id = e.target.dataset.paymentId;
+        document.getElementById(id)?.remove();
+        updateSummary();
+      });
+    });
+  }
+
+  // Payment notes
+  document.getElementById('payment-notes')?.addEventListener('change', updateSummary);
 }
 
 function updateSummary() {
@@ -1368,16 +1426,16 @@ function updateSummary() {
     'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style' },
     'electrical-color': { key: 'electrical_color', label: 'Electrical Color' },
     'exhaust-fan': { key: 'exhaust_fan', label: 'Exhaust Fan' },
-    'shower-color': { key: 'shower_color', label: 'Shower Color' },
+    'shower-color': { key: 'shower_color', label: 'Tub / Shower Pan color' },
     'shower-size': { key: 'shower_size', label: 'Shower Size' },
     'shower-drain': { key: 'shower_drain', label: 'Shower Drain Location' },
     'tub-depth': { key: 'tub_depth', label: 'Tub Depth' },
-    'tub-length': { key: 'tub_length', label: 'Tub Length' },
+    'tub-length': { key: 'tub_length', label: 'Tub Size' },
     'wall-color': { key: 'wall_color', label: 'Wall Color' },
     'wall-pattern': { key: 'wall_pattern', label: 'Wall Pattern' },
     'wall-type': { key: 'wall_type', label: 'Wall Type' },
     'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
-    'flooring-type': { key: 'flooring_type', label: 'Flooring Type' },
+    // Removed 'flooring-type' to fix duplicate display - it has custom logic below
     'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
     'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style' },
     'window-style': { key: 'window_style', label: 'Window Style' },
@@ -1386,6 +1444,12 @@ function updateSummary() {
     'shower-door-style': { key: 'shower_door_style', label: 'Shower Door Style' },
     'shower-door-thickness': { key: 'shower_door_thickness', label: 'Shower Door Thickness' },
     'shower-door-glass-type': { key: 'shower_door_glass_type', label: 'Shower Door Glass Type' },
+    // Added missing fields that weren't showing on estimate
+    'shower-head': { key: 'shower_head', label: 'Shower Head' },
+    'trim-color': { key: 'trim_color', label: 'Trim Color' },
+    'seat-type': { key: 'seat_type', label: 'Seat' },
+    'enclosure-type': { key: 'enclosure_type', label: 'Enclosure' },
+    'window-kit': { key: 'window_kit', label: 'Window Kit' }
   };
 
   // Build summary
@@ -1421,7 +1485,7 @@ function updateSummary() {
     if (cost > 0) {
       total += cost;
       html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-        <strong>Demo & Disposal Cost:</strong> <span class="price-text">$${cost.toFixed(2)}</span>
+        <strong>Demo & Disposal:</strong> <span class="price-text">$${cost.toFixed(2)}</span>
       </div>`;
       selections.demo_disposal_cost = cost;
     }
@@ -1440,7 +1504,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          tileHtml += `<li>${item.name} (x${qty}) <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
+          tileHtml += `<li>${item.name} (x${qty})</li>`;
           selections[`tile_material_${item.id}`] = `${item.name} (x${qty})`;
           selections.tile_materials_data.push({ id: item.id, qty: qty });
         }
@@ -1463,7 +1527,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          plumbingHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          plumbingHtml += `<li>${item.name} (x${qty})</li>`;
           selections[`plumbing_material_${item.id}`] = `${item.name} (x${qty})`;
           selections.plumbing_materials_data.push({ id: item.id, qty: qty });
         }
@@ -1507,7 +1571,7 @@ function updateSummary() {
         if (item && item.name !== 'None') {
           const cost = item.price * qty;
           total += cost;
-          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
+          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty})</li>`;
           hasGrabBars = true;
         }
       }
@@ -1517,7 +1581,7 @@ function updateSummary() {
         if (item && item.name !== 'None') {
           const cost = item.price * qty;
           total += cost;
-          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty}) - $${cost.toFixed(2)}</li>`;
+          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty})</li>`;
           hasGrabBars = true;
         }
       }
@@ -1542,7 +1606,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          electricalHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          electricalHtml += `<li>${item.name} (x${qty})</li>`;
           selections[`electrical_${item.id}`] = `${item.name} (x${qty})`;
           selections.electrical_items_data.push({ id: item.id, qty: qty });
         }
@@ -1594,7 +1658,7 @@ function updateSummary() {
         if (item) {
           const cost = item.price;
           total += cost;
-          vanityTopHtml += `<li>${item.name} - $${cost.toFixed(2)}</li>`;
+          vanityTopHtml += `<li>${item.name}</li>`;
           hasVanityTop = true;
         }
       });
@@ -1619,7 +1683,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          accessoriesHtml += `<li>${item.name} (x${qty}) - $${cost.toFixed(2)}</li>`;
+          accessoriesHtml += `<li>${item.name} (x${qty})</li>`;
           selections[`accessory_${item.id}`] = `${item.name} (x${qty})`;
           selections.accessory_items_data.push({ id: item.id, qty: qty });
         }
@@ -1824,7 +1888,7 @@ function updateSummary() {
           if (item && item.price > 0) {
             const cost = item.price * sqft;
             total += cost;
-            flooringHtml += `<li>Square Footage: ${sqft} sq ft × $${item.price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+            flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
           } else {
             flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
           }
@@ -1916,9 +1980,10 @@ function updateSummary() {
           total += parseFloat(priceMatch[1]);
         }
 
+        // Remove price display from item text - show only the selection name
         let itemText = el.options[el.selectedIndex].text;
-        const priceTag = '<span class="price-text">$1</span>';
-        itemText = itemText.replace(/\(\+\$([0-9.]+)\)/, `(${priceTag})`);
+        itemText = itemText.replace(/\s*\(\+\$[0-9.]+\)/, ''); // Remove (+$XX.XX)
+        itemText = itemText.replace(/\s*\(-\$[0-9.]+\)/, ''); // Remove (-$XX.XX)
 
         html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
           <strong>${config.label}:</strong> ${itemText}
@@ -1931,12 +1996,58 @@ function updateSummary() {
   const totalDiv = document.getElementById('total');
   const emailBtn = document.getElementById('email-btn');
 
+  // Calculate Payments
+  const paymentAmounts = document.querySelectorAll('.payment-amount');
+  let totalPayments = 0;
+  let paymentsHtml = '';
+  selections.payments_data = [];
+
+  if (paymentAmounts.length > 0) {
+    paymentsHtml = '<div style="padding: 8px; background: #d1fae5; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid #10b981;"><strong>Payments Received:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+    paymentAmounts.forEach(input => {
+      const amount = parseFloat(input.value) || 0;
+      if (amount > 0) {
+        const paymentId = input.dataset.paymentId;
+        const descInput = document.querySelector(`.payment-description[data-payment-id="${paymentId}"]`);
+        const description = descInput ? descInput.value : '';
+        totalPayments += amount;
+        paymentsHtml += `<li>${description || 'Payment'}: <span class="price-text">$${amount.toFixed(2)}</span></li>`;
+        selections.payments_data.push({ amount: amount, description: description });
+      }
+    });
+    paymentsHtml += '</ul></div>';
+  }
+
+  const paymentNotes = document.getElementById('payment-notes');
+  if (paymentNotes && paymentNotes.value.trim()) {
+    selections.payment_notes = paymentNotes.value.trim();
+  }
+
   if (html) {
+    // Add payments section to summary if there are payments
+    if (totalPayments > 0) {
+      html += paymentsHtml;
+    }
+
     summaryDiv.innerHTML = html;
+
+    // Calculate balance due
+    const balanceDue = total - totalPayments;
+
     totalDiv.innerHTML = `
       <div id="pdf-total-section" style="padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin-top: 16px;">
-        <div style="font-size: 14px; opacity: 0.9;">Total Estimate</div>
+        <div style="font-size: 14px; opacity: 0.9;">Total Investment</div>
         <div style="font-size: 28px; font-weight: bold; margin-top: 4px;">$${total.toFixed(2)}</div>
+        ${totalPayments > 0 ? `
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+            <div style="font-size: 14px; opacity: 0.9;">Payments Received</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 4px;">-$${totalPayments.toFixed(2)}</div>
+          </div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+            <div style="font-size: 14px; opacity: 0.9;">Balance Due</div>
+            <div style="font-size: 28px; font-weight: bold; margin-top: 4px;">$${balanceDue.toFixed(2)}</div>
+          </div>
+        ` : ''}
       </div>
     `;
     if (emailBtn) emailBtn.disabled = false;
