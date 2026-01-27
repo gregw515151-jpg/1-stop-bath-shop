@@ -1556,6 +1556,7 @@ function updateSummary() {
     'shower-head': { key: 'shower_head', label: 'Shower Head' },
     'trim-color': { key: 'trim_color', label: 'Trim Color' },
     'seat-type': { key: 'seat_type', label: 'Seat' },
+    'shelves-type': { key: 'shelves_type', label: 'Shelves', hidePrice: true }, // Hide pricing like flooring
     'enclosure-type': { key: 'enclosure_type', label: 'Enclosure' },
     'window-kit': { key: 'window_kit', label: 'Window Kit' }
   };
@@ -2109,10 +2110,12 @@ function updateSummary() {
       selections[config.key] = val ? el.options[el.selectedIndex].text : "";
 
       if (val) {
-        // Try to estimate price if it's in the text (e.g. "+$100")
-        const priceMatch = el.options[el.selectedIndex].text.match(/\(\+\$([0-9.]+)\)/);
-        if (priceMatch) {
-          total += parseFloat(priceMatch[1]);
+        // Try to estimate price if it's in the text (e.g. "+$100") - but skip if hidePrice is true
+        if (!config.hidePrice) {
+          const priceMatch = el.options[el.selectedIndex].text.match(/\(\+\$([0-9.]+)\)/);
+          if (priceMatch) {
+            total += parseFloat(priceMatch[1]);
+          }
         }
 
         // Remove price display from item text - show only the selection name
