@@ -142,23 +142,22 @@ export async function initAdmin() {
     });
 
     // Close button functionality
-    console.log('DEBUG: closeAdminBtn found:', !!closeAdminBtn);
-    console.log('DEBUG: adminOverlay found:', !!adminOverlay);
-
-    if (closeAdminBtn && adminOverlay) {
-        console.log('DEBUG: Attaching click event to close button');
-        closeAdminBtn.addEventListener('click', () => {
-            console.log('DEBUG: Close button clicked! Hiding overlay...');
-            adminOverlay.style.display = 'none';
-            // Reset to login screen for next time
-            if (adminPanel) adminPanel.style.display = 'none';
-            if (loginScreen) loginScreen.style.display = 'block';
-        });
-        console.log('DEBUG: Close button event listener attached successfully');
-    } else {
-        console.error('DEBUG: Failed to attach close button listener - elements missing');
+    if (closeAdminBtn) {
+        closeAdminBtn.onclick = () => window.closeAdmin();
     }
 }
+
+window.closeAdmin = () => {
+    const adminOverlay = document.getElementById('admin-overlay');
+    const adminPanel = document.getElementById('admin-panel');
+    const loginScreen = document.getElementById('login-screen');
+
+    if (adminOverlay) adminOverlay.style.display = 'none';
+    // Reset to login screen for next time
+    if (adminPanel) adminPanel.style.display = 'none';
+    if (loginScreen) loginScreen.style.display = 'block';
+    console.log('DEBUG: Admin overlay closed and reset.');
+};
 
 async function saveCompanyInfo() {
     console.log('DEBUG: saveCompanyInfo called');
@@ -253,7 +252,7 @@ async function renderCategories(container) {
                 </div>
             </div>
             </div>
-            <div style="grid-column: 1 / -1;">
+            <div style="grid-column: 1 / -1; margin-top: 12px;">
                 <label style="display: block; font-weight: 600; margin-bottom: 4px;">Terms and Conditions (HTML supported):</label>
                 <textarea id="company-terms" placeholder="Enter terms and conditions here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 400px; font-family: monospace; font-size: 13px;">${companyInfo.terms || DEFAULT_TERMS}</textarea>
                 <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">💡 Tip: You can use HTML tags for formatting (e.g., &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, &lt;p&gt;)</p>
@@ -262,25 +261,6 @@ async function renderCategories(container) {
         </div>
     `;
     container.appendChild(companySection);
-
-    CATEGORIES.forEach(cat => {
-        const section = document.createElement('section');
-        section.className = 'category-section';
-
-        section.innerHTML = `
-            <h2>${cat.name}</h2>
-            <div class="add-form">
-                <input type="text" id="add-name-${cat.id}" placeholder="Item Name">
-                <input type="number" id="add-price-${cat.id}" placeholder="Price" step="0.01">
-                <button class="btn btn-primary" onclick="window.handleAdd('${cat.id}')">Add</button>
-                <button class="btn btn-cancel" onclick="window.handleCancel('${cat.id}')" style="background: #6b7280; margin-left: 4px;">Cancel</button>
-            </div>
-            <div class="item-list" id="list-${cat.id}">
-                ${renderItemList(cat.id)}
-            </div>
-        `;
-        container.appendChild(section);
-    });
 }
 
 function renderItemList(categoryId) {
