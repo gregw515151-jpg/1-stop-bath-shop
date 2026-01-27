@@ -358,6 +358,29 @@ export const DEFAULT_QUOTE_DATA = {
   labor_items: [
     { id: "1", name: "General Labor (Hours)", price: 75 },
     { id: "2", name: "Specialized Labor (Hours)", price: 125 }
+  ],
+  demo_disposal_items: [
+    { id: "1", name: "Vanity", price: 0 },
+    { id: "2", name: "Vanity Top", price: 0 },
+    { id: "3", name: "Toilet", price: 0 },
+    { id: "4", name: "Drywall", price: 0 },
+    { id: "5", name: "Ceiling", price: 0 },
+    { id: "6", name: "Fan", price: 0 },
+    { id: "7", name: "Vanity Light", price: 0 },
+    { id: "8", name: "Ceiling Lights", price: 0 },
+    { id: "9", name: "Tub", price: 0 },
+    { id: "10", name: "Shower", price: 0 },
+    { id: "11", name: "Floor", price: 0 },
+    { id: "12", name: "Door Casing", price: 0 },
+    { id: "13", name: "Window Casing", price: 0 },
+    { id: "14", name: "Baseboard", price: 0 },
+    { id: "15", name: "Bill & List", price: 0 }
+  ],
+  vanity_top_options: [
+    { id: "1", name: "Cultured Marble", price: 0 },
+    { id: "2", name: "Granite", price: 0 },
+    { id: "3", name: "Quartz", price: 0 },
+    { id: "4", name: "Custom", price: 0 }
   ]
 };
 
@@ -379,6 +402,7 @@ const DROPDOWN_MAPPINGS = {
   'wall-pattern': 'wall_patterns',
   'wall-type': 'wall_types',
   'vanity-length': 'vanity_lengths',
+  'vanity-top': 'vanity_top_options',
   'flooring-type': 'flooring_types',
   'trim-color': 'trim_colors',
   'baseboard-style': 'trim_baseboard_styles',
@@ -399,7 +423,8 @@ const DROPDOWN_MAPPINGS = {
 const CHECKBOX_MAPPINGS = {
   'tile-materials': 'tile_materials',
   'plumbing-materials': 'plumbing_materials',
-  'splash-options': 'splash_options'
+  'splash-options': 'splash_options',
+  'demo-disposal-items': 'demo_disposal_items'
 };
 
 
@@ -647,14 +672,18 @@ function buildQuoteSections() {
       </div>
       <div class="section-content">
         <label style="font-weight: 600; margin-bottom: 12px; display: block;">Select items to demo:</label>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-          ${['Vanity', 'Vanity Top', 'Toilet', 'Drywall', 'Ceiling', 'Fan', 'Vanity Light', 'Ceiling Lights', 'Tub', 'Shower', 'Floor', 'Door Casing', 'Window Casing', 'Baseboard', 'Bill & List'].map(item => `
+        <div id="demo-disposal-items" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+          ${products.demo_disposal_items.map(item => `
             <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
-              <input type="checkbox" class="demo-item" value="${item}" style="width: 18px; height: 18px;">
-              <span>${item}</span>
+              <input type="checkbox" class="demo-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+              <span>${item.name}</span>
+              <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
             </label>
           `).join('')}
         </div>
+        
+        <!-- Admin controls are now injected dynamically -->
+        
         <div class="form-group" style="margin-top: 16px;">
           <label>Demolition Notes:</label>
           <textarea id="demolition-notes" rows="2" class="select-input" placeholder="Any special demolition requirements or notes..."></textarea>
@@ -862,7 +891,7 @@ function buildQuoteSections() {
             </select>
           </div>
           <div class="form-group">
-            <label>Grab Bars Size (2):</label>
+            <label>Grab Bar Size:</label>
             <select id="grab-bars-size-2" class="select-input">
               <option value="">-- Select --</option>
               <option value="16">16"</option>
@@ -949,8 +978,13 @@ function buildQuoteSections() {
           <select id="vanity-length" class="select-input">
           </select>
         </div>
+        <div class="form-group">
+          <label>Vanity Top (Countertop):</label>
+          <select id="vanity-top" class="select-input">
+          </select>
+        </div>
         
-        <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 16px;">Vanity Top</h3>
+        <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 16px;">Vanity Top Details</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
           <div class="form-group">
             <label>Bowl Style:</label>
@@ -1049,6 +1083,10 @@ function buildQuoteSections() {
           <div class="form-group">
             <label>Drywall Sheets:</label>
             <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="How many sheets?">
+          </div>
+          <div class="form-group">
+            <label>Paint Square Footage:</label>
+            <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="Square feet to paint">
           </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
@@ -1435,6 +1473,7 @@ function updateSummary() {
     'wall-pattern': { key: 'wall_pattern', label: 'Wall Pattern' },
     'wall-type': { key: 'wall_type', label: 'Wall Type' },
     'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
+    'vanity-top': { key: 'vanity_top', label: 'Vanity Top' },
     // Removed 'flooring-type' to fix duplicate display - it has custom logic below
     'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
     'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style' },
@@ -1471,11 +1510,17 @@ function updateSummary() {
     </div>`;
   }
 
-  // Add demolition items
-  if (selections.demo_items && selections.demo_items.length > 0) {
+  // Add demolition items - now using database structure
+  const demoCheckboxes = document.querySelectorAll('.demo-item:checked');
+  if (demoCheckboxes.length > 0) {
+    const demoNames = Array.from(demoCheckboxes).map(cb => {
+      const item = products.demo_disposal_items?.find(p => p.id === cb.value);
+      return item ? item.name : cb.dataset.name || cb.value;
+    });
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-      <strong>Demolition Items:</strong> ${selections.demo_items.join(', ')}
+      <strong>Demolition Items:</strong> ${demoNames.join(', ')}
     </div>`;
+    selections.demo_items = demoNames;
   }
 
   // Add demo & disposal cost
@@ -1779,6 +1824,22 @@ function updateSummary() {
       }
     }
 
+    // Paint Square Footage calculation
+    const paintSqft = document.getElementById('paint-sqft');
+    if (paintSqft && paintSqft.value) {
+      const sqft = parseInt(paintSqft.value) || 0;
+      if (sqft > 0) {
+        // Use "Paint - 2 Coats Walls" as the base paint item for square footage pricing
+        const item = products.drywall_paint_items?.find(p => p.name === 'Paint - 2 Coats Walls');
+        if (item && item.price > 0) {
+          const cost = item.price * sqft;
+          total += cost;
+          drywallHtml += `<li>Paint: ${sqft} sq ft - $${cost.toFixed(2)}</li>`;
+          hasDrywall = true;
+        }
+      }
+    }
+
     drywallHtml += '</ul>';
 
     if (drywallNotes && drywallNotes.value.trim()) {
@@ -1876,25 +1937,16 @@ function updateSummary() {
     if (flooringType && flooringType.value) {
       const item = products.flooring_types?.find(p => p.id === flooringType.value);
       if (item) {
-        flooringHtml += `<li>Type: ${item.name}</li>`;
-      }
-    }
-
-    if (flooringSqft && flooringSqft.value) {
-      const sqft = parseInt(flooringSqft.value) || 0;
-      if (sqft > 0) {
-        if (flooringType && flooringType.value) {
-          const item = products.flooring_types?.find(p => p.id === flooringType.value);
-          if (item && item.price > 0) {
+        // Calculate cost but don't show square footage to customer
+        if (flooringSqft && flooringSqft.value) {
+          const sqft = parseInt(flooringSqft.value) || 0;
+          if (sqft > 0 && item.price > 0) {
             const cost = item.price * sqft;
             total += cost;
-            flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
-          } else {
-            flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
           }
-        } else {
-          flooringHtml += `<li>Square Footage: ${sqft} sq ft</li>`;
         }
+        // Only show the flooring type name, not the square footage
+        flooringHtml += `<li>${item.name}</li>`;
       }
     }
 
@@ -2266,7 +2318,9 @@ export const CATEGORIES = [
   { id: 'shower_door_thickness', name: 'Shower Door Thickness', description: 'Controls: Shower Door THICKNESS dropdown' },
   { id: 'shower_door_glass_types', name: 'Shower Door Glass Types', description: 'Controls: Shower Door GLASS TYPE dropdown' },
   { id: 'change_order_items', name: 'Change Order Items', description: 'Pricing: Unforeseen conditions, extras' },
-  { id: 'labor_items', name: 'Labor Items', description: 'Pricing: Hourly labor rates' }
+  { id: 'labor_items', name: 'Labor Items', description: 'Pricing: Hourly labor rates' },
+  { id: 'demo_disposal_items', name: 'Demo & Disposal Items', description: 'Controls: Demolition section checkboxes' },
+  { id: 'vanity_top_options', name: 'Vanity Top Options', description: 'Controls: Vanity Top (Countertop) dropdown' }
 ];
 
 function renderAdminCategories() {

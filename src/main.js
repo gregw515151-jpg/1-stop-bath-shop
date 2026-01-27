@@ -663,6 +663,15 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
     <style>
       .price-text { display: none !important; }
+      /* Prevent line items from splitting across pages */
+      div[style*="padding: 8px"] { 
+        break-inside: avoid !important; 
+        page-break-inside: avoid !important;
+      }
+      ul li {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
     </style>
 
     ${customerHTML}
