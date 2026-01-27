@@ -1075,21 +1075,50 @@ function buildQuoteSections() {
         <span class="toggle-icon" style="font-size: 1.5rem;">▼</span>
       </div>
       <div class="section-content">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-          <div class="form-group">
-            <label>Drywall Linear Footage:</label>
-            <input type="number" id="drywall-linear-ft" min="0" class="select-input" placeholder="Linear feet">
+        <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Drywall & Paint Pricing</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <!-- Drywall Linear Footage -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall (Linear Ft)</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Feet:</label>
+              <input type="number" id="drywall-linear-ft" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Drywall Sheets:</label>
-            <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="How many sheets?">
+
+          <!-- Drywall Sheets -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall Sheets</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Sheet:</label>
+              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Number of Sheets:</label>
+              <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Paint Square Footage:</label>
-            <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="Square feet to paint">
+
+          <!-- Paint Square Footage -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Sq Ft:</label>
+              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Square Footage:</label>
+              <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
         </div>
-        <div class="form-group" style="margin-top: 16px;">
+
+        <div class="form-group">
           <label style="font-weight: 600; margin-bottom: 12px; display: block;">Paint Work:</label>
           <div style="display: flex; gap: 16px; flex-wrap: wrap;">
             <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
@@ -1786,8 +1815,12 @@ function updateSummary() {
   }
 
   // Calculate Drywall & Paint Section
+  const drywallLinearPrice = document.getElementById('drywall-linear-price');
   const drywallLinearFt = document.getElementById('drywall-linear-ft');
+  const drywallSheetPrice = document.getElementById('drywall-sheet-price');
   const drywallSheets = document.getElementById('drywall-sheets');
+  const paintPricePerSqft = document.getElementById('paint-price-per-sqft');
+  const paintSqft = document.getElementById('paint-sqft');
   const paintWalls = document.getElementById('paint-walls');
   const paintTrim = document.getElementById('paint-trim');
   const paintCeiling = document.getElementById('paint-ceiling');
@@ -1797,34 +1830,46 @@ function updateSummary() {
   let drywallHtml = '';
   let hasDrywall = false;
 
-  if ((drywallLinearFt && drywallLinearFt.value) || (drywallSheets && drywallSheets.value) ||
+  if ((drywallLinearFt && drywallLinearFt.value && drywallLinearPrice && drywallLinearPrice.value) ||
+    (drywallSheets && drywallSheets.value && drywallSheetPrice && drywallSheetPrice.value) ||
+    (paintSqft && paintSqft.value && paintPricePerSqft && paintPricePerSqft.value) ||
     (paintWalls && paintWalls.checked) || (paintTrim && paintTrim.checked) ||
     (paintCeiling && paintCeiling.checked) || (pointUpDrywall && pointUpDrywall.checked)) {
     drywallHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Drywall & Paint:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
 
-    if (drywallLinearFt && drywallLinearFt.value) {
+    // Drywall linear footage calculation
+    if (drywallLinearFt && drywallLinearFt.value && drywallLinearPrice && drywallLinearPrice.value) {
       const qty = parseInt(drywallLinearFt.value) || 0;
-      if (qty > 0) {
-        const item = products.drywall_paint_items?.find(p => p.name === 'Drywall (per linear ft)');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          drywallHtml += `<li>Drywall Linear Footage: ${qty} ft - $${cost.toFixed(2)}</li>`;
-          hasDrywall = true;
-        }
+      const price = parseFloat(drywallLinearPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        drywallHtml += `<li>Drywall: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasDrywall = true;
       }
     }
 
-    if (drywallSheets && drywallSheets.value) {
+    // Drywall sheets calculation
+    if (drywallSheets && drywallSheets.value && drywallSheetPrice && drywallSheetPrice.value) {
       const qty = parseInt(drywallSheets.value) || 0;
-      if (qty > 0) {
-        const item = products.drywall_paint_items?.find(p => p.name === 'Drywall Sheet');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          drywallHtml += `<li>Drywall Sheets: ${qty} - $${cost.toFixed(2)}</li>`;
-          hasDrywall = true;
-        }
+      const price = parseFloat(drywallSheetPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        drywallHtml += `<li>Drywall Sheets: ${qty} × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasDrywall = true;
+      }
+    }
+
+    // Paint square footage calculation
+    if (paintSqft && paintSqft.value && paintPricePerSqft && paintPricePerSqft.value) {
+      const qty = parseInt(paintSqft.value) || 0;
+      const price = parseFloat(paintPricePerSqft.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        drywallHtml += `<li>Paint: ${qty} sq ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasDrywall = true;
       }
     }
 
