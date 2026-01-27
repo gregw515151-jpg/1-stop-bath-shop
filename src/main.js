@@ -169,7 +169,7 @@ function getAppHtml(maxPhotos) {
             }
           </style>
           <div class="admin-container">
-            <button id="close-admin-btn" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
+            <button id="close-admin-btn" style="position: absolute; top: 16px; right: 16px; background: #f3f4f6; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; color: #374151; display: flex; align-items: center; gap: 6px;">← Back</button>
             <div id="login-screen" class="login-screen">
               <h1>Admin Access</h1>
               <p>Please enter the admin password to manage products.</p>
