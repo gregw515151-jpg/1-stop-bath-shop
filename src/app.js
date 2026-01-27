@@ -1133,21 +1133,61 @@ function buildQuoteSections() {
               <option value="">-- Select --</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Casing (Linear Ft):</label>
-            <input type="number" id="trim-casing-ft" min="0" class="select-input" placeholder="Linear feet">
+        </div>
+
+        <h3 style="margin: 20px 0 12px; font-size: 1.1rem; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 16px;">Trim Pricing & Quantities</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+          <!-- Casing -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Casing</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="trim-casing-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Feet:</label>
+              <input type="number" id="trim-casing-ft" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Baseboard (Linear Ft):</label>
-            <input type="number" id="trim-baseboard-ft" min="0" class="select-input" placeholder="Linear feet">
+
+          <!-- Baseboard -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Baseboard</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="trim-baseboard-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Feet:</label>
+              <input type="number" id="trim-baseboard-ft" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Qtr Round (Linear Ft):</label>
-            <input type="number" id="trim-qtr-round-ft" min="0" class="select-input" placeholder="Linear feet">
+
+          <!-- Quarter Round -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Quarter Round</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="trim-qtr-round-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Feet:</label>
+              <input type="number" id="trim-qtr-round-ft" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Doors (Qty):</label>
-            <input type="number" id="trim-doors-qty" min="0" class="select-input" placeholder="How many?">
+
+          <!-- Doors -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Doors</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Door:</label>
+              <input type="number" id="trim-door-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Quantity:</label>
+              <input type="number" id="trim-doors-qty" min="0" class="select-input" placeholder="0">
+            </div>
           </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
@@ -1851,68 +1891,70 @@ function updateSummary() {
   }
 
   // Calculate Trim Section
+  const trimCasingPrice = document.getElementById('trim-casing-price');
   const trimCasingFt = document.getElementById('trim-casing-ft');
+  const trimBaseboardPrice = document.getElementById('trim-baseboard-price');
   const trimBaseboardFt = document.getElementById('trim-baseboard-ft');
+  const trimQtrRoundPrice = document.getElementById('trim-qtr-round-price');
   const trimQtrRoundFt = document.getElementById('trim-qtr-round-ft');
+  const trimDoorPrice = document.getElementById('trim-door-price');
   const trimDoorsQty = document.getElementById('trim-doors-qty');
   const trimNotes = document.getElementById('trim-notes');
 
   let trimHtml = '';
   let hasTrim = false;
 
-  if ((trimCasingFt && trimCasingFt.value) || (trimBaseboardFt && trimBaseboardFt.value) ||
-    (trimQtrRoundFt && trimQtrRoundFt.value) || (trimDoorsQty && trimDoorsQty.value)) {
+  if ((trimCasingFt && trimCasingFt.value && trimCasingPrice && trimCasingPrice.value) ||
+    (trimBaseboardFt && trimBaseboardFt.value && trimBaseboardPrice && trimBaseboardPrice.value) ||
+    (trimQtrRoundFt && trimQtrRoundFt.value && trimQtrRoundPrice && trimQtrRoundPrice.value) ||
+    (trimDoorsQty && trimDoorsQty.value && trimDoorPrice && trimDoorPrice.value)) {
     trimHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Trim:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
 
-    if (trimCasingFt && trimCasingFt.value) {
+    // Casing calculation
+    if (trimCasingFt && trimCasingFt.value && trimCasingPrice && trimCasingPrice.value) {
       const qty = parseInt(trimCasingFt.value) || 0;
-      if (qty > 0) {
-        const item = products.trim_items?.find(p => p.name === 'Casing (per linear ft)');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          trimHtml += `<li>Casing: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
-          hasTrim = true;
-        }
+      const price = parseFloat(trimCasingPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        trimHtml += `<li>Casing: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasTrim = true;
       }
     }
 
-    if (trimBaseboardFt && trimBaseboardFt.value) {
+    // Baseboard calculation
+    if (trimBaseboardFt && trimBaseboardFt.value && trimBaseboardPrice && trimBaseboardPrice.value) {
       const qty = parseInt(trimBaseboardFt.value) || 0;
-      if (qty > 0) {
-        const item = products.trim_items?.find(p => p.name === 'Baseboard (per linear ft)');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          trimHtml += `<li>Baseboard: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
-          hasTrim = true;
-        }
+      const price = parseFloat(trimBaseboardPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        trimHtml += `<li>Baseboard: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasTrim = true;
       }
     }
 
-    if (trimQtrRoundFt && trimQtrRoundFt.value) {
+    // Quarter Round calculation
+    if (trimQtrRoundFt && trimQtrRoundFt.value && trimQtrRoundPrice && trimQtrRoundPrice.value) {
       const qty = parseInt(trimQtrRoundFt.value) || 0;
-      if (qty > 0) {
-        const item = products.trim_items?.find(p => p.name === 'Qtr Round (per linear ft)');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          trimHtml += `<li>Qtr Round: ${qty} linear ft - $${cost.toFixed(2)}</li>`;
-          hasTrim = true;
-        }
+      const price = parseFloat(trimQtrRoundPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        trimHtml += `<li>Qtr Round: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasTrim = true;
       }
     }
 
-    if (trimDoorsQty && trimDoorsQty.value) {
+    // Doors calculation
+    if (trimDoorsQty && trimDoorsQty.value && trimDoorPrice && trimDoorPrice.value) {
       const qty = parseInt(trimDoorsQty.value) || 0;
-      if (qty > 0) {
-        const item = products.trim_items?.find(p => p.name === 'Door');
-        if (item) {
-          const cost = item.price * qty;
-          total += cost;
-          trimHtml += `<li>Doors: ${qty} - $${cost.toFixed(2)}</li>`;
-          hasTrim = true;
-        }
+      const price = parseFloat(trimDoorPrice.value) || 0;
+      if (qty > 0 && price > 0) {
+        const cost = price * qty;
+        total += cost;
+        trimHtml += `<li>Doors: ${qty} × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        hasTrim = true;
       }
     }
 
