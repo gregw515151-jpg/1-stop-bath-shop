@@ -142,10 +142,21 @@ export async function initAdmin() {
     });
 
     // Close button functionality
+    console.log('DEBUG: closeAdminBtn found:', !!closeAdminBtn);
+    console.log('DEBUG: adminOverlay found:', !!adminOverlay);
+
     if (closeAdminBtn && adminOverlay) {
+        console.log('DEBUG: Attaching click event to close button');
         closeAdminBtn.addEventListener('click', () => {
+            console.log('DEBUG: Close button clicked! Hiding overlay...');
             adminOverlay.style.display = 'none';
+            // Reset to login screen for next time
+            if (adminPanel) adminPanel.style.display = 'none';
+            if (loginScreen) loginScreen.style.display = 'block';
         });
+        console.log('DEBUG: Close button event listener attached successfully');
+    } else {
+        console.error('DEBUG: Failed to attach close button listener - elements missing');
     }
 }
 
