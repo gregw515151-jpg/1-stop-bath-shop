@@ -181,9 +181,8 @@ function getAppHtml(maxPhotos) {
             </div>
 
             <div id="admin-panel" class="admin-panel">
-              <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <header style="margin-bottom: 24px;">
                 <h1>Product Management</h1>
-                <button id="logout-btn" class="btn btn-secondary">Logout</button>
               </header>
 
               <div id="categories-container">
