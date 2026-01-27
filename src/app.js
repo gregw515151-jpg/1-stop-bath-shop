@@ -1937,15 +1937,7 @@ function updateSummary() {
     if (flooringType && flooringType.value) {
       const item = products.flooring_types?.find(p => p.id === flooringType.value);
       if (item) {
-        // Calculate cost but don't show square footage to customer
-        if (flooringSqft && flooringSqft.value) {
-          const sqft = parseInt(flooringSqft.value) || 0;
-          if (sqft > 0 && item.price > 0) {
-            const cost = item.price * sqft;
-            total += cost;
-          }
-        }
-        // Only show the flooring type name, not the square footage
+        // Only show the flooring type name - NO pricing, NO square footage
         flooringHtml += `<li>${item.name}</li>`;
       }
     }
