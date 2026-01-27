@@ -1831,8 +1831,9 @@ function updateSummary() {
     if (paintWalls && paintWalls.checked) {
       const item = products.drywall_paint_items?.find(p => p.name === 'Paint - 2 Coats Walls');
       if (item) {
-        total += item.price;
-        drywallHtml += `<li>2 Coats Walls - $${item.price.toFixed(2)}</li>`;
+        const cost = item.price || 0;
+        total += cost;
+        drywallHtml += `<li>2 Coats Walls${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
         hasDrywall = true;
       }
     }
@@ -1840,8 +1841,9 @@ function updateSummary() {
     if (paintTrim && paintTrim.checked) {
       const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Trim');
       if (item) {
-        total += item.price;
-        drywallHtml += `<li>Trim Paint - $${item.price.toFixed(2)}</li>`;
+        const cost = item.price || 0;
+        total += cost;
+        drywallHtml += `<li>Trim Paint${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
         hasDrywall = true;
       }
     }
@@ -1849,8 +1851,9 @@ function updateSummary() {
     if (paintCeiling && paintCeiling.checked) {
       const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Ceiling');
       if (item) {
-        total += item.price;
-        drywallHtml += `<li>Ceiling - $${item.price.toFixed(2)}</li>`;
+        const cost = item.price || 0;
+        total += cost;
+        drywallHtml += `<li>Ceiling${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
         hasDrywall = true;
       }
     }
@@ -1858,8 +1861,9 @@ function updateSummary() {
     if (pointUpDrywall && pointUpDrywall.checked) {
       const item = products.drywall_paint_items?.find(p => p.name === 'Point Up Drywall');
       if (item) {
-        total += item.price;
-        drywallHtml += `<li>Point Up Drywall - $${item.price.toFixed(2)}</li>`;
+        const cost = item.price || 0;
+        total += cost;
+        drywallHtml += `<li>Point Up Drywall${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
         hasDrywall = true;
       }
     }
