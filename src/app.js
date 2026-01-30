@@ -2730,6 +2730,13 @@ function injectAdminControlsToCheckboxes() {
       setupDynamicAdminControlsForCheckboxes('labor_items', controlsDiv);
     }
   }
+  // 9. Demo & Disposal Items
+  const demoContainer = document.getElementById('demo-disposal-items');
+  if (demoContainer && !demoContainer.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+    const controlsDiv = createCheckboxAdminControls('demo_disposal_items');
+    demoContainer.parentNode.insertBefore(controlsDiv, demoContainer.nextElementSibling);
+    setupDynamicAdminControlsForCheckboxes('demo_disposal_items', controlsDiv);
+  }
 }
 
 function createCheckboxAdminControls(category) {
@@ -2779,6 +2786,8 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
     checkboxContainer = document.getElementById('change-order-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
   } else if (category === 'labor_items') {
     checkboxContainer = document.getElementById('labor-notes').closest('.section-content').querySelector('div[style*="grid-template-columns"]');
+  } else if (category === 'demo_disposal_items') {
+    checkboxContainer = document.getElementById('demo-disposal-items');
   }
 
   // Add click listener to checkboxes to populate form
@@ -2889,6 +2898,14 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
             <input type="number" class="plumbing-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
           </label>
         `).join('');
+      } else if (category === 'demo_disposal_items') {
+        checkboxContainer.innerHTML = products.demo_disposal_items.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="demo-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+            <span>${item.name}</span>
+            <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
+          </label>
+        `).join('');
       }
     }
 
@@ -2956,6 +2973,14 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
               <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
             </div>
             <input type="number" class="plumbing-qty" data-item="${item.id}" min="0" placeholder="Qty" style="width: 60px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+          </label>
+        `).join('');
+      } else if (category === 'demo_disposal_items') {
+        checkboxContainer.innerHTML = products.demo_disposal_items.map(item => `
+          <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+            <input type="checkbox" class="demo-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px;">
+            <span>${item.name}</span>
+            <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
           </label>
         `).join('');
       }
