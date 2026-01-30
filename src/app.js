@@ -1611,7 +1611,7 @@ function updateSummary() {
     if (cost > 0) {
       total += cost;
       html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-        <strong>Demo & Disposal:</strong> <span class="price-text">$${cost.toFixed(2)}</span>
+        <strong>Demo & Disposal:</strong> Included
       </div>`;
       selections.demo_disposal_cost = cost;
     }
@@ -1854,7 +1854,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Drywall: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        drywallHtml += `<li>Drywall: ${qty} linear ft</li>`;
         hasDrywall = true;
       }
     }
@@ -1866,7 +1866,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Drywall Sheets: ${qty} × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        drywallHtml += `<li>Drywall Sheets: ${qty}</li>`;
         hasDrywall = true;
       }
     }
@@ -1878,7 +1878,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Paint: ${qty} sq ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        drywallHtml += `<li>Paint: ${qty} sq ft</li>`;
         hasDrywall = true;
       }
     }
@@ -1888,7 +1888,7 @@ function updateSummary() {
       if (item) {
         const cost = item.price || 0;
         total += cost;
-        drywallHtml += `<li>2 Coats Walls${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
+        drywallHtml += `<li>2 Coats Walls</li>`;
         hasDrywall = true;
       }
     }
@@ -1898,7 +1898,7 @@ function updateSummary() {
       if (item) {
         const cost = item.price || 0;
         total += cost;
-        drywallHtml += `<li>Trim Paint${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
+        drywallHtml += `<li>Trim Paint</li>`;
         hasDrywall = true;
       }
     }
@@ -1908,7 +1908,7 @@ function updateSummary() {
       if (item) {
         const cost = item.price || 0;
         total += cost;
-        drywallHtml += `<li>Ceiling${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
+        drywallHtml += `<li>Ceiling</li>`;
         hasDrywall = true;
       }
     }
@@ -1918,7 +1918,7 @@ function updateSummary() {
       if (item) {
         const cost = item.price || 0;
         total += cost;
-        drywallHtml += `<li>Point Up Drywall${cost > 0 ? ` - $${cost.toFixed(2)}` : ''}</li>`;
+        drywallHtml += `<li>Point Up Drywall</li>`;
         hasDrywall = true;
       }
     }
@@ -1933,7 +1933,7 @@ function updateSummary() {
         if (item && item.price > 0) {
           const cost = item.price * sqft;
           total += cost;
-          drywallHtml += `<li>Paint: ${sqft} sq ft - $${cost.toFixed(2)}</li>`;
+          drywallHtml += `<li>Paint: ${sqft} sq ft</li>`;
           hasDrywall = true;
         }
       }
@@ -1976,7 +1976,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Casing: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        trimHtml += `<li>Casing: ${qty} linear ft</li>`;
         hasTrim = true;
       }
     }
@@ -1988,7 +1988,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Baseboard: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        trimHtml += `<li>Baseboard: ${qty} linear ft</li>`;
         hasTrim = true;
       }
     }
@@ -2000,7 +2000,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Qtr Round: ${qty} linear ft × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        trimHtml += `<li>Qtr Round: ${qty} linear ft</li>`;
         hasTrim = true;
       }
     }
@@ -2012,7 +2012,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Doors: ${qty} × $${price.toFixed(2)} = $${cost.toFixed(2)}</li>`;
+        trimHtml += `<li>Doors: ${qty}</li>`;
         hasTrim = true;
       }
     }
@@ -2075,7 +2075,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          coHtml += `<li>${item.name} (x${qty}) <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
+          coHtml += `<li>${item.name} (x${qty})</li>`;
           selections.change_order_items_data.push({ id: item.id, qty: qty });
         }
       }
@@ -2104,7 +2104,7 @@ function updateSummary() {
         if (qty > 0) {
           const cost = item.price * qty;
           total += cost;
-          laborHtml += `<li>${item.name}: ${qty} hrs <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
+          laborHtml += `<li>${item.name}: ${qty} hrs</li>`;
           selections.labor_items_data.push({ id: item.id, qty: qty });
         }
       }
