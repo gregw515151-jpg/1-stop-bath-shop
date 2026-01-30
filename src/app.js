@@ -907,9 +907,7 @@ function buildQuoteSections() {
               <option value="none">None</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Number of Grab Bars:</label>
-            <input type="number" id="grab-bars-qty" min="0" max="10" class="select-input" placeholder="How many?">
+            </select>
           </div>
         </div>
 
@@ -1683,37 +1681,35 @@ function updateSummary() {
   // Calculate Options Section - Grab Bars
   const grabBarsSize = document.getElementById('grab-bars-size');
   const grabBarsSize2 = document.getElementById('grab-bars-size-2');
-  const grabBarsQty = document.getElementById('grab-bars-qty');
-  if (grabBarsQty && grabBarsQty.value) {
-    const qty = parseInt(grabBarsQty.value) || 0;
-    if (qty > 0) {
-      let grabBarsHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Grab Bars:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
-      let hasGrabBars = false;
 
-      if (grabBarsSize && grabBarsSize.value) {
-        const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize.value);
-        if (item && item.name !== 'None') {
-          const cost = item.price * qty;
-          total += cost;
-          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty})</li>`;
-          hasGrabBars = true;
-        }
-      }
+  // Logic updated: quantity is always 1 per selected dropdown
+  let grabBarsHtml = '<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;"><strong>Grab Bars:</strong><ul style="margin: 4px 0 0 0; padding-left: 20px;">';
+  let hasGrabBars = false;
 
-      if (grabBarsSize2 && grabBarsSize2.value) {
-        const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize2.value);
-        if (item && item.name !== 'None') {
-          const cost = item.price * qty;
-          total += cost;
-          grabBarsHtml += `<li>${item.name} Grab Bar (x${qty})</li>`;
-          hasGrabBars = true;
-        }
-      }
-
-      grabBarsHtml += '</ul></div>';
-      if (hasGrabBars) html += grabBarsHtml;
+  if (grabBarsSize && grabBarsSize.value) {
+    const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize.value);
+    if (item && item.name !== 'None') {
+      const cost = item.price * 1; // Always 1
+      total += cost;
+      grabBarsHtml += `<li>${item.name} Grab Bar</li>`;
+      hasGrabBars = true;
     }
   }
+
+  if (grabBarsSize2 && grabBarsSize2.value) {
+    const item = products.grab_bar_sizes?.find(p => p.id === grabBarsSize2.value);
+    if (item && item.name !== 'None') {
+      const cost = item.price * 1; // Always 1
+      total += cost;
+      grabBarsHtml += `<li>${item.name} Grab Bar</li>`;
+      hasGrabBars = true;
+    }
+  }
+
+  grabBarsHtml += '</ul></div>';
+  if (hasGrabBars) html += grabBarsHtml;
+
+
 
   // Calculate Electrical Items
   const electricalCheckboxes = document.querySelectorAll('.electrical-item:checked');
