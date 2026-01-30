@@ -1,5 +1,6 @@
 // Comprehensive Contractor Quote System - Complete Implementation
 // Based on handwritten specifications
+console.log("APP VERSION: SHELVES FIX V3 Loaded");
 import { supabase } from './supabaseClient.js';
 export const DEFAULT_TERMS = `
       <div style="font-size: 10px; line-height: 1.4; text-align: justify;">
@@ -251,9 +252,9 @@ export const DEFAULT_QUOTE_DATA = {
     { id: "20", name: "TENSION CURTAIN ROD", price: 0 }
   ],
   shelf_types: [
-    { id: "1", name: "Single Shelf", price: 0 },
-    { id: "2", name: "Double Shelf", price: 0 },
-    { id: "3", name: "None", price: 0 }
+    { id: "single", name: "Single Shelf", price: 0 },
+    { id: "double", name: "Double Shelf", price: 0 },
+    { id: "none", name: "None", price: 0 }
   ],
   seat_types: [
     { id: "1", name: "Hexagon", price: 0 },
@@ -510,6 +511,13 @@ export async function loadProductsFromStorage() {
       });
       // Merge with defaults to ensure all categories exist
       products = { ...DEFAULT_QUOTE_DATA, ...loadedProducts };
+
+      // MIGRATION: Fix shelf_types IDs if they are old numbers
+      if (products.shelf_types && products.shelf_types[0] && products.shelf_types[0].id === '1') {
+        console.log('Migrating shelf_types to new ID structure...');
+        products.shelf_types = DEFAULT_QUOTE_DATA.shelf_types;
+      }
+
       console.log('Products loaded from Supabase:', Object.keys(loadedProducts).length, 'categories');
     } else {
       // No data in Supabase yet, use defaults and save them
@@ -1422,10 +1430,12 @@ function setupListeners() {
     // Accessories section
     'towel-bar-qty', 'towel-ring-qty', 'tp-holder-qty', 'accessories-finish', 'accessories-notes',
     // Drywall & Paint section
-    'drywall-linear-ft', 'drywall-sheets', 'drywall-notes',
+    'drywall-linear-price', 'drywall-linear-ft', 'drywall-sheet-price', 'drywall-sheets',
+    'paint-price-per-sqft', 'paint-sqft', 'drywall-notes',
     'paint-walls', 'paint-trim', 'paint-ceiling', 'point-up-drywall',
     // Trim section
-    'trim-casing-ft', 'trim-baseboard-ft', 'trim-qtr-round-ft', 'trim-doors-qty', 'trim-notes',
+    'trim-casing-price', 'trim-casing-ft', 'trim-baseboard-price', 'trim-baseboard-ft',
+    'trim-qtr-round-price', 'trim-qtr-round-ft', 'trim-door-price', 'trim-doors-qty', 'trim-notes',
     // New Sections
     'change-order-notes', 'labor-notes'
   ];
@@ -1548,7 +1558,7 @@ function updateSummary() {
     'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style' },
     'window-style': { key: 'window_style', label: 'Window Style' },
     'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size' },
-    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size (2)' },
+    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size' },
     'shower-door-style': { key: 'shower_door_style', label: 'Shower Door Style' },
     'shower-door-thickness': { key: 'shower_door_thickness', label: 'Shower Door Thickness' },
     'shower-door-glass-type': { key: 'shower_door_glass_type', label: 'Shower Door Glass Type' },
@@ -1556,7 +1566,6 @@ function updateSummary() {
     'shower-head': { key: 'shower_head', label: 'Shower Head' },
     'trim-color': { key: 'trim_color', label: 'Trim Color' },
     'seat-type': { key: 'seat_type', label: 'Seat' },
-    'shelves-type': { key: 'shelves_type', label: 'Shelves', hidePrice: true }, // Hide pricing like flooring
     'enclosure-type': { key: 'enclosure_type', label: 'Enclosure' },
     'window-kit': { key: 'window_kit', label: 'Window Kit' }
   };
@@ -1664,7 +1673,7 @@ function updateSummary() {
         const cost = item.price * qty;
         total += cost;
         html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-          <strong>Shelves:</strong> ${item.name} (x${qty}) - $${cost.toFixed(2)}
+          <strong>Shelves:</strong> ${item.name} (x${qty})
         </div>`;
         selections.shelves = `${item.name} (x${qty})`;
       }
@@ -2029,8 +2038,15 @@ function updateSummary() {
     if (flooringType && flooringType.value) {
       const item = products.flooring_types?.find(p => p.id === flooringType.value);
       if (item) {
-        // Only show the flooring type name - NO pricing, NO square footage
-        flooringHtml += `<li>${item.name}</li>`;
+        const sqft = flooringSqft ? parseInt(flooringSqft.value) || 0 : 0;
+        if (sqft > 0 && item.price > 0) {
+          const cost = item.price * sqft;
+          total += cost;
+          flooringHtml += `<li>${item.name}: ${sqft} sq ft</li>`;
+          selections.flooring_sqft = sqft;
+        } else {
+          flooringHtml += `<li>${item.name}</li>`;
+        }
       }
     }
 
