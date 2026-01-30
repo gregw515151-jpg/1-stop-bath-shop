@@ -1440,7 +1440,11 @@ function setupListeners() {
 
   inputs.forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('change', updateSummary);
+    if (el) {
+      el.addEventListener('change', updateSummary);
+      // Add input listener for real-time updates on text/number inputs
+      el.addEventListener('input', updateSummary);
+    }
   });
 
   // Checkboxes (including demo, tile, and plumbing items)
