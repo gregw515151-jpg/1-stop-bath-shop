@@ -50,10 +50,14 @@ export function saveFormData() {
             photos: []
         };
 
-        // Collect all select elements
-        document.querySelectorAll('select').forEach(select => {
-            if (select.id) {
+        // Collect all select elements with improved logging
+        const allSelects = document.querySelectorAll('select');
+        console.log(`📊 Found ${allSelects.length} select elements`);
+
+        allSelects.forEach(select => {
+            if (select.id && select.value) {
                 data.selects[select.id] = select.value;
+                console.log(`  ✓ Saved dropdown: ${select.id} = ${select.value}`);
             }
         });
 
@@ -85,14 +89,16 @@ export function saveFormData() {
         document.querySelectorAll('input[type="number"]').forEach(input => {
             if (input.id || input.className) {
                 const key = input.id || input.className;
-                data.quantities[key] = input.value;
+                if (input.value) {
+                    data.quantities[key] = input.value;
+                }
             }
         });
 
         // Collect electrical quantities
         document.querySelectorAll('.electrical-qty').forEach(input => {
             const itemId = input.dataset.item;
-            if (itemId) {
+            if (itemId && input.value) {
                 data.quantities[`electrical-qty-${itemId}`] = input.value;
             }
         });
@@ -100,7 +106,7 @@ export function saveFormData() {
         // Collect accessory quantities
         document.querySelectorAll('.accessory-qty').forEach(input => {
             const itemId = input.dataset.item;
-            if (itemId) {
+            if (itemId && input.value) {
                 data.quantities[`accessory-qty-${itemId}`] = input.value;
             }
         });
@@ -119,7 +125,7 @@ export function saveFormData() {
         ];
         noteFields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
-            if (field) {
+            if (field && field.value) {
                 data.textareas[fieldId] = field.value;
             }
         });
@@ -133,6 +139,12 @@ export function saveFormData() {
         updateSaveIndicator('saved');
 
         console.log('✅ Auto-save completed');
+        console.log('📦 Saved data summary:', {
+            selects: Object.keys(data.selects).length,
+            checkboxes: Object.keys(data.checkboxes).length,
+            quantities: Object.keys(data.quantities).length,
+            textareas: Object.keys(data.textareas).length
+        });
     } catch (error) {
         console.error('❌ Auto-save failed:', error);
         updateSaveIndicator('error');
@@ -171,10 +183,18 @@ export function restoreFormData() {
 
         // Restore all select dropdowns
         if (data.selects) {
+            console.log(`📥 Restoring ${Object.keys(data.selects).length} dropdowns...`);
             Object.entries(data.selects).forEach(([id, value]) => {
                 const select = document.getElementById(id);
-                if (select && value) {
-                    select.value = value;
+                if (select) {
+                    if (value) {
+                        select.value = value;
+                        console.log(`  ✓ Restored dropdown: ${id} = ${value}`);
+                        // Trigger change event to update summary
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                } else {
+                    console.warn(`  ⚠️ Dropdown not found: ${id}`);
                 }
             });
         }
