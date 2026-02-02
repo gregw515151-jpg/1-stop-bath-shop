@@ -436,11 +436,11 @@ const state = {
 /* ---------- Initialize ---------- */
 initializeApp();
 
-// Initialize auto-save after app is ready
+// Initialize auto-save after app is ready (wait for dynamic form to be built)
 setTimeout(() => {
   initAutoSave();
   console.log('✅ Auto-save initialized');
-}, 500);
+}, 2000); // Increased delay to ensure all form elements are rendered
 
 /* ---------- Preload Logo ---------- */
 (async function preloadLogo() {
@@ -1004,6 +1004,14 @@ document.getElementById('reset-btn')?.addEventListener('click', () => {
   // Clear auto-save data
   clearAutoSave();
   console.log('🗑️ Form and auto-save cleared');
+});
+
+/* ---------- Start New Button ---------- */
+document.getElementById('start-new-btn')?.addEventListener('click', () => {
+  if (confirm('Start a new quote? This will clear all current data.')) {
+    // Trigger the reset button click
+    document.getElementById('reset-btn')?.click();
+  }
 });
 
 // Export state for other modules
