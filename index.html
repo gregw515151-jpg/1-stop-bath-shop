@@ -9,45 +9,53 @@
 </head>
 
 <body>
-  <div id="app"></div>
-
-  <!-- Draft control buttons - FIXED at top -->
+  <!-- Draft control buttons - FIXED at very top -->
   <div id="main-header"
-    style="position: fixed; top: 140px; left: 0; right: 0; padding: 10px; z-index: 9999; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    style="position: fixed; top: 0; left: 0; right: 0; padding: 8px 10px; z-index: 10000; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 2px solid #e5e7eb;">
     <button id="save-draft-btn"
-      style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 14px;">💾
+      style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 13px;">💾
       Save Draft</button>
     <button id="load-draft-btn"
-      style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 14px;">📂
+      style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 13px;">📂
       Load Draft</button>
     <button id="start-new-btn"
-      style="background: #f59e0b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 14px;">🆕
+      style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; font-size: 13px;">🆕
       Start New</button>
   </div>
 
+  <div id="app"></div>
+
   <style>
+    /* Ensure body doesn't interfere with fixed positioning */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
     /* Adjust main container to account for fixed buttons */
     .container {
-      margin-top: 200px !important;
+      margin-top: 60px !important;
+      padding-top: 10px;
     }
 
     /* Mobile responsive styling */
     @media (max-width: 768px) {
       #main-header {
-        top: 120px;
-        flex-direction: row;
-        gap: 8px;
+        padding: 6px 8px;
+        gap: 6px;
       }
 
       #main-header button {
         flex: 1;
-        min-width: 100px;
-        font-size: 12px;
-        padding: 8px 12px;
+        min-width: 85px;
+        font-size: 11px;
+        padding: 6px 10px;
       }
 
       .container {
-        margin-top: 180px !important;
+        margin-top: 55px !important;
       }
     }
   </style>
