@@ -11,17 +11,34 @@
 <body>
   <div id="app"></div>
   <div id="main-header"
-    style="position: fixed; top: 0; left: 60px; padding: 10px; z-index: 1000; display: flex; gap: 10px;">
+    style="position: fixed; top: 0; left: 60px; padding: 10px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap;">
     <button id="save-draft-btn"
-      style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">💾
+      style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;">💾
       Save Draft</button>
     <button id="load-draft-btn"
-      style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📂
+      style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;">📂
       Load Draft</button>
     <button id="start-new-btn"
-      style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🆕
+      style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;">🆕
       Start New</button>
   </div>
+  <style>
+    /* Mobile responsive styling for header buttons */
+    @media (max-width: 768px) {
+      #main-header {
+        left: 10px !important;
+        right: 10px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      #main-header button {
+        width: 100%;
+        font-size: 14px;
+      }
+    }
+  </style>
   <script type="module" src="/src/main.js"></script>
 </body>
 

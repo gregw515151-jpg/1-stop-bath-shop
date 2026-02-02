@@ -1110,15 +1110,15 @@ function buildQuoteSections() {
             </div>
           </div>
 
-          <!-- Paint Square Footage -->
+          <!-- Paint Linear Footage -->
           <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
             <div class="form-group" style="margin-bottom: 8px;">
-              <label style="font-size: 13px;">Price per Sq Ft:</label>
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
               <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
             </div>
             <div class="form-group">
-              <label style="font-size: 13px;">Square Footage:</label>
+              <label style="font-size: 13px;">Linear Footage:</label>
               <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="0">
             </div>
           </div>
@@ -1878,7 +1878,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Paint: ${qty} sq ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        drywallHtml += `<li>Paint: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasDrywall = true;
       }
     }
@@ -1933,7 +1933,7 @@ function updateSummary() {
         if (item && item.price > 0) {
           const cost = item.price * sqft;
           total += cost;
-          drywallHtml += `<li>Paint: ${sqft} sq ft <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
+          drywallHtml += `<li>Paint: ${sqft} linear ft <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
           hasDrywall = true;
         }
       }
