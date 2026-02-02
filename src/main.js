@@ -5,6 +5,7 @@ import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 import { initAdmin } from './admin.js'
 import { saveDraft, loadDraft, getDrafts, deleteDraft } from './drafts.js'
+import { initAutoSave, clearAutoSave } from './autosave.js'
 
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
@@ -434,6 +435,12 @@ const state = {
 
 /* ---------- Initialize ---------- */
 initializeApp();
+
+// Initialize auto-save after app is ready
+setTimeout(() => {
+  initAutoSave();
+  console.log('✅ Auto-save initialized');
+}, 500);
 
 /* ---------- Preload Logo ---------- */
 (async function preloadLogo() {
@@ -897,6 +904,10 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     const modal = document.getElementById('pdf-modal');
     modal.style.display = 'block';
 
+    // Clear auto-save after successful PDF generation
+    clearAutoSave();
+    console.log('✅ PDF generated, auto-save cleared');
+
     // Save to Supabase for tracking
     try {
       const customer = getCustomerInfo();
@@ -989,6 +1000,10 @@ document.getElementById('reset-btn')?.addEventListener('click', () => {
   state.currentDraftId = null;
   state.currentDraftName = null;
   updateDraftIndicator();
+
+  // Clear auto-save data
+  clearAutoSave();
+  console.log('🗑️ Form and auto-save cleared');
 });
 
 // Export state for other modules
