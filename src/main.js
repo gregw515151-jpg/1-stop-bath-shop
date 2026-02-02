@@ -685,6 +685,13 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
     <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
 
+    ${totalEl && totalEl.textContent.trim() ? `
+      <div style="margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; border-left: 4px solid #3b82f6;">
+        <div style="font-size: 18px; font-weight: 700; color: #111827; text-align: right;">
+          Total Investment: ${totalEl.textContent.trim()}
+        </div>
+      </div>
+    ` : ''}
 
     <h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>
     <div>${photosGridHTML || '<div style="font-size:12px;color:#6b7280;">No photos attached.</div>'}</div>
