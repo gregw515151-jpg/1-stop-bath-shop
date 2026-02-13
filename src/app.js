@@ -1656,6 +1656,12 @@ function setupListeners() {
   document.getElementById('payment-notes')?.addEventListener('change', updateSummary);
 
   // Inline Edit buttons for Drywall & Paint default prices
+  const fieldToColumnMap = {
+    'drywall-linear-price': 'drywall_linear_price',
+    'drywall-sheet-price': 'drywall_sheet_price',
+    'paint-price-per-sqft': 'paint_linear_price'
+  };
+
   document.querySelectorAll('.inline-edit-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const fieldId = e.target.dataset.field;
@@ -1663,7 +1669,12 @@ function setupListeners() {
       if (!inputField) return;
 
       const currentValue = parseFloat(inputField.value) || 0;
-      const fieldName = fieldId.replace(/-/g, '_');
+      const columnName = fieldToColumnMap[fieldId];
+
+      if (!columnName) {
+        alert('Unknown field: ' + fieldId);
+        return;
+      }
 
       // Save to database
       try {
@@ -1672,7 +1683,7 @@ function setupListeners() {
           .select('id')
           .single();
 
-        const updateData = { [fieldName]: currentValue };
+        const updateData = { [columnName]: currentValue };
 
         if (existing) {
           const { error } = await supabase
@@ -1690,7 +1701,7 @@ function setupListeners() {
         alert(`✅ Default price saved: $${currentValue.toFixed(2)}`);
       } catch (err) {
         console.error('Error saving default price:', err);
-        alert('❌ Error saving default price');
+        alert('❌ Error saving default price. Make sure the database columns exist.');
       }
     });
   });
