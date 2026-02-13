@@ -1221,7 +1221,7 @@ function buildQuoteSections() {
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
               <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
-              <button class="admin-control inline-edit-btn" data-field="drywall-linear-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
+              <button class="admin-control inline-edit-btn" data-field="drywall-linear-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Feet:</label>
@@ -1235,7 +1235,7 @@ function buildQuoteSections() {
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Sheet:</label>
               <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
-              <button class="admin-control inline-edit-btn" data-field="drywall-sheet-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
+              <button class="admin-control inline-edit-btn" data-field="drywall-sheet-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Number of Sheets:</label>
