@@ -559,6 +559,11 @@ export function loginAdmin(password) {
     isAdminMode = true;
     document.body.classList.add('admin-mode');
     setTimeout(() => injectAdminControlsToAllDropdowns(), 100);
+    // Make drywall/paint price fields editable in admin mode
+    document.querySelectorAll('.drywall-paint-price').forEach(el => {
+      el.removeAttribute('readonly');
+      el.style.background = '#fff';
+    });
     return true;
   }
   return false;
@@ -568,6 +573,11 @@ export function logoutAdmin() {
   isAdminMode = false;
   document.body.classList.remove('admin-mode');
   removeAdminControlsFromAllDropdowns();
+  // Lock drywall/paint price fields in regular mode
+  document.querySelectorAll('.drywall-paint-price').forEach(el => {
+    el.setAttribute('readonly', true);
+    el.style.background = '#f3f4f6';
+  });
 }
 
 export function isAdmin() {
@@ -1210,7 +1220,7 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall (Linear Ft)</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
               <button class="admin-control inline-edit-btn" data-field="drywall-linear-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
@@ -1224,7 +1234,7 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall Sheets</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Sheet:</label>
-              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
               <button class="admin-control inline-edit-btn" data-field="drywall-sheet-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
@@ -1238,7 +1248,7 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
               <button class="admin-control inline-edit-btn" data-field="paint-price-per-sqft" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
