@@ -1121,12 +1121,64 @@ function buildQuoteSections() {
       <div class="section-content">
         <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Drywall & Paint Pricing</h3>
         
-        <!-- Dynamic Drywall & Paint Items Container -->
-        <div id="drywall-paint-items-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
-          <!-- Items will be populated dynamically -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <!-- Drywall Linear Footage -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall (Linear Ft)</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Feet:</label>
+              <input type="number" id="drywall-linear-ft" min="0" class="select-input" placeholder="0">
+            </div>
+          </div>
+
+          <!-- Drywall Sheets -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall Sheets</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Sheet:</label>
+              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Number of Sheets:</label>
+              <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="0">
+            </div>
+          </div>
+
+          <!-- Paint Linear Footage -->
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 13px;">Price per Linear Ft:</label>
+              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 13px;">Linear Footage:</label>
+              <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="0">
+            </div>
+          </div>
         </div>
-        
-        <!-- Admin controls are now injected dynamically -->
+
+        <div class="form-group">
+          <label style="font-weight: 600; margin-bottom: 12px; display: block;">Paint Work:</label>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-walls" style="width: 18px; height: 18px;"> 2 Coats Walls
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-trim" style="width: 18px; height: 18px;"> Trim Paint
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="paint-ceiling" style="width: 18px; height: 18px;"> Ceiling
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
+              <input type="checkbox" id="point-up-drywall" style="width: 18px; height: 18px;"> Point Up Drywall
+            </label>
+          </div>
+        </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Drywall & Paint Notes:</label>
           <textarea id="drywall-notes" rows="2" class="select-input" placeholder="Any special requirements for drywall or paint..."></textarea>
@@ -2731,17 +2783,6 @@ function injectAdminControlsToCheckboxes() {
     const controlsDiv = createCheckboxAdminControls('demo_disposal_items');
     demoContainer.parentNode.insertBefore(controlsDiv, demoContainer.nextElementSibling);
     setupDynamicAdminControlsForCheckboxes('demo_disposal_items', controlsDiv);
-  }
-
-  // 10. Drywall & Paint Items
-  const drywallPaintSection = document.getElementById('drywall-notes')?.closest('.section-content');
-  if (drywallPaintSection) {
-    const container = drywallPaintSection.querySelector('#drywall-paint-items-container');
-    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
-      const controlsDiv = createCheckboxAdminControls('drywall_paint_items');
-      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
-      setupDynamicAdminControlsForCheckboxes('drywall_paint_items', controlsDiv);
-    }
   }
 }
 
