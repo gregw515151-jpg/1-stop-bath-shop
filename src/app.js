@@ -667,6 +667,44 @@ function populateDropdowns() {
   });
 }
 
+function populateDrywallPaintItems() {
+  const container = document.getElementById('drywall-paint-items-container');
+  if (!container) return;
+
+  container.innerHTML = products.drywall_paint_items.map(item => `
+    <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+      <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+        <input type="checkbox" class="drywall-paint-item" value="${item.id}" data-name="${item.name}" style="width: 18px; height: 18px; flex-shrink: 0;">
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 14px;">${item.name}</div>
+          <div style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</div>
+        </div>
+      </label>
+      <div class="form-group" style="margin-top: 8px;">
+        <label style="font-size: 13px;">Quantity:</label>
+        <input type="number" class="drywall-paint-qty" data-item="${item.id}" min="0" placeholder="0" style="width: 100%; padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+      </div>
+    </div>
+  `).join('');
+
+  // Add event listeners for checkboxes and quantity inputs
+  container.querySelectorAll('.drywall-paint-item').forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        const qtyInput = container.querySelector(`.drywall-paint-qty[data-item="${e.target.value}"]`);
+        if (qtyInput && (qtyInput.value === '' || qtyInput.value === '0')) {
+          qtyInput.value = 1;
+        }
+      }
+      updateSummary();
+    });
+  });
+
+  container.querySelectorAll('.drywall-paint-qty').forEach(input => {
+    input.addEventListener('input', updateSummary);
+  });
+}
+
 function buildQuoteSections() {
   const container = document.getElementById('quote-sections');
   if (!container) return;
@@ -1083,63 +1121,27 @@ function buildQuoteSections() {
       <div class="section-content">
         <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Drywall & Paint Pricing</h3>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
-          <!-- Drywall Linear Footage -->
-          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
-            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall (Linear Ft)</label>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+        <!-- Admin Controls Container -->
+        <div id="drywall-paint-admin-controls" class="admin-controls" style="display: none; background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 2px solid #f59e0b;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end;">
+            <div style="flex: 1; min-width: 200px;">
+              <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Item Name:</label>
+              <input type="text" class="admin-name-input" placeholder="e.g., Drywall (per linear ft)" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
             </div>
-            <div class="form-group">
-              <label style="font-size: 13px;">Linear Feet:</label>
-              <input type="number" id="drywall-linear-ft" min="0" class="select-input" placeholder="0">
+            <div style="width: 120px;">
+              <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Price:</label>
+              <input type="number" class="admin-price-input" min="0" step="0.01" placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
             </div>
-          </div>
-
-          <!-- Drywall Sheets -->
-          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
-            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall Sheets</label>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label style="font-size: 13px;">Price per Sheet:</label>
-              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
-            </div>
-            <div class="form-group">
-              <label style="font-size: 13px;">Number of Sheets:</label>
-              <input type="number" id="drywall-sheets" min="0" class="select-input" placeholder="0">
-            </div>
-          </div>
-
-          <!-- Paint Linear Footage -->
-          <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
-            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
-            </div>
-            <div class="form-group">
-              <label style="font-size: 13px;">Linear Footage:</label>
-              <input type="number" id="paint-sqft" min="0" class="select-input" placeholder="0">
-            </div>
+            <button class="admin-add-btn" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">➕ Add</button>
+            <button class="admin-edit-btn" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">✏️ Edit</button>
+            <button class="admin-delete-btn" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">🗑️ Delete</button>
+            <button class="admin-cancel-btn" style="display: none; background: #6b7280; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">❌ Cancel</button>
           </div>
         </div>
 
-        <div class="form-group">
-          <label style="font-weight: 600; margin-bottom: 12px; display: block;">Paint Work:</label>
-          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
-              <input type="checkbox" id="paint-walls" style="width: 18px; height: 18px;"> 2 Coats Walls
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
-              <input type="checkbox" id="paint-trim" style="width: 18px; height: 18px;"> Trim Paint
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
-              <input type="checkbox" id="paint-ceiling" style="width: 18px; height: 18px;"> Ceiling
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; padding: 8px; background: #f9fafb; border-radius: 6px;">
-              <input type="checkbox" id="point-up-drywall" style="width: 18px; height: 18px;"> Point Up Drywall
-            </label>
-          </div>
+        <!-- Dynamic Drywall & Paint Items Container -->
+        <div id="drywall-paint-items-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <!-- Items will be populated dynamically -->
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label>Drywall & Paint Notes:</label>
@@ -1403,6 +1405,10 @@ function buildQuoteSections() {
   // Setup admin handlers for inline controls
   setupCategoryHandlers('electrical_items');
   setupCategoryHandlers('accessory_items');
+  setupCategoryHandlers('drywall_paint_items');
+
+  // Populate drywall paint items
+  populateDrywallPaintItems();
 }
 
 function setupListeners() {
@@ -2482,9 +2488,12 @@ function setupCategoryHandlers(categoryId) {
     return;
   }
 
-  // For checkbox-based categories (electrical_items, accessory_items), add click-to-populate
-  if (categoryId === 'electrical_items' || categoryId === 'accessory_items') {
-    const checkboxClass = categoryId === 'electrical_items' ? '.electrical-item' : '.accessory-item';
+  // For checkbox-based categories (electrical_items, accessory_items, drywall_paint_items), add click-to-populate
+  if (categoryId === 'electrical_items' || categoryId === 'accessory_items' || categoryId === 'drywall_paint_items') {
+    let checkboxClass;
+    if (categoryId === 'electrical_items') checkboxClass = '.electrical-item';
+    else if (categoryId === 'accessory_items') checkboxClass = '.accessory-item';
+    else if (categoryId === 'drywall_paint_items') checkboxClass = '.drywall-paint-item';
 
     // Add event listener to checkboxes
     document.addEventListener('change', (e) => {
@@ -2527,6 +2536,8 @@ function setupCategoryHandlers(categoryId) {
             document.querySelectorAll('.electrical-item').forEach(cb => cb.checked = false);
           } else if (categoryId === 'accessory_items') {
             document.querySelectorAll('.accessory-item').forEach(cb => cb.checked = false);
+          } else if (categoryId === 'drywall_paint_items') {
+            document.querySelectorAll('.drywall-paint-item').forEach(cb => cb.checked = false);
           }
         } else {
           // Add new item
