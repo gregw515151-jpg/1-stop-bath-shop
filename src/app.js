@@ -1121,28 +1121,12 @@ function buildQuoteSections() {
       <div class="section-content">
         <h3 style="margin: 0 0 12px; font-size: 1.1rem; color: #374151;">Drywall & Paint Pricing</h3>
         
-        <!-- Admin Controls Container -->
-        <div id="drywall-paint-admin-controls" class="admin-controls" style="display: none; background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 2px solid #f59e0b;">
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end;">
-            <div style="flex: 1; min-width: 200px;">
-              <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Item Name:</label>
-              <input type="text" class="admin-name-input" placeholder="e.g., Drywall (per linear ft)" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-            </div>
-            <div style="width: 120px;">
-              <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Price:</label>
-              <input type="number" class="admin-price-input" min="0" step="0.01" placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-            </div>
-            <button class="admin-add-btn" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">➕ Add</button>
-            <button class="admin-edit-btn" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">✏️ Edit</button>
-            <button class="admin-delete-btn" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">🗑️ Delete</button>
-            <button class="admin-cancel-btn" style="display: none; background: #6b7280; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">❌ Cancel</button>
-          </div>
-        </div>
-
         <!-- Dynamic Drywall & Paint Items Container -->
         <div id="drywall-paint-items-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
           <!-- Items will be populated dynamically -->
         </div>
+        
+        <!-- Admin controls are now injected dynamically -->
         <div class="form-group" style="margin-top: 16px;">
           <label>Drywall & Paint Notes:</label>
           <textarea id="drywall-notes" rows="2" class="select-input" placeholder="Any special requirements for drywall or paint..."></textarea>
@@ -2747,6 +2731,17 @@ function injectAdminControlsToCheckboxes() {
     const controlsDiv = createCheckboxAdminControls('demo_disposal_items');
     demoContainer.parentNode.insertBefore(controlsDiv, demoContainer.nextElementSibling);
     setupDynamicAdminControlsForCheckboxes('demo_disposal_items', controlsDiv);
+  }
+
+  // 10. Drywall & Paint Items
+  const drywallPaintSection = document.getElementById('drywall-notes')?.closest('.section-content');
+  if (drywallPaintSection) {
+    const container = drywallPaintSection.querySelector('#drywall-paint-items-container');
+    if (container && !container.nextElementSibling?.classList.contains('dynamic-admin-controls')) {
+      const controlsDiv = createCheckboxAdminControls('drywall_paint_items');
+      container.parentNode.insertBefore(controlsDiv, container.nextElementSibling);
+      setupDynamicAdminControlsForCheckboxes('drywall_paint_items', controlsDiv);
+    }
   }
 }
 
