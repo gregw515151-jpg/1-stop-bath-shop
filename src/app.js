@@ -2912,6 +2912,9 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
             <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
           </label>
         `).join('');
+      } else if (category === 'drywall_paint_items') {
+        // Re-populate using the populateDrywallPaintItems function
+        populateDrywallPaintItems();
       }
     }
 
@@ -2989,6 +2992,9 @@ function setupDynamicAdminControlsForCheckboxes(category, controlsDiv) {
             <span style="font-size: 12px; color: #6b7280;">$${item.price.toFixed(2)}</span>
           </label>
         `).join('');
+      } else if (category === 'drywall_paint_items') {
+        // Re-populate using the populateDrywallPaintItems function
+        populateDrywallPaintItems();
       }
 
       setupListeners();
