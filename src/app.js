@@ -559,8 +559,8 @@ export function loginAdmin(password) {
     isAdminMode = true;
     document.body.classList.add('admin-mode');
     setTimeout(() => injectAdminControlsToAllDropdowns(), 100);
-    // Make drywall/paint price fields editable in admin mode
-    document.querySelectorAll('.drywall-paint-price').forEach(el => {
+    // Make admin price fields editable in admin mode
+    document.querySelectorAll('.admin-price').forEach(el => {
       el.removeAttribute('readonly');
       el.style.background = '#fff';
     });
@@ -573,8 +573,8 @@ export function logoutAdmin() {
   isAdminMode = false;
   document.body.classList.remove('admin-mode');
   removeAdminControlsFromAllDropdowns();
-  // Lock drywall/paint price fields in regular mode
-  document.querySelectorAll('.drywall-paint-price').forEach(el => {
+  // Lock admin price fields in regular mode
+  document.querySelectorAll('.admin-price').forEach(el => {
     el.setAttribute('readonly', true);
     el.style.background = '#f3f4f6';
   });
@@ -644,7 +644,7 @@ async function loadDrywallPaintDefaults() {
   try {
     const { data, error } = await supabase
       .from('company_settings')
-      .select('drywall_linear_price, drywall_sheet_price, paint_linear_price')
+      .select('drywall_linear_price, drywall_sheet_price, paint_linear_price, trim_casing_price, trim_baseboard_price, trim_qtr_round_price, trim_door_price')
       .single();
 
     if (error) {
@@ -668,7 +668,26 @@ async function loadDrywallPaintDefaults() {
         paintLinearPrice.value = data.paint_linear_price;
       }
 
-      console.log('Loaded default Drywall & Paint prices:', data);
+      // Trim defaults
+      const trimCasingPrice = document.getElementById('trim-casing-price');
+      const trimBaseboardPrice = document.getElementById('trim-baseboard-price');
+      const trimQtrRoundPrice = document.getElementById('trim-qtr-round-price');
+      const trimDoorPrice = document.getElementById('trim-door-price');
+
+      if (trimCasingPrice && data.trim_casing_price !== null) {
+        trimCasingPrice.value = data.trim_casing_price;
+      }
+      if (trimBaseboardPrice && data.trim_baseboard_price !== null) {
+        trimBaseboardPrice.value = data.trim_baseboard_price;
+      }
+      if (trimQtrRoundPrice && data.trim_qtr_round_price !== null) {
+        trimQtrRoundPrice.value = data.trim_qtr_round_price;
+      }
+      if (trimDoorPrice && data.trim_door_price !== null) {
+        trimDoorPrice.value = data.trim_door_price;
+      }
+
+      console.log('Loaded default prices:', data);
     }
   } catch (err) {
     console.error('Error loading Drywall & Paint defaults:', err);
@@ -1220,7 +1239,7 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall (Linear Ft)</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
               <button class="admin-control inline-edit-btn" data-field="drywall-linear-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
@@ -1234,7 +1253,7 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Drywall Sheets</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Sheet:</label>
-              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
               <button class="admin-control inline-edit-btn" data-field="drywall-sheet-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
@@ -1313,7 +1332,8 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Casing</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="trim-casing-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="trim-casing-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <button class="admin-control inline-edit-btn" data-field="trim-casing-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Feet:</label>
@@ -1326,7 +1346,8 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Baseboard</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="trim-baseboard-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="trim-baseboard-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <button class="admin-control inline-edit-btn" data-field="trim-baseboard-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Feet:</label>
@@ -1339,7 +1360,8 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Quarter Round</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="trim-qtr-round-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="trim-qtr-round-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <button class="admin-control inline-edit-btn" data-field="trim-qtr-round-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Feet:</label>
@@ -1352,7 +1374,8 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Doors</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Door:</label>
-              <input type="number" id="trim-door-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <input type="number" id="trim-door-price" min="0" step="0.01" class="select-input admin-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
+              <button class="admin-control inline-edit-btn" data-field="trim-door-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Quantity:</label>
@@ -1669,7 +1692,11 @@ function setupListeners() {
   const fieldToColumnMap = {
     'drywall-linear-price': 'drywall_linear_price',
     'drywall-sheet-price': 'drywall_sheet_price',
-    'paint-price-per-sqft': 'paint_linear_price'
+    'paint-price-per-sqft': 'paint_linear_price',
+    'trim-casing-price': 'trim_casing_price',
+    'trim-baseboard-price': 'trim_baseboard_price',
+    'trim-qtr-round-price': 'trim_qtr_round_price',
+    'trim-door-price': 'trim_door_price'
   };
 
   document.querySelectorAll('.inline-edit-btn').forEach(btn => {
