@@ -629,6 +629,88 @@ function renumberAllItems() {
   console.log('All items renumbered and saved');
 }
 
+// Load default Drywall & Paint prices from company_settings
+async function loadDrywallPaintDefaults() {
+  try {
+    const { data, error } = await supabase
+      .from('company_settings')
+      .select('drywall_linear_price, drywall_sheet_price, paint_linear_price')
+      .single();
+
+    if (error) {
+      console.log('No default prices found, using empty values');
+      return;
+    }
+
+    if (data) {
+      // Pre-fill the price input fields with saved defaults
+      const drywallLinearPrice = document.getElementById('drywall-linear-price');
+      const drywallSheetPrice = document.getElementById('drywall-sheet-price');
+      const paintLinearPrice = document.getElementById('paint-price-per-sqft');
+
+      if (drywallLinearPrice && data.drywall_linear_price !== null) {
+        drywallLinearPrice.value = data.drywall_linear_price;
+      }
+      if (drywallSheetPrice && data.drywall_sheet_price !== null) {
+        drywallSheetPrice.value = data.drywall_sheet_price;
+      }
+      if (paintLinearPrice && data.paint_linear_price !== null) {
+        paintLinearPrice.value = data.paint_linear_price;
+      }
+
+      console.log('Loaded default Drywall & Paint prices:', data);
+    }
+  } catch (err) {
+    console.error('Error loading Drywall & Paint defaults:', err);
+  }
+}
+
+// Save default Drywall & Paint prices to company_settings
+async function saveDrywallPaintDefaults() {
+  const drywallLinearPrice = parseFloat(document.getElementById('drywall-linear-price')?.value) || 0;
+  const drywallSheetPrice = parseFloat(document.getElementById('drywall-sheet-price')?.value) || 0;
+  const paintLinearPrice = parseFloat(document.getElementById('paint-price-per-sqft')?.value) || 0;
+
+  try {
+    // First check if a row exists
+    const { data: existing } = await supabase
+      .from('company_settings')
+      .select('id')
+      .single();
+
+    if (existing) {
+      // Update existing row
+      const { error } = await supabase
+        .from('company_settings')
+        .update({
+          drywall_linear_price: drywallLinearPrice,
+          drywall_sheet_price: drywallSheetPrice,
+          paint_linear_price: paintLinearPrice
+        })
+        .eq('id', existing.id);
+
+      if (error) throw error;
+    } else {
+      // Insert new row
+      const { error } = await supabase
+        .from('company_settings')
+        .insert({
+          drywall_linear_price: drywallLinearPrice,
+          drywall_sheet_price: drywallSheetPrice,
+          paint_linear_price: paintLinearPrice
+        });
+
+      if (error) throw error;
+    }
+
+    alert('✅ Default prices saved successfully!');
+    console.log('Saved default prices:', { drywallLinearPrice, drywallSheetPrice, paintLinearPrice });
+  } catch (err) {
+    console.error('Error saving Drywall & Paint defaults:', err);
+    alert('❌ Error saving default prices. Please try again.');
+  }
+}
+
 // Initialize
 export async function initializeApp() {
   await loadProductsFromStorage(); // Now async - loads from Supabase
@@ -638,6 +720,7 @@ export async function initializeApp() {
   populateDropdowns(); // Then populate with data
   initQuoteAdminControls();
   setupListeners();
+  await loadDrywallPaintDefaults(); // Load default Drywall & Paint prices
 }
 
 function populateScopeOfWork() {
@@ -1179,6 +1262,14 @@ function buildQuoteSections() {
             </label>
           </div>
         </div>
+        
+        <!-- Admin Controls for Default Prices -->
+        <div id="drywall-paint-admin-section" class="admin-control" style="margin-top: 16px; padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+          <div style="font-size: 13px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">Admin: Set Default Prices</div>
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Set the default prices that will auto-fill for new quotes. These can be overridden per quote.</p>
+          <button id="save-drywall-paint-defaults" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Save Default Prices</button>
+        </div>
+        
         <div class="form-group" style="margin-top: 16px;">
           <label>Drywall & Paint Notes:</label>
           <textarea id="drywall-notes" rows="2" class="select-input" placeholder="Any special requirements for drywall or paint..."></textarea>
@@ -1441,10 +1532,6 @@ function buildQuoteSections() {
   // Setup admin handlers for inline controls
   setupCategoryHandlers('electrical_items');
   setupCategoryHandlers('accessory_items');
-  setupCategoryHandlers('drywall_paint_items');
-
-  // Populate drywall paint items
-  populateDrywallPaintItems();
 }
 
 function setupListeners() {
@@ -1571,6 +1658,12 @@ function setupListeners() {
 
   // Payment notes
   document.getElementById('payment-notes')?.addEventListener('change', updateSummary);
+
+  // Save Drywall & Paint Default Prices button
+  const saveDrywallPaintBtn = document.getElementById('save-drywall-paint-defaults');
+  if (saveDrywallPaintBtn) {
+    saveDrywallPaintBtn.addEventListener('click', saveDrywallPaintDefaults);
+  }
 }
 
 function updateSummary() {
