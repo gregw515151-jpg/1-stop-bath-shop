@@ -1211,6 +1211,7 @@ function buildQuoteSections() {
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
               <input type="number" id="drywall-linear-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <button class="admin-control inline-edit-btn" data-field="drywall-linear-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Feet:</label>
@@ -1224,6 +1225,7 @@ function buildQuoteSections() {
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Sheet:</label>
               <input type="number" id="drywall-sheet-price" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <button class="admin-control inline-edit-btn" data-field="drywall-sheet-price" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Number of Sheets:</label>
@@ -1237,6 +1239,7 @@ function buildQuoteSections() {
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
               <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input" placeholder="$0.00">
+              <button class="admin-control inline-edit-btn" data-field="paint-price-per-sqft" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Footage:</label>
@@ -1261,13 +1264,6 @@ function buildQuoteSections() {
               <input type="checkbox" id="point-up-drywall" style="width: 18px; height: 18px;"> Point Up Drywall
             </label>
           </div>
-        </div>
-        
-        <!-- Admin Controls for Default Prices -->
-        <div id="drywall-paint-admin-section" class="admin-control" style="margin-top: 16px; padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-          <div style="font-size: 13px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">Admin: Set Default Prices</div>
-          <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Set the default prices that will auto-fill for new quotes. These can be overridden per quote.</p>
-          <button id="save-drywall-paint-defaults" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Save Default Prices</button>
         </div>
         
         <div class="form-group" style="margin-top: 16px;">
@@ -1659,11 +1655,45 @@ function setupListeners() {
   // Payment notes
   document.getElementById('payment-notes')?.addEventListener('change', updateSummary);
 
-  // Save Drywall & Paint Default Prices button
-  const saveDrywallPaintBtn = document.getElementById('save-drywall-paint-defaults');
-  if (saveDrywallPaintBtn) {
-    saveDrywallPaintBtn.addEventListener('click', saveDrywallPaintDefaults);
-  }
+  // Inline Edit buttons for Drywall & Paint default prices
+  document.querySelectorAll('.inline-edit-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const fieldId = e.target.dataset.field;
+      const inputField = document.getElementById(fieldId);
+      if (!inputField) return;
+
+      const currentValue = parseFloat(inputField.value) || 0;
+      const fieldName = fieldId.replace(/-/g, '_');
+
+      // Save to database
+      try {
+        const { data: existing } = await supabase
+          .from('company_settings')
+          .select('id')
+          .single();
+
+        const updateData = { [fieldName]: currentValue };
+
+        if (existing) {
+          const { error } = await supabase
+            .from('company_settings')
+            .update(updateData)
+            .eq('id', existing.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase
+            .from('company_settings')
+            .insert(updateData);
+          if (error) throw error;
+        }
+
+        alert(`✅ Default price saved: $${currentValue.toFixed(2)}`);
+      } catch (err) {
+        console.error('Error saving default price:', err);
+        alert('❌ Error saving default price');
+      }
+    });
+  });
 }
 
 function updateSummary() {
