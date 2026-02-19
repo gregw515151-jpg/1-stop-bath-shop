@@ -922,9 +922,25 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     clearAutoSave();
     console.log('✅ PDF generated, auto-save cleared');
 
+    // Auto-save draft using customer name
+    try {
+      const draftName = customer.name ? customer.name.trim() : 'Untitled Quote';
+      const { data: draftData, error: draftError } = await saveDraft(
+        state.currentDraftName || draftName,
+        state.currentDraftId || null
+      );
+      if (!draftError && draftData && draftData[0]) {
+        state.currentDraftId = draftData[0].id;
+        state.currentDraftName = draftData[0].name;
+        updateDraftIndicator();
+        console.log('✅ Draft auto-saved as:', state.currentDraftName);
+      }
+    } catch (draftErr) {
+      console.warn('Auto-save draft failed:', draftErr);
+    }
+
     // Save to Supabase for tracking
     try {
-      const customer = getCustomerInfo();
       await supabase.from('quotes_sent').insert([{
         customer_name: customer.name,
         customer_email: customer.email,
@@ -985,6 +1001,23 @@ document.getElementById('print-btn')?.addEventListener('click', async () => {
       a.download = customerFileName;
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    // Auto-save draft using customer name
+    try {
+      const draftName = customer.name ? customer.name.trim() : 'Untitled Quote';
+      const { data: draftData, error: draftError } = await saveDraft(
+        state.currentDraftName || draftName,
+        state.currentDraftId || null
+      );
+      if (!draftError && draftData && draftData[0]) {
+        state.currentDraftId = draftData[0].id;
+        state.currentDraftName = draftData[0].name;
+        updateDraftIndicator();
+        console.log('✅ Draft auto-saved as:', state.currentDraftName);
+      }
+    } catch (draftErr) {
+      console.warn('Auto-save draft failed:', draftErr);
     }
 
   } catch (error) {
