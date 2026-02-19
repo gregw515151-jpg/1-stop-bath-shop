@@ -2097,51 +2097,30 @@ function updateSummary() {
     }
 
     if (paintWalls && paintWalls.checked) {
-      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - 2 Coats Walls');
-      if (item) {
-        const cost = item.price || 0;
-        total += cost;
-        drywallHtml += `<li>2 Coats Walls${cost > 0 ? ` <span class="price-text">- $${cost.toFixed(2)}</span>` : ''}</li>`;
-        hasDrywall = true;
-      }
+      drywallHtml += `<li>2 Coats Walls</li>`;
+      hasDrywall = true;
     }
 
     if (paintTrim && paintTrim.checked) {
-      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Trim');
-      if (item) {
-        const cost = item.price || 0;
-        total += cost;
-        drywallHtml += `<li>Trim Paint${cost > 0 ? ` <span class="price-text">- $${cost.toFixed(2)}</span>` : ''}</li>`;
-        hasDrywall = true;
-      }
+      drywallHtml += `<li>Trim Paint</li>`;
+      hasDrywall = true;
     }
 
     if (paintCeiling && paintCeiling.checked) {
-      const item = products.drywall_paint_items?.find(p => p.name === 'Paint - Ceiling');
-      if (item) {
-        const cost = item.price || 0;
-        total += cost;
-        drywallHtml += `<li>Ceiling${cost > 0 ? ` <span class="price-text">- $${cost.toFixed(2)}</span>` : ''}</li>`;
-        hasDrywall = true;
-      }
+      drywallHtml += `<li>Ceiling</li>`;
+      hasDrywall = true;
     }
 
     if (pointUpDrywall && pointUpDrywall.checked) {
-      const item = products.drywall_paint_items?.find(p => p.name === 'Point Up Drywall');
-      if (item) {
-        const cost = item.price || 0;
-        total += cost;
-        drywallHtml += `<li>Point Up Drywall${cost > 0 ? ` <span class="price-text">- $${cost.toFixed(2)}</span>` : ''}</li>`;
-        hasDrywall = true;
-      }
+      drywallHtml += `<li>Point Up Drywall</li>`;
+      hasDrywall = true;
     }
 
-    // Paint Square Footage calculation
-    const paintSqft = document.getElementById('paint-sqft');
-    if (paintSqft && paintSqft.value) {
-      const sqft = parseInt(paintSqft.value) || 0;
+    // Paint Square Footage calculation (secondary path)
+    const paintSqft2 = document.getElementById('paint-sqft');
+    if (paintSqft2 && paintSqft2.value) {
+      const sqft = parseInt(paintSqft2.value) || 0;
       if (sqft > 0) {
-        // Use "Paint - 2 Coats Walls" as the base paint item for square footage pricing
         const item = products.drywall_paint_items?.find(p => p.name === 'Paint - 2 Coats Walls');
         if (item && item.price > 0) {
           const cost = item.price * sqft;
