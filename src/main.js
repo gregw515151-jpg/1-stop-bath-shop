@@ -669,6 +669,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
     <style>
       .price-text { display: none !important; }
+      .qty-text { display: none !important; }
       /* Prevent line items from splitting across pages */
       div[style*="padding: 8px"] { 
         break-inside: avoid !important; 
@@ -893,16 +894,22 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     shareBtn.textContent = 'Generating PDF...';
 
     // Step 1: Generate the PDF
+    // Build filename from customer name
+    const customer = getCustomerInfo();
+    const customerFileName = customer.name
+      ? customer.name.trim().replace(/\s+/g, '_') + '_Quote.pdf'
+      : 'Quote.pdf';
+
     const { blob } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
-      fileName: 'quote.pdf'
+      fileName: customerFileName
     });
 
     shareBtn.textContent = 'Uploading PDF...';
 
     // Step 2: Upload PDF to Supabase Storage
-    const pdfUrl = await uploadToSupabase(blob, 'quote.pdf');
+    const pdfUrl = await uploadToSupabase(blob, customerFileName);
     currentPdfUrl = pdfUrl; // Store for sharing
 
     shareBtn.textContent = 'Opening...';
@@ -948,10 +955,16 @@ document.getElementById('print-btn')?.addEventListener('click', async () => {
     printBtn.disabled = true;
     printBtn.textContent = 'Generating PDF...';
 
+    // Build filename from customer name
+    const customer = getCustomerInfo();
+    const customerFileName = customer.name
+      ? customer.name.trim().replace(/\s+/g, '_') + '_Quote.pdf'
+      : 'Quote.pdf';
+
     const { blob } = await generateQuotePDF({
       logo: state.logo,
       photos: state.photos,
-      fileName: 'quote.pdf'
+      fileName: customerFileName
     });
 
     // Create a blob URL and open it in a new window to trigger print dialog
@@ -969,7 +982,7 @@ document.getElementById('print-btn')?.addEventListener('click', async () => {
       // Fallback: if popup blocked, just download
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'quote.pdf';
+      a.download = customerFileName;
       a.click();
       URL.revokeObjectURL(url);
     }

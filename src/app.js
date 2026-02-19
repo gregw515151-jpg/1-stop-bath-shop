@@ -1267,8 +1267,8 @@ function buildQuoteSections() {
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Paint</label>
             <div class="form-group" style="margin-bottom: 8px;">
               <label style="font-size: 13px;">Price per Linear Ft:</label>
-              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00" readonly style="background: #f3f4f6;">
-              <button class="admin-control inline-edit-btn" data-field="paint-price-per-sqft" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit Default</button>
+              <input type="number" id="paint-price-per-sqft" min="0" step="0.01" class="select-input drywall-paint-price" placeholder="$0.00">
+              <button class="admin-control inline-edit-btn" data-field="paint-price-per-sqft" style="margin-top: 4px; padding: 4px 8px; font-size: 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Save</button>
             </div>
             <div class="form-group">
               <label style="font-size: 13px;">Linear Footage:</label>
@@ -2067,7 +2067,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Drywall: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        drywallHtml += `<li>Drywall <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasDrywall = true;
       }
     }
@@ -2079,7 +2079,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Drywall Sheets: ${qty} <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        drywallHtml += `<li>Drywall Sheets <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasDrywall = true;
       }
     }
@@ -2091,7 +2091,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        drywallHtml += `<li>Paint: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        drywallHtml += `<li>Paint <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasDrywall = true;
       }
     }
@@ -2146,7 +2146,7 @@ function updateSummary() {
         if (item && item.price > 0) {
           const cost = item.price * sqft;
           total += cost;
-          drywallHtml += `<li>Paint: ${sqft} linear ft <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
+          drywallHtml += `<li>Paint <span class="qty-text">(${sqft})</span> <span class="price-text">- $${cost.toFixed(2)}</span></li>`;
           hasDrywall = true;
         }
       }
@@ -2189,7 +2189,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Casing: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        trimHtml += `<li>Casing <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasTrim = true;
       }
     }
@@ -2201,7 +2201,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Baseboard: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        trimHtml += `<li>Baseboard <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasTrim = true;
       }
     }
@@ -2213,7 +2213,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Qtr Round: ${qty} linear ft <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        trimHtml += `<li>Qtr Round <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasTrim = true;
       }
     }
@@ -2225,7 +2225,7 @@ function updateSummary() {
       if (qty > 0 && price > 0) {
         const cost = price * qty;
         total += cost;
-        trimHtml += `<li>Doors: ${qty} <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
+        trimHtml += `<li>Doors <span class="qty-text">(${qty})</span> <span class="price-text">× $${price.toFixed(2)} = $${cost.toFixed(2)}</span></li>`;
         hasTrim = true;
       }
     }
