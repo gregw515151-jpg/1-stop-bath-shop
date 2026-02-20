@@ -89,6 +89,7 @@ function getAppHtml(maxPhotos) {
                 <button id="modal-view-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️ View PDF</button>
                 <button id="modal-share-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px;">📤 Share PDF</button>
                 <button id="modal-copy-link-btn" class="btn btn-secondary" style="width: 100%; padding: 16px; font-size: 16px;">📋 Copy Link</button>
+                <button id="modal-email-btn" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📧 Email Quote</button>
               </div>
             </div>
           </div>
@@ -865,6 +866,7 @@ async function uploadToSupabase(blob, fileName) {
 
 /* ---------- Share PDF (Store current PDF URL) ---------- */
 let currentPdfUrl = null; // Store the current PDF URL for sharing
+let currentPdfBase64 = null; // Store the current PDF base64 for emailing
 
 /* ---------- Modal Close Button ---------- */
 document.getElementById('modal-close-btn')?.addEventListener('click', () => {
@@ -943,6 +945,62 @@ document.getElementById('modal-copy-link-btn')?.addEventListener('click', async 
   }
 });
 
+/* ---------- Modal Email Quote Button ---------- */
+document.getElementById('modal-email-btn')?.addEventListener('click', async () => {
+  const customer = getCustomerInfo();
+  const emailTo = customer.email || prompt('Enter the customer email address:');
+
+  if (!emailTo || !emailTo.trim()) {
+    alert('Email address is required to send the quote.');
+    return;
+  }
+
+  const emailBtn = document.getElementById('modal-email-btn');
+  const originalText = emailBtn.textContent;
+
+  try {
+    emailBtn.disabled = true;
+    emailBtn.textContent = 'Sending...';
+
+    // Get summary text
+    const summaryEl = document.getElementById('summary');
+    const summaryText = summaryEl ? summaryEl.innerText : '';
+    const totalEl = document.getElementById('total');
+    const totalText = totalEl ? totalEl.textContent.trim() : '';
+
+    const response = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: emailTo.trim(),
+        customerInfo: {
+          name: customer.name,
+          phone: customer.phone,
+          email: customer.email,
+          address: customer.address
+        },
+        summary: summaryText + (totalText ? '\n\nTotal Investment: ' + totalText : ''),
+        notes: customer.notes || '',
+        pdfBase64: currentPdfBase64 || null
+      })
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      alert('✅ Email sent successfully to ' + emailTo.trim() + '!');
+    } else {
+      throw new Error(result.error || 'Failed to send email');
+    }
+  } catch (error) {
+    console.error('Email send error:', error);
+    alert('❌ Failed to send email: ' + error.message);
+  } finally {
+    emailBtn.disabled = false;
+    emailBtn.textContent = originalText;
+  }
+});
+
 /* ---------- Share PDF Button ---------- */
 document.getElementById('share-btn')?.addEventListener('click', async () => {
   const shareBtn = document.getElementById('share-btn');
@@ -979,6 +1037,12 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
     // Step 2: Upload PDF to Supabase Storage
     const pdfUrl = await uploadToSupabase(blob, customerFileName);
     currentPdfUrl = pdfUrl; // Store for sharing
+    // Store base64 for email
+    const reader = new FileReader();
+    currentPdfBase64 = await new Promise((resolve) => {
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.readAsDataURL(blob);
+    });
 
     shareBtn.textContent = 'Opening...';
 
