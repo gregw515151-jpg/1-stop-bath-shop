@@ -601,8 +601,10 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   pdfRoot.style.color = '#111827';
   pdfRoot.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
   pdfRoot.style.lineHeight = '1.5';
-  pdfRoot.style.position = 'fixed';
+  pdfRoot.style.position = 'absolute';
   pdfRoot.style.left = '-99999px';
+  pdfRoot.style.top = '0';
+  pdfRoot.style.overflow = 'hidden';
 
   const logoHTML = (logo && logo.dataUrl)
     ? `<img src="${logo.dataUrl}" alt="Logo" style="max-height:90px; width:auto; display:block; margin:0 auto; object-fit:contain;">`
@@ -722,7 +724,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
   for (const sectionHTML of sections) {
     pdfRoot.innerHTML = sectionHTML;
-    const canvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+    const canvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true, height: pdfRoot.scrollHeight, windowHeight: pdfRoot.scrollHeight });
     sectionImages.push({
       imgData: canvas.toDataURL('image/png'),
       canvasWidth: canvas.width,
@@ -732,7 +734,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
   // Render terms
   pdfRoot.innerHTML = termsContent;
-  const termsCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+  const termsCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true, height: pdfRoot.scrollHeight, windowHeight: pdfRoot.scrollHeight });
   const termsImgData = termsCanvas.toDataURL('image/png');
 
   document.body.removeChild(pdfRoot);
