@@ -581,12 +581,18 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     { id: 'demolition-notes', label: 'Demolition Notes' },
     { id: 'electrical-notes', label: 'Electrical Notes' },
     { id: 'fixtures-notes', label: 'Fixtures & Finishes Notes' },
+    { id: 'bathroom-notes', label: 'Acrylics Notes' },
+    { id: 'options-notes', label: 'Options Notes' },
     { id: 'cabinetry-notes', label: 'Cabinetry Notes' },
+    { id: 'accessories-notes', label: 'Accessories Notes' },
+    { id: 'drywall-notes', label: 'Drywall & Paint Notes' },
     { id: 'trim-notes', label: 'Trim Notes' },
     { id: 'flooring-notes', label: 'Flooring Notes' },
     { id: 'tile-notes', label: 'Tile Notes' },
     { id: 'plumbing-notes', label: 'Plumbing Notes' },
-    { id: 'bathroom-notes', label: 'Additional Notes' }
+    { id: 'change-order-notes', label: 'Change Order Notes' },
+    { id: 'labor-notes', label: 'Labor Notes' },
+    { id: 'payment-notes', label: 'Payment Notes' }
   ];
 
   let allNotesHTML = '';
@@ -661,42 +667,69 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   const totalSectionHTML = totalEl ? totalEl.innerHTML : '';
 
   // Split content into main and terms
-  const mainContent = `
+  // Build content sections as separate HTML blocks for intelligent page breaks
+  const pdfStyles = `
+    <style>
+      .price-text { display: none !important; }
+      .qty-text { display: none !important; }
+    </style>
+  `;
+
+  const sections = [];
+
+  // Section 1: Header (logo + company info)
+  sections.push(`
+    ${pdfStyles}
     <div style="text-align:center; margin-bottom: 10px;">
       ${logoHTML}
       ${companyInfoHTML}
     </div>
+  `);
 
-    <style>
-      .price-text { display: none !important; }
-      .qty-text { display: none !important; }
-      /* Prevent line items from splitting across pages */
-      div[style*="padding: 8px"] { 
-        break-inside: avoid !important; 
-        page-break-inside: avoid !important;
-      }
-      ul li {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-      }
-    </style>
-
+  // Section 2: Customer info + notes
+  sections.push(`
+    ${pdfStyles}
     ${customerHTML}
+  `);
 
-    <h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>
-    <div>${summaryEl ? summaryEl.innerHTML : ''}</div>
+  // Section 3: Summary - split into individual summary items
+  if (summaryEl) {
+    const summaryChildren = summaryEl.children;
+    // Add summary header
+    sections.push(`${pdfStyles}<h2 style="font-size:16px; margin: 16px 0 8px;">Summary</h2>`);
+    // Add each summary section as its own block
+    for (let i = 0; i < summaryChildren.length; i++) {
+      sections.push(`${pdfStyles}<div>${summaryChildren[i].outerHTML}</div>`);
+    }
+  }
 
-    ${totalEl && totalEl.textContent.trim() ? `
+  // Section 4: Total investment
+  if (totalEl && totalEl.textContent.trim()) {
+    sections.push(`
+      ${pdfStyles}
       <div style="margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; border-left: 4px solid #3b82f6;">
         <div style="font-size: 18px; font-weight: 700; color: #111827; text-align: right;">
           Total Investment: ${totalEl.textContent.trim()}
         </div>
       </div>
-    ` : ''}
+    `);
+  }
 
-    <h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>
-    <div>${photosGridHTML || '<div style="font-size:12px;color:#6b7280;">No photos attached.</div>'}</div>
-  `;
+  // Section 5: Photos - each photo as its own section
+  if (photos && photos.length > 0) {
+    sections.push(`${pdfStyles}<h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2>`);
+    photos.forEach((p) => {
+      sections.push(`
+        ${pdfStyles}
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="${p.dataUrl}" alt="${esc(p.name)}" style="max-width:700px; width:100%; height:auto; display:block; margin:0 auto; border-radius:4px; border:1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          ${p.caption ? `<div style="font-size:12px; color:#555; margin-top:8px; font-style:italic;">${esc(p.caption)}</div>` : ''}
+        </div>
+      `);
+    });
+  } else {
+    sections.push(`${pdfStyles}<h2 style="font-size:16px; margin: 16px 0 8px;">Photos</h2><div style="font-size:12px;color:#6b7280;">No photos attached.</div>`);
+  }
 
   const termsContent = `
     <div style="padding: 24px; font-size: 10px; line-height: 1.4;">
@@ -705,40 +738,75 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
     </div>
   `;
 
-  // Render main content
-  pdfRoot.innerHTML = mainContent;
+  // Render each section to a separate canvas
   document.body.appendChild(pdfRoot);
+  const sectionImages = [];
 
-  const mainCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
-  const mainImgData = mainCanvas.toDataURL('image/png');
+  for (const sectionHTML of sections) {
+    pdfRoot.innerHTML = sectionHTML;
+    const canvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
+    sectionImages.push({
+      imgData: canvas.toDataURL('image/png'),
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height
+    });
+  }
 
-  // Render terms content
+  // Render terms
   pdfRoot.innerHTML = termsContent;
   const termsCanvas = await html2canvas(pdfRoot, { scale: 2, useCORS: true });
   const termsImgData = termsCanvas.toDataURL('image/png');
 
   document.body.removeChild(pdfRoot);
 
-  // Create PDF with pagination
+  // Create PDF and place sections with intelligent page breaks
   const pdf = new jsPDF('p', 'pt', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
+  const pageMargin = 20; // top/bottom margin
+  const usableHeight = pageHeight - (pageMargin * 2);
 
-  // Add main content pages
-  const mainImgWidth = pageWidth;
-  const mainImgHeight = (mainCanvas.height * mainImgWidth) / mainCanvas.width;
+  let currentY = pageMargin;
+  let isFirstPage = true;
 
-  let heightLeft = mainImgHeight;
-  let position = 0;
+  for (const section of sectionImages) {
+    const imgWidth = pageWidth;
+    const imgHeight = (section.canvasHeight * imgWidth) / section.canvasWidth;
 
-  pdf.addImage(mainImgData, 'PNG', 0, position, mainImgWidth, mainImgHeight, undefined, 'FAST');
-  heightLeft -= pageHeight;
+    // If this section won't fit on the current page and we're not at the top, start a new page
+    if (currentY + imgHeight > pageHeight - pageMargin && currentY > pageMargin + 10) {
+      pdf.addPage();
+      currentY = pageMargin;
+    }
 
-  while (heightLeft > 0) {
-    pdf.addPage();
-    position = heightLeft - mainImgHeight;
-    pdf.addImage(mainImgData, 'PNG', 0, position, mainImgWidth, mainImgHeight, undefined, 'FAST');
-    heightLeft -= pageHeight;
+    // If a single section is taller than one page, we need to split it across pages
+    if (imgHeight > usableHeight) {
+      // For oversized sections, use the old slice approach but starting from currentY
+      let heightLeft = imgHeight;
+      let offset = 0;
+
+      while (heightLeft > 0) {
+        const spaceOnPage = (offset === 0) ? (pageHeight - currentY - pageMargin) : usableHeight;
+
+        if (offset > 0) {
+          pdf.addPage();
+          currentY = pageMargin;
+        }
+
+        // Draw the full image offset so the right portion shows
+        const drawY = currentY - offset;
+        pdf.addImage(section.imgData, 'PNG', 0, drawY, imgWidth, imgHeight, undefined, 'FAST');
+
+        offset += spaceOnPage;
+        heightLeft -= spaceOnPage;
+      }
+      currentY = pageMargin + (imgHeight % usableHeight);
+      if (currentY < pageMargin + 5) currentY = pageMargin;
+    } else {
+      // Normal case: section fits on a page
+      pdf.addImage(section.imgData, 'PNG', 0, currentY, imgWidth, imgHeight, undefined, 'FAST');
+      currentY += imgHeight;
+    }
   }
 
   // Add terms on a new page
