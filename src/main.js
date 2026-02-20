@@ -596,7 +596,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
   // Temporary off-screen container for clean render
   const pdfRoot = document.createElement('div');
   pdfRoot.style.width = '800px';
-  pdfRoot.style.padding = '24px';
+  pdfRoot.style.padding = '12px 24px';
   pdfRoot.style.background = '#ffffff';
   pdfRoot.style.color = '#111827';
   pdfRoot.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
@@ -657,18 +657,13 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
 
   const sections = [];
 
-  // Section 1: Header (logo + company info)
+  // Section 1: Header (logo + company info) + Customer info + notes (combined to avoid gap)
   sections.push(`
     ${pdfStyles}
     <div style="text-align:center; margin-bottom: 10px;">
       ${logoHTML}
       ${companyInfoHTML}
     </div>
-  `);
-
-  // Section 2: Customer info + notes
-  sections.push(`
-    ${pdfStyles}
     ${customerHTML}
   `);
 
