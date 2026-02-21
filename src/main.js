@@ -861,8 +861,10 @@ async function uploadToSupabase(blob, fileName) {
   return publicUrl;
 }
 
-/* ---------- Share PDF (Store current PDF URL) ---------- */
+/* ---------- Share PDF (Store current PDF URL and blob) ---------- */
 let currentPdfUrl = null; // Store the current PDF URL for sharing
+let currentPdfBlob = null; // Store the current PDF blob for file sharing
+let currentPdfFileName = 'Quote.pdf'; // Store the current PDF filename
 
 /* ---------- Modal Close Button ---------- */
 document.getElementById('modal-close-btn')?.addEventListener('click', () => {
@@ -888,32 +890,41 @@ document.getElementById('modal-view-btn')?.addEventListener('click', () => {
   window.open(currentPdfUrl, '_blank');
 });
 
-/* ---------- Modal Share Button ---------- */
+/* ---------- Modal Share Button (shares actual PDF file) ---------- */
 document.getElementById('modal-share-btn')?.addEventListener('click', async () => {
-  if (!currentPdfUrl) {
+  if (!currentPdfBlob) {
     alert('No PDF to share. Please generate a quote first.');
     return;
   }
 
   try {
-    // Try to use Web Share API (works great on mobile!)
-    if (navigator.share) {
+    // Create a File object from the blob
+    const pdfFile = new File([currentPdfBlob], currentPdfFileName, { type: 'application/pdf' });
+
+    // Check if file sharing is supported (mobile browsers)
+    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+      await navigator.share({
+        title: 'Bathroom Estimate Quote',
+        text: 'Here is your bathroom estimate quote',
+        files: [pdfFile]
+      });
+      console.log('File share completed!');
+    } else if (navigator.share) {
+      // Fallback: share the URL if file sharing not supported
       await navigator.share({
         title: 'Bathroom Estimate Quote - 1 Stop Bath Shop',
         text: 'Here is your bathroom estimate quote from 1 Stop Bath Shop',
         url: currentPdfUrl
       });
-      console.log('Share completed!');
+      console.log('URL share completed!');
     } else {
-      // Fallback: Copy to clipboard
+      // Desktop fallback: Copy link to clipboard
       await navigator.clipboard.writeText(currentPdfUrl);
-      alert('Web Share not supported. PDF link copied to clipboard! You can now paste and share it. 📋');
+      alert('PDF link copied to clipboard! You can now paste and share it. 📋');
     }
   } catch (error) {
-    // User cancelled or error occurred
     if (error.name !== 'AbortError') {
       console.error('Share error:', error);
-      // Try clipboard fallback
       try {
         await navigator.clipboard.writeText(currentPdfUrl);
         alert('PDF link copied to clipboard! 📋');
@@ -976,7 +987,9 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
 
     // Step 2: Upload PDF to Supabase Storage
     const pdfUrl = await uploadToSupabase(blob, customerFileName);
-    currentPdfUrl = pdfUrl; // Store for sharing
+    currentPdfUrl = pdfUrl; // Store for link sharing
+    currentPdfBlob = blob; // Store for file sharing
+    currentPdfFileName = customerFileName; // Store filename
 
     shareBtn.textContent = 'Opening...';
 
