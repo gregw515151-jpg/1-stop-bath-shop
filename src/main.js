@@ -7,6 +7,18 @@ import { initAdmin } from './admin.js'
 import { saveDraft, loadDraft, getDrafts, deleteDraft } from './drafts.js'
 import { initAutoSave, clearAutoSave } from './autosave.js'
 
+/* ---------- Auth Guard ---------- */
+(function checkAuth() {
+  const session = localStorage.getItem('estimatepro_session');
+  const expiry = localStorage.getItem('estimatepro_session_expiry');
+  if (!session || !expiry || Date.now() >= parseInt(expiry)) {
+    localStorage.removeItem('estimatepro_session');
+    localStorage.removeItem('estimatepro_session_expiry');
+    window.location.href = '/login.html';
+    return;
+  }
+})();
+
 /* ---------- Config ---------- */
 const DEFAULT_LOGO_URL = "/logos/1-STOP-BATH-SHOP-LOGO.jpg";
 const MAX_PHOTOS = 15;
