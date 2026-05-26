@@ -1753,36 +1753,36 @@ function updateSummary() {
 
   // Define all labels for display and selection update
   const fieldMapping = {
-    'fixture-type': { key: 'fixture_type', label: 'Fixture Type' },
-    'plumbing-color': { key: 'plumbing_color', label: 'Plumbing Color' },
-    'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style' },
-    'electrical-color': { key: 'electrical_color', label: 'Electrical Color' },
-    'exhaust-fan': { key: 'exhaust_fan', label: 'Exhaust Fan' },
-    'shower-color': { key: 'shower_color', label: 'Tub / Shower Pan color' },
-    'shower-size': { key: 'shower_size', label: 'Shower Size' },
-    'shower-drain': { key: 'shower_drain', label: 'Shower Drain Location' },
-    'tub-depth': { key: 'tub_depth', label: 'Tub Depth' },
-    'tub-length': { key: 'tub_length', label: 'Tub Size' },
-    'wall-color': { key: 'wall_color', label: 'Wall Color' },
-    'wall-pattern': { key: 'wall_pattern', label: 'Wall Pattern' },
-    'wall-type': { key: 'wall_type', label: 'Wall Type' },
-    'vanity-length': { key: 'vanity_length', label: 'Vanity Length' },
-    'vanity-top': { key: 'vanity_top', label: 'Vanity Top' },
+    'fixture-type': { key: 'fixture_type', label: 'Fixture Type', group: 'Plumbing' },
+    'plumbing-color': { key: 'plumbing_color', label: 'Plumbing Color', group: 'Plumbing' },
+    'plumbing-style': { key: 'plumbing_style', label: 'Plumbing Style', group: 'Plumbing' },
+    'electrical-color': { key: 'electrical_color', label: 'Electrical Color', group: 'Electrical' },
+    'exhaust-fan': { key: 'exhaust_fan', label: 'Exhaust Fan', group: 'Electrical' },
+    'shower-color': { key: 'shower_color', label: 'Tub / Shower Pan color', group: 'Acrylics' },
+    'shower-size': { key: 'shower_size', label: 'Shower Size', group: 'Acrylics' },
+    'shower-drain': { key: 'shower_drain', label: 'Shower Drain Location', group: 'Acrylics' },
+    'tub-depth': { key: 'tub_depth', label: 'Tub Depth', group: 'Acrylics' },
+    'tub-length': { key: 'tub_length', label: 'Tub Size', group: 'Acrylics' },
+    'wall-color': { key: 'wall_color', label: 'Wall Color', group: 'Acrylics' },
+    'wall-pattern': { key: 'wall_pattern', label: 'Wall Pattern', group: 'Acrylics' },
+    'wall-type': { key: 'wall_type', label: 'Wall Type', group: 'Acrylics' },
+    'vanity-length': { key: 'vanity_length', label: 'Vanity Length', group: 'Vanity' },
+    'vanity-top': { key: 'vanity_top', label: 'Vanity Top', group: 'Vanity' },
     // Removed 'flooring-type' to fix duplicate display - it has custom logic below
-    'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style' },
-    'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style' },
-    'window-style': { key: 'window_style', label: 'Window Style' },
-    'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size' },
-    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size' },
-    'shower-door-style': { key: 'shower_door_style', label: 'Shower Door Style' },
-    'shower-door-thickness': { key: 'shower_door_thickness', label: 'Shower Door Thickness' },
-    'shower-door-glass-type': { key: 'shower_door_glass_type', label: 'Shower Door Glass Type' },
+    'baseboard-style': { key: 'baseboard_style', label: 'Baseboard Style', group: 'Trim' },
+    'window-door-style': { key: 'window_door_style', label: 'Window/Door Trim Style', group: 'Trim' },
+    'window-style': { key: 'window_style', label: 'Window Style', group: 'Trim' },
+    'grab-bars-size': { key: 'grab_bars_size', label: 'Grab Bars Size', group: 'Options', skipRender: true },
+    'grab-bars-size-2': { key: 'grab_bars_size_2', label: 'Grab Bars Size', group: 'Options', skipRender: true },
+    'shower-door-style': { key: 'shower_door_style', label: 'Shower Door Style', group: 'Options' },
+    'shower-door-thickness': { key: 'shower_door_thickness', label: 'Shower Door Thickness', group: 'Options' },
+    'shower-door-glass-type': { key: 'shower_door_glass_type', label: 'Shower Door Glass Type', group: 'Options' },
     // Added missing fields that weren't showing on estimate
-    'shower-head': { key: 'shower_head', label: 'Shower Head' },
-    'trim-color': { key: 'trim_color', label: 'Trim Color' },
-    'seat-type': { key: 'seat_type', label: 'Seat' },
-    'enclosure-type': { key: 'enclosure_type', label: 'Enclosure' },
-    'window-kit': { key: 'window_kit', label: 'Window Kit' }
+    'shower-head': { key: 'shower_head', label: 'Shower Head', group: 'Plumbing' },
+    'trim-color': { key: 'trim_color', label: 'Trim Color', group: 'Trim' },
+    'seat-type': { key: 'seat_type', label: 'Seat', group: 'Acrylics' },
+    'enclosure-type': { key: 'enclosure_type', label: 'Enclosure', group: 'Acrylics' },
+    'window-kit': { key: 'window_kit', label: 'Window Kit', group: 'Acrylics' }
   };
 
   // Build summary
@@ -2310,7 +2310,9 @@ function updateSummary() {
     if (laborHtml.includes('<li>')) html += laborHtml;
   }
 
-  // Update other selections and build HTML
+  // Update other selections and build HTML with section grouping
+  const groupedSelections = {};
+
   Object.entries(fieldMapping).forEach(([id, config]) => {
     const el = document.getElementById(id);
     if (el) {
@@ -2326,16 +2328,48 @@ function updateSummary() {
           }
         }
 
-        // Remove price display from item text - show only the selection name
-        let itemText = el.options[el.selectedIndex].text;
-        itemText = itemText.replace(/\s*\(\+\$[0-9.]+\)/, ''); // Remove (+$XX.XX)
-        itemText = itemText.replace(/\s*\(-\$[0-9.]+\)/, ''); // Remove (-$XX.XX)
+        // Only add to summary if not explicitly skipped
+        if (!config.skipRender) {
+          // Remove price display from item text - show only the selection name
+          let itemText = el.options[el.selectedIndex].text;
+          itemText = itemText.replace(/\s*\(\+\$[0-9.]+\)/, ''); // Remove (+$XX.XX)
+          itemText = itemText.replace(/\s*\(-\$[0-9.]+\)/, ''); // Remove (-$XX.XX)
 
-        html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
-          <strong>${config.label}:</strong> ${itemText}
-        </div>`;
+          const groupName = config.group || 'Other';
+          if (!groupedSelections[groupName]) {
+            groupedSelections[groupName] = [];
+          }
+          groupedSelections[groupName].push({ label: config.label, value: itemText });
+        }
       }
     }
+  });
+
+  // Handle Acrylics Notes (bathroom-notes)
+  const bathroomNotes = document.getElementById('bathroom-notes');
+  if (bathroomNotes && bathroomNotes.value.trim()) {
+    selections.bathroom_notes = bathroomNotes.value.trim();
+  }
+
+  // Render grouped selections to summary
+  Object.entries(groupedSelections).forEach(([groupName, items]) => {
+    let groupHtml = `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
+      <strong>${groupName}:</strong>
+      <ul style="margin: 4px 0 0 0; padding-left: 20px;">`;
+    
+    items.forEach(item => {
+      groupHtml += `<li>${item.label}: ${item.value}</li>`;
+    });
+    
+    groupHtml += `</ul>`;
+    
+    // Add notes to the group if it's Acrylics and notes exist
+    if (groupName === 'Acrylics' && selections.bathroom_notes) {
+      groupHtml += `<div style="margin-top: 6px; font-size: 13px; color: #6b7280;"><em>Notes: ${selections.bathroom_notes}</em></div>`;
+    }
+    
+    groupHtml += `</div>`;
+    html += groupHtml;
   });
 
   const summaryDiv = document.getElementById('summary');

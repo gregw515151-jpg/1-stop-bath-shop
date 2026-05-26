@@ -718,7 +718,7 @@ async function generateQuotePDF({ logo, photos, fileName = 'quote.pdf' } = {}) {
       ${pdfStyles}
       <div style="margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; border-left: 4px solid #3b82f6;">
         <div style="font-size: 18px; font-weight: 700; color: #111827; text-align: right;">
-          Total Investment: ${totalEl.textContent.trim()}
+          ${totalEl.textContent.trim()}
         </div>
       </div>
     `);
