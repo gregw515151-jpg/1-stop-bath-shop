@@ -116,8 +116,7 @@ function restoreDropdownsFromState(selections) {
 
     // Restore all dropdown and input values
     Object.entries(selections).forEach(([key, val]) => {
-        let el = document.getElementById(key);
-        if (!el) el = document.getElementById(key.replace(/_/g, '-'));
+        let el = document.getElementById(key) || document.getElementById(key.replace(/_/g, '-'));
 
         if (el && (el.tagName === 'SELECT' || el.tagName === 'INPUT')) {
             el.value = val || '';

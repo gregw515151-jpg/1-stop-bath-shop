@@ -2317,7 +2317,6 @@ function updateSummary() {
     const el = document.getElementById(id);
     if (el) {
       const val = el.value;
-      selections[config.key] = val ? el.options[el.selectedIndex].text : "";
 
       if (val) {
         // Try to estimate price if it's in the text (e.g. "+$100") - but skip if hidePrice is true
