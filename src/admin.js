@@ -122,24 +122,30 @@ export async function initAdmin() {
         }
     };
 
-    loginBtn.addEventListener('click', handleLoginWrapper);
-    passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLoginWrapper();
-    });
-
-    logoutBtn.addEventListener('click', () => {
-        // Sync global logout
-        logoutAdmin();
-
-        // Play Duck Hunt Dog Jump on logout
-        playDuckHuntVideo(duckHuntDogJump, () => {
-            adminPanel.style.display = 'none';
-            loginScreen.style.display = 'block';
-            passwordInput.value = '';
-            // Close the overlay too if desired, or just reset to login screen
-            if (adminOverlay) adminOverlay.style.display = 'none';
+    if (loginBtn) {
+        loginBtn.addEventListener('click', handleLoginWrapper);
+    }
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLoginWrapper();
         });
-    });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Sync global logout
+            logoutAdmin();
+
+            // Play Duck Hunt Dog Jump on logout
+            playDuckHuntVideo(duckHuntDogJump, () => {
+                adminPanel.style.display = 'none';
+                loginScreen.style.display = 'block';
+                passwordInput.value = '';
+                // Close the overlay too if desired, or just reset to login screen
+                if (adminOverlay) adminOverlay.style.display = 'none';
+            });
+        });
+    }
 
     // Close button functionality
     if (closeAdminBtn) {
