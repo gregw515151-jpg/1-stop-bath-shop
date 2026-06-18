@@ -62,22 +62,10 @@ export function saveFormData() {
         });
 
         // Collect all checkboxes (grouped by class)
-        const checkboxClasses = ['demo-item', 'electrical-item', 'accessory-item'];
+        const checkboxClasses = ['demo-item', 'electrical-item', 'accessory-item', 'tile-item', 'plumbing-item', 'change-order-item', 'labor-item'];
         checkboxClasses.forEach(className => {
             data.checkboxes[className] = Array.from(document.querySelectorAll(`.${className}:checked`)).map(cb => cb.value);
         });
-
-        // Collect tile materials checkboxes
-        const tileMaterialsContainer = document.getElementById('tile-materials');
-        if (tileMaterialsContainer) {
-            data.checkboxes['tile-materials'] = Array.from(tileMaterialsContainer.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-        }
-
-        // Collect plumbing materials checkboxes
-        const plumbingMaterialsContainer = document.getElementById('plumbing-materials');
-        if (plumbingMaterialsContainer) {
-            data.checkboxes['plumbing-materials'] = Array.from(plumbingMaterialsContainer.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-        }
 
         // Collect splash options checkboxes
         const splashOptionsContainer = document.getElementById('splash-options');
@@ -108,6 +96,38 @@ export function saveFormData() {
             const itemId = input.dataset.item;
             if (itemId && input.value) {
                 data.quantities[`accessory-qty-${itemId}`] = input.value;
+            }
+        });
+
+        // Collect tile quantities
+        document.querySelectorAll('.tile-qty').forEach(input => {
+            const itemId = input.dataset.item;
+            if (itemId && input.value) {
+                data.quantities[`tile-qty-${itemId}`] = input.value;
+            }
+        });
+
+        // Collect plumbing quantities
+        document.querySelectorAll('.plumbing-qty').forEach(input => {
+            const itemId = input.dataset.item;
+            if (itemId && input.value) {
+                data.quantities[`plumbing-qty-${itemId}`] = input.value;
+            }
+        });
+
+        // Collect change order quantities
+        document.querySelectorAll('.change-order-qty').forEach(input => {
+            const itemId = input.dataset.item;
+            if (itemId && input.value) {
+                data.quantities[`change-order-qty-${itemId}`] = input.value;
+            }
+        });
+
+        // Collect labor quantities
+        document.querySelectorAll('.labor-qty').forEach(input => {
+            const itemId = input.dataset.item;
+            if (itemId && input.value) {
+                data.quantities[`labor-qty-${itemId}`] = input.value;
             }
         });
 
@@ -204,21 +224,7 @@ export function restoreFormData() {
         // Restore checkboxes
         if (data.checkboxes) {
             Object.entries(data.checkboxes).forEach(([className, values]) => {
-                if (className === 'tile-materials') {
-                    const container = document.getElementById('tile-materials');
-                    if (container) {
-                        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                            cb.checked = values.includes(cb.value);
-                        });
-                    }
-                } else if (className === 'plumbing-materials') {
-                    const container = document.getElementById('plumbing-materials');
-                    if (container) {
-                        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                            cb.checked = values.includes(cb.value);
-                        });
-                    }
-                } else if (className === 'splash-options') {
+                if (className === 'splash-options') {
                     const container = document.getElementById('splash-options');
                     if (container) {
                         container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -245,6 +251,30 @@ export function restoreFormData() {
                 } else if (key.startsWith('accessory-qty-')) {
                     const itemId = key.replace('accessory-qty-', '');
                     const input = document.querySelector(`.accessory-qty[data-item="${itemId}"]`);
+                    if (input && value) {
+                        input.value = value;
+                    }
+                } else if (key.startsWith('tile-qty-')) {
+                    const itemId = key.replace('tile-qty-', '');
+                    const input = document.querySelector(`.tile-qty[data-item="${itemId}"]`);
+                    if (input && value) {
+                        input.value = value;
+                    }
+                } else if (key.startsWith('plumbing-qty-')) {
+                    const itemId = key.replace('plumbing-qty-', '');
+                    const input = document.querySelector(`.plumbing-qty[data-item="${itemId}"]`);
+                    if (input && value) {
+                        input.value = value;
+                    }
+                } else if (key.startsWith('change-order-qty-')) {
+                    const itemId = key.replace('change-order-qty-', '');
+                    const input = document.querySelector(`.change-order-qty[data-item="${itemId}"]`);
+                    if (input && value) {
+                        input.value = value;
+                    }
+                } else if (key.startsWith('labor-qty-')) {
+                    const itemId = key.replace('labor-qty-', '');
+                    const input = document.querySelector(`.labor-qty[data-item="${itemId}"]`);
                     if (input && value) {
                         input.value = value;
                     }
