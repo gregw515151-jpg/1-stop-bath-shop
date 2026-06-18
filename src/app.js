@@ -1798,7 +1798,12 @@ function updateSummary() {
   });
 
   // Add Scope of Work first if selected
-  if (selections.scope_of_work) {
+  const scopeCheckboxes = document.querySelectorAll('.scope-item:checked');
+  if (scopeCheckboxes.length > 0) {
+    scopeCheckboxes.forEach(cb => {
+      const price = parseFloat(cb.dataset.price) || 0;
+      total += price;
+    });
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
       <strong>Scope of Work:</strong> ${selections.scope_of_work}
     </div>`;
@@ -1809,6 +1814,9 @@ function updateSummary() {
   if (demoCheckboxes.length > 0) {
     const demoNames = Array.from(demoCheckboxes).map(cb => {
       const item = products.demo_disposal_items?.find(p => p.id === cb.value);
+      if (item) {
+        total += parseFloat(item.price) || 0;
+      }
       return item ? item.name : cb.dataset.name || cb.value;
     });
     html += `<div style="padding: 8px; background: #f9fafb; border-radius: 6px; margin-bottom: 6px;">
@@ -2321,9 +2329,9 @@ function updateSummary() {
       if (val) {
         // Try to estimate price if it's in the text (e.g. "+$100") - but skip if hidePrice is true
         if (!config.hidePrice) {
-          const priceMatch = el.options[el.selectedIndex].text.match(/\(\+\$([0-9.]+)\)/);
+          const priceMatch = el.options[el.selectedIndex].text.match(/\(\+\$([0-9.,]+)\)/);
           if (priceMatch) {
-            total += parseFloat(priceMatch[1]);
+            total += parseFloat(priceMatch[1].replace(/,/g, ''));
           }
         }
 
@@ -2331,8 +2339,8 @@ function updateSummary() {
         if (!config.skipRender) {
           // Remove price display from item text - show only the selection name
           let itemText = el.options[el.selectedIndex].text;
-          itemText = itemText.replace(/\s*\(\+\$[0-9.]+\)/, ''); // Remove (+$XX.XX)
-          itemText = itemText.replace(/\s*\(-\$[0-9.]+\)/, ''); // Remove (-$XX.XX)
+          itemText = itemText.replace(/\s*\(\+\$[0-9.,]+\)/, ''); // Remove (+$XX.XX)
+          itemText = itemText.replace(/\s*\(-\$[0-9.,]+\)/, ''); // Remove (-$XX.XX)
 
           const groupName = config.group || 'Other';
           if (!groupedSelections[groupName]) {
