@@ -111,7 +111,6 @@ export function saveFormData() {
             }
         });
 
-        // Collect all textareas (section notes)
         const noteFields = [
             'demolition-notes',
             'electrical-notes',
@@ -121,7 +120,10 @@ export function saveFormData() {
             'flooring-notes',
             'tile-notes',
             'plumbing-notes',
-            'bathroom-notes'
+            'bathroom-notes',
+            'options-notes',
+            'change-order-notes',
+            'labor-notes'
         ];
         noteFields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
